@@ -6,8 +6,8 @@
 <meta name="theme-color" content="#0B0E11">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Track Me">
-<title>Track Me — Daily Trip Ledger</title>
+<meta name="apple-mobile-web-app-title" content="Shiftmeter">
+<title>SHIFTMETER — Daily Trip Ledger</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -228,7 +228,7 @@ canvas.donut { width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
     <div class="brand" id="profileHeaderBtn">
       <div class="avatar-initial" id="avatarInit">S</div>
       <div class="brand-text">
-        <div class="brand-name" id="userNameLabel">Track Me</div>
+        <div class="brand-name" id="userNameLabel">SHIFTMETER</div>
         <div class="brand-sub" id="todayLabel">Daily trip ledger</div>
       </div>
     </div>
@@ -669,7 +669,7 @@ canvas.donut { width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
 <div class="overlay" id="installOverlay">
   <div class="sheet" id="installSheet">
     <div class="sheet-handle"></div>
-    <div class="sheet-title"><span>Install Track Me</span><span class="sheet-close" id="installClose">✕</span></div>
+    <div class="sheet-title"><span>Install SHIFTMETER</span><span class="sheet-close" id="installClose">✕</span></div>
     <div id="installBody"></div>
     <div class="sheet-actions">
       <button type="button" class="btn btn-primary" id="installActionBtn" style="display:none;">Install</button>
@@ -694,8 +694,8 @@ canvas.donut { width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
 'use strict';
 
 /* ================= CONSTANTS & THEME ================= */
-const STORAGE_KEY = 'Track Me.v5';
-const OLD_KEY = 'Track Me.v4';
+const STORAGE_KEY = 'shiftmeter.v5';
+const OLD_KEY = 'shiftmeter.v4';
 const COLORS = { amber:'#FFB020', green:'#34D399', red:'#F76B6B', teal:'#38BDF8', violet:'#C084FC', blue:'#60A5FA', lime:'#A3E635', muted:'#7C8894', hairline:'#242C35', bg:'#0B0E11' };
 const PALETTE = [COLORS.teal, COLORS.violet, COLORS.blue, '#F472B6', COLORS.lime, '#FB923C', '#818CF8', COLORS.red, COLORS.green, '#2DD4BF'];
 const DEFAULT_PLATFORMS = ['Zepto','Blinkit','Swiggy','Zomato'];
@@ -1667,7 +1667,7 @@ document.getElementById('profileNameInput').addEventListener('input', e => {
 });
 
 function updateHeader(){
-  document.getElementById('userNameLabel').textContent = state.profile.name || 'Track Me';
+  document.getElementById('userNameLabel').textContent = state.profile.name || 'SHIFTMETER';
   document.getElementById('avatarInit').textContent = (state.profile.name||'S').charAt(0).toUpperCase();
   document.getElementById('todayLabel').textContent = new Date().toLocaleDateString('en-IN', {weekday:'short', day:'numeric', month:'short'});
   
@@ -1954,7 +1954,7 @@ document.getElementById('deleteRecurringBtn').onclick = async ()=>{
 document.getElementById('exportJsonBtn').onclick = ()=>{
   state.profile.lastBackup = Date.now(); saveState();
   const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(state,null,2)], {type:'application/json'}));
-  a.download = `Track Me-backup-${todayStr()}.json`; a.click(); document.getElementById('reminderBanner').style.display='none';
+  a.download = `shiftmeter-backup-${todayStr()}.json`; a.click(); document.getElementById('reminderBanner').style.display='none';
 };
 document.getElementById('importJsonBtn').onclick = ()=>{ document.getElementById('importBox').style.display='block'; document.getElementById('loadImportBtn').style.display='block'; };
 document.getElementById('loadImportBtn').onclick = async ()=>{
@@ -1977,14 +1977,14 @@ document.getElementById('exportCsvBtn').onclick = ()=>{
     csv += `${e.date},${v.name||''},${plats},${c.fares},${c.tips},${c.distance},${c.fuelCost},${c.otherTotal},${c.profit},"${(e.note||'').replace(/"/g,'""')}"\n`;
   });
   const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'}));
-  a.download = `Track Me-export-${todayStr()}.csv`; a.click();
+  a.download = `shiftmeter-export-${todayStr()}.csv`; a.click();
 };
 
 /* ================= PDF PRINT ================= */
 document.getElementById('printPnlBtn').onclick = ()=>{
   const pA = document.getElementById('printArea');
   pA.innerHTML = `
-    <h2 style="font-family:var(--font-display); margin-bottom:5px;">Track Me Statement</h2>
+    <h2 style="font-family:var(--font-display); margin-bottom:5px;">SHIFTMETER Statement</h2>
     <p style="margin-top:0; color:#555;">Generated: ${new Date().toLocaleString('en-IN')}</p>
     <div class="print-card">
       <h3 style="margin-top:0;">Profit & Loss Breakdown</h3>
@@ -2021,7 +2021,7 @@ const instOverlay = document.getElementById('installOverlay');
 document.getElementById('installBtn').onclick = ()=>{
   const ib = document.getElementById('installBody'); const ab = document.getElementById('installActionBtn'); ab.style.display='none'; ab.onclick=null;
   if(window.matchMedia('(display-mode: standalone)').matches){ ib.innerHTML=`<div class="helper-text">You're already using the installed app. 🎉</div>`; }
-  else if(defPrompt){ ib.innerHTML=`<div class="helper-text">Install Track Me for quick, full-screen access.</div>`; ab.style.display='block'; ab.onclick=async()=>{ instOverlay.classList.remove('open'); defPrompt.prompt(); await defPrompt.userChoice; defPrompt=null; }; }
+  else if(defPrompt){ ib.innerHTML=`<div class="helper-text">Install SHIFTMETER for quick, full-screen access.</div>`; ab.style.display='block'; ab.onclick=async()=>{ instOverlay.classList.remove('open'); defPrompt.prompt(); await defPrompt.userChoice; defPrompt=null; }; }
   else if(/iphone|ipad|ipod/i.test(navigator.userAgent)){ ib.innerHTML=`<div class="helper-text">To add to Home Screen:<br>1. Tap the <b>Share</b> icon.<br>2. Tap <b>Add to Home Screen</b>.</div>`; }
   else { ib.innerHTML=`<div class="helper-text">Open your browser menu (⋮) and choose <b>Install app</b>.</div>`; }
   instOverlay.classList.add('open');
@@ -2037,13 +2037,13 @@ function setupDynamicPWA(){
     ctx.beginPath(); ctx.roundRect(0,0,192,192,40); ctx.fill(); ctx.fillStyle='#191300'; ctx.font='bold 90px Arial'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('S', 96, 105);
     const iconUrl = cvs.toDataURL();
     
-    const manifest = { name: 'Track Me', short_name: 'Track Me', start_url: '.', display: 'standalone', background_color: '#0B0E11', theme_color: '#0B0E11', icons: [{ src: iconUrl, sizes: '192x192', type: 'image/png' }] };
+    const manifest = { name: 'SHIFTMETER', short_name: 'Shiftmeter', start_url: '.', display: 'standalone', background_color: '#0B0E11', theme_color: '#0B0E11', icons: [{ src: iconUrl, sizes: '192x192', type: 'image/png' }] };
     const mLink = document.createElement('link'); mLink.rel = 'manifest'; mLink.href = URL.createObjectURL(new Blob([JSON.stringify(manifest)], {type:'application/manifest+json'})); document.head.appendChild(mLink);
     const aLink = document.createElement('link'); aLink.rel = 'apple-touch-icon'; aLink.href = iconUrl; document.head.appendChild(aLink);
     
     if('serviceWorker' in navigator){
       const swCode = `
-        const CACHE_NAME = 'Track Me-v5';
+        const CACHE_NAME = 'shiftmeter-v5';
         self.addEventListener('install', e => { self.skipWaiting(); e.waitUntil(caches.open(CACHE_NAME).then(c => c.add('.'))); });
         self.addEventListener('fetch', e => { e.respondWith(caches.match(e.request).then(res => res || fetch(e.request))); });
       `;
