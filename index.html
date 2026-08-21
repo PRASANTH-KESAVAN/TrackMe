@@ -12,39 +12,26 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#0B0E11;
-  --panel:#141920;
-  --panel-2:#1B222B;
-  --hairline:#242C35;
-  --text:#E8EDF2;
-  --muted:#7C8894;
-  --amber:#FFB020;
-  --green:#34D399;
-  --red:#F76B6B;
-  --teal:#38BDF8;
-  --violet:#C084FC;
-  --blue:#60A5FA;
-  --pink:#F472B6;
-  --lime:#A3E635;
-  --orange:#FB923C;
-  --indigo:#818CF8;
-  --radius:18px;
-  --radius-sm:12px;
+:root {
+  --bg:#0B0E11; --panel:#141920; --panel-2:#1B222B; --hairline:#242C35;
+  --text:#E8EDF2; --muted:#7C8894; --amber:#FFB020; --green:#34D399;
+  --red:#F76B6B; --teal:#38BDF8; --violet:#C084FC; --blue:#60A5FA;
+  --lime:#A3E635; --orange:#FB923C;
+  --radius:18px; --radius-sm:12px;
   --font-display:'Chakra Petch', sans-serif;
   --font-mono:'JetBrains Mono', monospace;
   --font-body:'Inter', sans-serif;
   color-scheme: dark;
 }
-*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-html,body{margin:0; padding:0; background:var(--bg);}
-body{
+
+* { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body { margin:0; padding:0; background:var(--bg); }
+body {
   background: radial-gradient(ellipse 900px 500px at 50% -10%, #1a2028 0%, var(--bg) 55%);
   color:var(--text); font-family:var(--font-body); min-height:100vh; padding-bottom:104px;
 }
-.wrap{max-width:520px; margin:0 auto; padding:0 16px;}
+.wrap { max-width:520px; margin:0 auto; padding:0 16px; }
 
-/* ---------- Print Styles ---------- */
 @media print {
   body { background: white !important; color: black !important; padding: 0 !important; }
   .topbar, .bottomnav, .fab, .view, .overlay, .reminder-banner { display: none !important; }
@@ -54,186 +41,177 @@ body{
   .print-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; }
   .print-table th, .print-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
   .print-table th { background: #f5f5f5; font-weight: bold; }
-  .print-text-right { text-align: right !important; }
 }
 #printArea { display: none; }
 
-/* ---------- Top bar ---------- */
-.topbar{ position:sticky; top:0; z-index:20; backdrop-filter:blur(10px); background:rgba(11,14,17,0.82); border-bottom:1px solid var(--hairline); }
-.topbar-inner{ max-width:520px; margin:0 auto; padding:14px 16px; display:flex; align-items:center; justify-content:space-between; }
-.brand{ display:flex; align-items:center; gap:10px; cursor:pointer; }
-.avatar-initial{ width:36px; height:36px; border-radius:10px; background:linear-gradient(135deg, var(--amber), var(--orange)); color:#1a1300; font-family:var(--font-display); font-weight:700; font-size:18px; display:flex; align-items:center; justify-content:center; }
-.brand-text{ display:flex; flex-direction:column; line-height:1.1; }
-.brand-name{ font-family:var(--font-display); font-weight:700; font-size:16px; letter-spacing:0.5px; }
-.brand-sub{ font-size:11px; color:var(--muted); margin-top:2px; font-family:var(--font-mono); }
-.top-actions{ display:flex; gap:8px; align-items:center; }
-.global-vehicle-sel{ background:var(--panel-2); border:1px solid var(--hairline); color:var(--amber); border-radius:8px; padding:6px 26px 6px 10px; font-size:11px; font-family:var(--font-mono); appearance:none; background-image:url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23FFB020%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E"); background-repeat:no-repeat; background-position:right 6px center; cursor:pointer; }
-.icon-btn{ width:36px; height:36px; border-radius:10px; background:var(--panel-2); border:1px solid var(--hairline); display:flex; align-items:center; justify-content:center; color:var(--text); cursor:pointer; }
-.icon-btn:active{ background:#242c37; }
-.icon-btn svg{ width:17px; height:17px; }
+.topbar { position:sticky; top:0; z-index:20; backdrop-filter:blur(10px); background:rgba(11,14,17,0.82); border-bottom:1px solid var(--hairline); }
+.topbar-inner { max-width:520px; margin:0 auto; padding:14px 16px; display:flex; align-items:center; justify-content:space-between; }
+.brand { display:flex; align-items:center; gap:10px; cursor:pointer; }
+.avatar-initial { width:36px; height:36px; border-radius:10px; background:linear-gradient(135deg, var(--amber), var(--orange)); color:#1a1300; font-family:var(--font-display); font-weight:700; font-size:18px; display:flex; align-items:center; justify-content:center; }
+.brand-text { display:flex; flex-direction:column; line-height:1.1; }
+.brand-name { font-family:var(--font-display); font-weight:700; font-size:16px; letter-spacing:0.5px; }
+.brand-sub { font-size:11px; color:var(--muted); margin-top:2px; font-family:var(--font-mono); }
+.top-actions { display:flex; gap:8px; align-items:center; }
 
-/* ---------- Banner ---------- */
-.reminder-banner{ background:rgba(255,176,32,0.15); border-bottom:1px solid rgba(255,176,32,0.3); color:var(--amber); padding:10px 16px; font-size:12px; font-family:var(--font-mono); text-align:center; display:none; cursor:pointer; }
+.global-vehicle-sel { background:var(--panel-2); border:1px solid var(--hairline); color:var(--amber); border-radius:8px; padding:6px 26px 6px 10px; font-size:11px; font-family:var(--font-mono); appearance:none; background-image:url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23FFB020%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E"); background-repeat:no-repeat; background-position:right 6px center; cursor:pointer; }
+.icon-btn { width:36px; height:36px; border-radius:10px; background:var(--panel-2); border:1px solid var(--hairline); display:flex; align-items:center; justify-content:center; color:var(--text); cursor:pointer; }
+.icon-btn:active { background:#242c37; }
+.icon-btn svg { width:17px; height:17px; }
 
-/* ---------- General ---------- */
-.section{ margin-top:22px; }
-.section-head{ display:flex; align-items:baseline; justify-content:space-between; margin-bottom:10px; }
-.section-title{ font-family:var(--font-display); font-size:13px; font-weight:600; letter-spacing:1.2px; color:var(--muted); text-transform:uppercase; }
-.section-link{ font-size:11.5px; color:var(--amber); font-family:var(--font-mono); cursor:pointer; }
-.card{ background:linear-gradient(180deg, var(--panel) 0%, var(--panel-2) 100%); border:1px solid var(--hairline); border-radius:var(--radius); padding:18px; }
-.card + .card{ margin-top:12px; }
-.divider{ height:1px; background:var(--hairline); margin:16px 0; }
+.reminder-banner { background:rgba(255,176,32,0.15); border-bottom:1px solid rgba(255,176,32,0.3); color:var(--amber); padding:10px 16px; font-size:12px; font-family:var(--font-mono); text-align:center; display:none; cursor:pointer; }
+.section { margin-top:22px; }
+.section-head { display:flex; align-items:baseline; justify-content:space-between; margin-bottom:10px; }
+.section-title { font-family:var(--font-display); font-size:13px; font-weight:600; letter-spacing:1.2px; color:var(--muted); text-transform:uppercase; }
+.section-link { font-size:11.5px; color:var(--amber); font-family:var(--font-mono); cursor:pointer; }
+.card { background:linear-gradient(180deg, var(--panel) 0%, var(--panel-2) 100%); border:1px solid var(--hairline); border-radius:var(--radius); padding:18px; }
+.card + .card { margin-top:12px; }
+.divider { height:1px; background:var(--hairline); margin:16px 0; }
 
-/* ---------- Hero & Gauge ---------- */
-.hero{ padding:20px 18px 18px; }
-.hero-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:2px; }
-.hero-label{ font-family:var(--font-display); font-size:12px; letter-spacing:1.4px; color:var(--muted); text-transform:uppercase; }
-.hero-range{ font-size:11px; color:var(--muted); font-family:var(--font-mono); }
-.gauge-wrap{ position:relative; width:100%; height:150px; margin-top:4px; }
-canvas.gauge{ width:100%; height:150px; display:block; }
-.gauge-readout{ position:absolute; left:0; right:0; bottom:6px; text-align:center; }
-.gauge-margin{ font-family:var(--font-mono); font-weight:700; font-size:34px; letter-spacing:-0.5px; }
-.gauge-sub{ font-size:11.5px; color:var(--muted); margin-top:2px; font-family:var(--font-mono); }
-.gauge-legend{ display:flex; justify-content:center; gap:14px; margin-top:8px; font-size:10.5px; color:var(--muted); font-family:var(--font-mono); }
-.gauge-legend span{ display:flex; align-items:center; gap:4px; }
-.gauge-legend i{ width:7px; height:7px; border-radius:2px; display:inline-block; }
+.hero { padding:20px 18px 18px; }
+.hero-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:2px; }
+.hero-label { font-family:var(--font-display); font-size:12px; letter-spacing:1.4px; color:var(--muted); text-transform:uppercase; }
+.hero-range { font-size:11px; color:var(--muted); font-family:var(--font-mono); }
+.gauge-wrap { position:relative; width:100%; height:150px; margin-top:4px; }
+canvas.gauge { width:100%; height:150px; display:block; }
+.gauge-readout { position:absolute; left:0; right:0; bottom:6px; text-align:center; }
+.gauge-margin { font-family:var(--font-mono); font-weight:700; font-size:34px; letter-spacing:-0.5px; }
+.gauge-sub { font-size:11.5px; color:var(--muted); margin-top:2px; font-family:var(--font-mono); }
+.gauge-legend { display:flex; justify-content:center; gap:14px; margin-top:8px; font-size:10.5px; color:var(--muted); font-family:var(--font-mono); }
+.gauge-legend span { display:flex; align-items:center; gap:4px; }
+.gauge-legend i { width:7px; height:7px; border-radius:2px; display:inline-block; }
 
-.odometer-row{ display:flex; align-items:flex-end; justify-content:space-between; }
-.odometer-label{ font-size:11px; color:var(--muted); letter-spacing:0.6px; text-transform:uppercase; font-family:var(--font-display); }
-.odometer-value{ font-family:var(--font-mono); font-weight:700; font-size:26px; font-variant-numeric:tabular-nums; margin-top:4px; }
-.odometer-value.pos{ color:var(--green); }
-.odometer-value.neg{ color:var(--red); }
-.odometer-days{ font-family:var(--font-mono); font-size:11px; color:var(--muted); text-align:right; }
+.odometer-row { display:flex; align-items:flex-end; justify-content:space-between; }
+.odometer-label { font-size:11px; color:var(--muted); letter-spacing:0.6px; text-transform:uppercase; font-family:var(--font-display); }
+.odometer-value { font-family:var(--font-mono); font-weight:700; font-size:26px; font-variant-numeric:tabular-nums; margin-top:4px; }
+.odometer-value.pos { color:var(--green); }
+.odometer-value.neg { color:var(--red); }
+.odometer-days { font-family:var(--font-mono); font-size:11px; color:var(--muted); text-align:right; }
 
-/* ---------- Goals UI ---------- */
-.goal-list{ display:flex; flex-direction:column; gap:12px; }
-.goal-item{ background:var(--panel-2); border:1px solid var(--hairline); border-radius:12px; padding:12px; }
-.goal-head{ display:flex; justify-content:space-between; margin-bottom:8px; font-size:12px; font-family:var(--font-mono); }
-.goal-name{ color:var(--text); font-weight:600; }
-.goal-meta{ color:var(--muted); }
-.goal-track{ height:8px; border-radius:4px; background:rgba(255,255,255,0.05); overflow:hidden; position:relative; }
-.goal-fill{ height:100%; border-radius:4px; transition:width 0.4s ease; }
-.goal-footer{ display:flex; justify-content:space-between; margin-top:6px; font-size:10.5px; color:var(--muted); font-family:var(--font-mono); }
-.streak-badge{ background:rgba(255,176,32,0.15); color:var(--amber); padding:2px 6px; border-radius:6px; font-weight:bold; }
+.goal-list { display:flex; flex-direction:column; gap:12px; }
+.goal-item { background:var(--panel-2); border:1px solid var(--hairline); border-radius:12px; padding:12px; cursor:pointer; }
+.goal-head { display:flex; justify-content:space-between; margin-bottom:8px; font-size:12px; font-family:var(--font-mono); }
+.goal-name { color:var(--text); font-weight:600; }
+.goal-meta { color:var(--muted); }
+.goal-track { height:8px; border-radius:4px; background:rgba(255,255,255,0.05); overflow:hidden; position:relative; }
+.goal-fill { height:100%; border-radius:4px; transition:width 0.4s cubic-bezier(0.2,0.8,0.2,1); }
+.goal-footer { display:flex; justify-content:space-between; margin-top:6px; font-size:10.5px; color:var(--muted); font-family:var(--font-mono); }
+.streak-badge { background:rgba(255,176,32,0.15); color:var(--amber); padding:2px 6px; border-radius:6px; font-weight:bold; }
 
-/* ---------- Stats & Chips ---------- */
-.stat-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
-.stat-card{ padding:12px; }
-.stat-title{ font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:0.6px; font-family:var(--font-display); }
-.stat-value{ font-family:var(--font-mono); font-weight:600; font-size:16px; margin-top:6px; white-space:nowrap; }
-canvas.spark{ width:100%; height:26px; display:block; margin-top:6px; }
-.stat-empty{ grid-column:1/-1; text-align:center; padding:16px 10px; color:var(--muted); font-size:12px; border:1px dashed var(--hairline); border-radius:var(--radius-sm); }
-.platform-today-chips{ display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
-.mini-chip{ background:var(--panel-2); border:1px solid var(--hairline); border-radius:8px; padding:5px 9px; font-size:11px; font-family:var(--font-mono); display:flex; align-items:center; gap:5px; }
-.mini-chip i{ width:6px; height:6px; border-radius:2px; }
+.stat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.stat-card { padding:12px; }
+.stat-title { font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:0.6px; font-family:var(--font-display); }
+.stat-value { font-family:var(--font-mono); font-weight:600; font-size:16px; margin-top:6px; white-space:nowrap; }
+canvas.spark { width:100%; height:26px; display:block; margin-top:6px; cursor:pointer;}
+.stat-empty { grid-column:1/-1; text-align:center; padding:16px 10px; color:var(--muted); font-size:12px; border:1px dashed var(--hairline); border-radius:var(--radius-sm); }
+.platform-today-chips { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+.mini-chip { background:var(--panel-2); border:1px solid var(--hairline); border-radius:8px; padding:5px 9px; font-size:11px; font-family:var(--font-mono); display:flex; align-items:center; gap:5px; }
+.mini-chip i { width:6px; height:6px; border-radius:2px; }
 
-/* ---------- Tabs & Forms ---------- */
-.tabs{ display:flex; gap:8px; }
-.tab{ flex:1; text-align:center; padding:8px 0; border-radius:10px; background:var(--panel-2); border:1px solid var(--hairline); font-family:var(--font-mono); font-size:12px; color:var(--muted); cursor:pointer; }
-.tab.active{ background:rgba(255,176,32,0.12); border-color:rgba(255,176,32,0.5); color:var(--amber); }
+.tabs { display:flex; gap:8px; }
+.tab { flex:1; text-align:center; padding:8px 0; border-radius:10px; background:var(--panel-2); border:1px solid var(--hairline); font-family:var(--font-mono); font-size:12px; color:var(--muted); cursor:pointer; transition:all 0.2s; }
+.tab.active { background:rgba(255,176,32,0.12); border-color:rgba(255,176,32,0.5); color:var(--amber); }
 
-.field{ margin-top:14px; }
-.field label{ display:block; font-size:11.5px; color:var(--muted); margin-bottom:6px; letter-spacing:0.3px; }
-.field input, .field select{ width:100%; background:var(--panel-2); border:1px solid var(--hairline); border-radius:10px; padding:11px 12px; color:var(--text); font-size:14px; font-family:var(--font-mono); }
-.field input:focus, .field select:focus{ outline:2px solid rgba(255,176,32,0.55); outline-offset:1px; }
-.row2{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.field { margin-top:14px; }
+.field label { display:block; font-size:11.5px; color:var(--muted); margin-bottom:6px; letter-spacing:0.3px; }
+.field input, .field select { width:100%; background:var(--panel-2); border:1px solid var(--hairline); border-radius:10px; padding:11px 12px; color:var(--text); font-size:14px; font-family:var(--font-mono); transition:border 0.2s;}
+.field input:focus, .field select:focus { outline:none; border-color:rgba(255,176,32,0.6); }
+.row2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.custom-range-picker { display:none; grid-template-columns:1fr 1fr auto; gap:8px; margin-top:10px; align-items:flex-end; }
+.custom-range-picker.active { display:grid; }
+.btn-sm { padding:10px; border-radius:10px; background:var(--panel-2); border:1px solid var(--hairline); color:var(--amber); cursor:pointer; font-family:var(--font-mono); font-size:12px; }
 
-/* ---------- Custom Range Picker ---------- */
-.custom-range-picker{ display:none; grid-template-columns:1fr 1fr auto; gap:8px; margin-top:10px; align-items:flex-end; }
-.custom-range-picker.active{ display:grid; }
-.btn-sm{ padding:10px; border-radius:10px; background:var(--panel-2); border:1px solid var(--hairline); color:var(--amber); cursor:pointer; font-family:var(--font-mono); font-size:12px; }
+.chart-legend { display:flex; gap:12px; margin-bottom:10px; font-size:11px; color:var(--muted); font-family:var(--font-mono); flex-wrap:wrap; }
+.chart-legend span { display:flex; align-items:center; gap:5px; }
+.chart-legend i { width:9px; height:3px; border-radius:2px; }
+canvas.linechart, canvas.barchart, canvas.catbar { width:100%; height:160px; display:block; cursor:pointer; touch-action:pan-y; }
+.chart-empty { text-align:center; padding:28px 10px; color:var(--muted); font-size:12px; }
+.donut-layout { display:flex; align-items:center; gap:16px; }
+canvas.donut { width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
+.donut-legend { flex:1; display:flex; flex-direction:column; gap:8px; min-width:0; }
+.donut-row { display:flex; align-items:center; gap:8px; font-size:12px; }
+.donut-row i { width:8px; height:8px; border-radius:2px; flex:0 0 8px; }
+.donut-row .dname { flex:1; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.donut-row .damt { font-family:var(--font-mono); color:var(--muted); font-size:11px; }
 
-/* ---------- Charts ---------- */
-.chart-legend{ display:flex; gap:12px; margin-bottom:10px; font-size:11px; color:var(--muted); font-family:var(--font-mono); flex-wrap:wrap; }
-.chart-legend span{ display:flex; align-items:center; gap:5px; }
-.chart-legend i{ width:9px; height:3px; border-radius:2px; }
-canvas.linechart, canvas.barchart, canvas.catbar{ width:100%; height:160px; display:block; cursor:pointer; touch-action:pan-y; }
-.chart-empty{ text-align:center; padding:28px 10px; color:var(--muted); font-size:12px; }
-.donut-layout{ display:flex; align-items:center; gap:16px; }
-canvas.donut{ width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
-.donut-legend{ flex:1; display:flex; flex-direction:column; gap:8px; min-width:0; }
-.donut-row{ display:flex; align-items:center; gap:8px; font-size:12px; }
-.donut-row i{ width:8px; height:8px; border-radius:2px; flex:0 0 8px; }
-.donut-row .dname{ flex:1; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.donut-row .damt{ font-family:var(--font-mono); color:var(--muted); font-size:11px; }
+.chart-tooltip { position:fixed; z-index:9000; display:none; pointer-events:none; background:rgba(20, 25, 32, 0.95); backdrop-filter:blur(4px); border:1px solid var(--hairline); border-radius:10px; padding:10px 12px; font-family:var(--font-mono); font-size:11.5px; box-shadow:0 8px 32px rgba(0,0,0,0.6); max-width:240px; }
+.chart-tooltip .ct-date { color:var(--muted); font-size:10px; text-transform:uppercase; letter-spacing:0.4px; margin-bottom:6px; border-bottom:1px solid var(--hairline); padding-bottom:4px;}
+.chart-tooltip .ct-row { display:flex; align-items:center; gap:8px; white-space:nowrap; margin-top:5px; }
+.chart-tooltip .ct-row i { width:8px; height:8px; border-radius:2px; flex-shrink:0;}
+.chart-tooltip .ct-row span { margin-left:auto; padding-left:12px; color:var(--text); font-weight:600; }
 
-.chart-tooltip{ position:fixed; z-index:60; display:none; pointer-events:none; background:#1B222B; border:1px solid var(--hairline); border-radius:10px; padding:8px 10px; font-family:var(--font-mono); font-size:11px; box-shadow:0 10px 24px rgba(0,0,0,0.4); max-width:220px; }
-.chart-tooltip .ct-date{ color:var(--muted); font-size:10px; text-transform:uppercase; letter-spacing:0.4px; margin-bottom:5px; }
-.chart-tooltip .ct-row{ display:flex; align-items:center; gap:6px; white-space:nowrap; margin-top:3px; }
-.chart-tooltip .ct-row i{ width:7px; height:7px; border-radius:2px; }
-.chart-tooltip .ct-row span{ margin-left:auto; padding-left:10px; color:var(--text); font-weight:600; }
+.pnl-table { width:100%; font-family:var(--font-mono); font-size:12px; border-collapse:collapse; }
+.pnl-table td { padding:8px 0; border-bottom:1px dashed var(--hairline); }
+.pnl-table tr:last-child td { border-bottom:none; }
+.pnl-table .val { text-align:right; font-weight:600; }
+.pnl-table .indent { padding-left:15px; color:var(--muted); font-size:11px; }
+.pnl-table .subtotal td { border-top:1px solid var(--hairline); padding-top:10px; margin-top:5px; font-weight:bold; }
+.pnl-table .net-profit td { font-size:14px; color:var(--green); border-top:2px solid var(--hairline); padding-top:12px; }
+.pnl-table .net-loss td { font-size:14px; color:var(--red); border-top:2px solid var(--hairline); padding-top:12px; }
 
-/* ---------- P&L Breakdown ---------- */
-.pnl-table{ width:100%; font-family:var(--font-mono); font-size:12px; border-collapse:collapse; }
-.pnl-table td{ padding:8px 0; border-bottom:1px dashed var(--hairline); }
-.pnl-table tr:last-child td{ border-bottom:none; }
-.pnl-table .val{ text-align:right; font-weight:600; }
-.pnl-table .indent{ padding-left:15px; color:var(--muted); font-size:11px; }
-.pnl-table .subtotal td{ border-top:1px solid var(--hairline); padding-top:10px; margin-top:5px; font-weight:bold; }
-.pnl-table .net-profit td{ font-size:14px; color:var(--green); border-top:2px solid var(--hairline); padding-top:12px; }
-.pnl-table .net-loss td{ font-size:14px; color:var(--red); border-top:2px solid var(--hairline); padding-top:12px; }
+.history-list { display:flex; flex-direction:column; gap:8px; }
+.hist-row { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px 14px; border-radius:var(--radius-sm); background:var(--panel-2); border:1px solid var(--hairline); cursor:pointer; transition:background 0.2s;}
+.hist-row:active { background:#232b35; }
+.hist-date { font-family:var(--font-mono); font-size:11px; color:var(--muted); width:52px; flex:0 0 52px; }
+.hist-mid { flex:1; min-width:0; }
+.hist-earn { font-size:13px; font-family:var(--font-mono); }
+.hist-meta { font-size:10.5px; color:var(--muted); margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.hist-profit { font-family:var(--font-mono); font-weight:600; font-size:13px; text-align:right; white-space:nowrap; }
+.hist-profit.pos { color:var(--green); }
+.hist-profit.neg { color:var(--red); }
 
-/* ---------- History List ---------- */
-.history-list{ display:flex; flex-direction:column; gap:8px; }
-.hist-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px 14px; border-radius:var(--radius-sm); background:var(--panel-2); border:1px solid var(--hairline); cursor:pointer; }
-.hist-row:active{ background:#232b35; }
-.hist-date{ font-family:var(--font-mono); font-size:11px; color:var(--muted); width:52px; flex:0 0 52px; }
-.hist-mid{ flex:1; min-width:0; }
-.hist-earn{ font-size:13px; font-family:var(--font-mono); }
-.hist-meta{ font-size:10.5px; color:var(--muted); margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.hist-profit{ font-family:var(--font-mono); font-weight:600; font-size:13px; text-align:right; white-space:nowrap; }
-.hist-profit.pos{ color:var(--green); }
-.hist-profit.neg{ color:var(--red); }
+.view { display:none; }
+.view.active { display:block; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;} }
 
-/* ---------- Misc UI ---------- */
-.chip-row{ display:flex; flex-wrap:wrap; gap:8px; }
-.chip{ display:inline-flex; align-items:center; gap:7px; background:var(--panel-2); border:1px solid var(--hairline); border-radius:20px; padding:6px 8px 6px 12px; font-size:12px; font-family:var(--font-mono); color:var(--text); }
-.chip i{ width:7px; height:7px; border-radius:2px; }
-.chip button{ background:rgba(247,107,107,0.14); border:none; color:var(--red); cursor:pointer; font-size:11px; padding:2px 6px; border-radius:8px; }
-.view{ display:none; }
-.view.active{ display:block; }
-.bottomnav{ position:fixed; left:0; right:0; bottom:0; z-index:35; background:rgba(11,14,17,0.92); backdrop-filter:blur(10px); border-top:1px solid var(--hairline); }
-.bottomnav-inner{ max-width:520px; margin:0 auto; display:flex; padding:6px 4px calc(6px + env(safe-area-inset-bottom)); overflow-x:auto; scrollbar-width:none; }
-.bottomnav-inner::-webkit-scrollbar{ display:none; }
-.nav-item{ flex:1 0 auto; min-width:65px; display:flex; flex-direction:column; align-items:center; gap:3px; padding:7px 4px 5px; color:var(--muted); cursor:pointer; font-size:9.5px; font-family:var(--font-mono); }
-.nav-item svg{ width:20px; height:20px; }
-.nav-item.active{ color:var(--amber); }
+.bottomnav { position:fixed; left:0; right:0; bottom:0; z-index:35; background:rgba(11,14,17,0.92); backdrop-filter:blur(10px); border-top:1px solid var(--hairline); }
+.bottomnav-inner { max-width:520px; margin:0 auto; display:flex; padding:6px 4px calc(6px + env(safe-area-inset-bottom)); overflow-x:auto; scrollbar-width:none; }
+.bottomnav-inner::-webkit-scrollbar { display:none; }
+.nav-item { flex:1 0 auto; min-width:65px; display:flex; flex-direction:column; align-items:center; gap:3px; padding:7px 4px 5px; color:var(--muted); cursor:pointer; font-size:9.5px; font-family:var(--font-mono); transition:color 0.2s;}
+.nav-item svg { width:20px; height:20px; }
+.nav-item.active { color:var(--amber); }
 
-/* ---------- FAB & Sheets ---------- */
-.fab{ position:fixed; right:20px; bottom:82px; z-index:30; width:56px; height:56px; border-radius:50%; background:linear-gradient(160deg, #ffc861, var(--amber)); color:#1a1300; border:none; box-shadow:0 8px 22px rgba(255,176,32,0.35); font-size:27px; display:flex; align-items:center; justify-content:center; cursor:pointer; }
-.fab:active{ transform:scale(0.94); }
-.overlay{ position:fixed; inset:0; background:rgba(5,7,9,0.6); backdrop-filter:blur(2px); z-index:40; opacity:0; pointer-events:none; transition:opacity .25s ease; }
-.overlay.open{ opacity:1; pointer-events:auto; }
-.sheet{ position:fixed; left:0; right:0; bottom:0; z-index:41; max-width:520px; margin:0 auto; background:var(--panel); border:1px solid var(--hairline); border-bottom:none; border-radius:22px 22px 0 0; max-height:88vh; overflow-y:auto; transform:translateY(100%); transition:transform .3s cubic-bezier(.2,.9,.25,1); padding:10px 18px calc(24px + env(safe-area-inset-bottom)); }
-.overlay.open .sheet{ transform:translateY(0); }
-.sheet-handle{ width:40px; height:4px; background:var(--hairline); border-radius:3px; margin:8px auto 14px; }
-.sheet-title{ font-family:var(--font-display); font-weight:700; font-size:17px; margin-bottom:4px; display:flex; justify-content:space-between; align-items:center; }
-.sheet-close{ color:var(--muted); font-size:20px; cursor:pointer; padding:4px; }
+.fab { position:fixed; right:20px; bottom:82px; z-index:30; width:56px; height:56px; border-radius:50%; background:linear-gradient(160deg, #ffc861, var(--amber)); color:#1a1300; border:none; box-shadow:0 8px 22px rgba(255,176,32,0.35); font-size:27px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:transform 0.1s;}
+.fab:active { transform:scale(0.94); }
 
-/* ---------- Form Details ---------- */
-.platform-row-form{ display:grid; grid-template-columns:1fr 0.8fr 0.8fr 34px; gap:6px; margin-top:8px; align-items:center; }
-.expense-row{ display:grid; grid-template-columns:1.2fr 1fr 34px; gap:8px; margin-top:8px; align-items:center; }
-.platform-row-form input, .platform-row-form select, .expense-row input, .expense-row select{ padding:9px 8px; font-size:12px; }
-.rm-exp{ width:34px; height:34px; border-radius:9px; background:rgba(247,107,107,0.12); border:1px solid rgba(247,107,107,0.4); color:var(--red); cursor:pointer; font-size:15px; }
-.fuel-preview{ margin-top:14px; padding:11px 13px; border-radius:10px; background:rgba(255,176,32,0.08); border:1px solid rgba(255,176,32,0.35); display:flex; justify-content:space-between; align-items:center; }
-.fuel-preview .fp-label{ font-size:12px; color:var(--amber); }
-.fuel-preview .fp-value{ font-family:var(--font-mono); font-weight:700; color:var(--amber); font-size:15px; }
-.earn-preview{ background:rgba(52,211,153,0.08); border-color:rgba(52,211,153,0.35); }
-.earn-preview .fp-label, .earn-preview .fp-value{ color:var(--green); }
-.sheet-actions{ display:flex; gap:10px; margin-top:22px; }
-.btn{ flex:1; padding:13px; border-radius:12px; border:none; font-family:var(--font-display); font-weight:600; font-size:14px; cursor:pointer; text-align:center; text-decoration:none; display:inline-block;}
-.btn-primary{ background:linear-gradient(160deg,#ffc861,var(--amber)); color:#1a1300; }
-.btn-ghost{ background:var(--panel-2); border:1px solid var(--hairline); color:var(--text); }
-.btn-danger{ background:rgba(247,107,107,0.12); border:1px solid rgba(247,107,107,0.4); color:var(--red); flex:0 0 auto; width:46px; }
-.helper-text{ font-size:11px; color:var(--muted); margin-top:10px; line-height:1.5; }
+.overlay { position:fixed; inset:0; background:rgba(5,7,9,0.7); backdrop-filter:blur(3px); z-index:8000; opacity:0; pointer-events:none; transition:opacity .25s ease; }
+.overlay.open { opacity:1; pointer-events:auto; }
+.sheet { position:fixed; left:0; right:0; bottom:0; z-index:8001; max-width:520px; margin:0 auto; background:var(--panel); border:1px solid var(--hairline); border-bottom:none; border-radius:22px 22px 0 0; max-height:90vh; overflow-y:auto; transform:translateY(100%); transition:transform .3s cubic-bezier(.2,.9,.25,1); padding:10px 18px calc(24px + env(safe-area-inset-bottom)); }
+.overlay.open .sheet { transform:translateY(0); }
+.sheet-handle { width:40px; height:4px; background:var(--hairline); border-radius:3px; margin:8px auto 14px; }
+.sheet-title { font-family:var(--font-display); font-weight:700; font-size:17px; margin-bottom:4px; display:flex; justify-content:space-between; align-items:center; }
+.sheet-close { color:var(--muted); font-size:20px; cursor:pointer; padding:4px; }
 
-@media (prefers-reduced-motion: reduce){ .sheet, .overlay, .goal-fill { transition:none !important; } }
+/* Custom Dialog Box */
+.dialog-box { position:absolute; top:50%; left:50%; transform:translate(-50%, -50%) scale(0.95); width:90%; max-width:320px; background:var(--panel-2); border:1px solid var(--hairline); border-radius:var(--radius); padding:20px; box-shadow:0 15px 35px rgba(0,0,0,0.5); transition:transform 0.2s cubic-bezier(0.2,0.9,0.25,1); }
+.overlay.open .dialog-box { transform:translate(-50%, -50%) scale(1); }
+.dialog-title { font-family:var(--font-display); font-size:18px; font-weight:700; color:var(--text); margin-bottom:10px;}
+.dialog-msg { font-size:13.5px; color:var(--muted); line-height:1.5; margin-bottom:20px;}
+.dialog-actions { display:flex; justify-content:flex-end; gap:10px; }
+
+.platform-row-form { display:grid; grid-template-columns:1fr 0.8fr 0.8fr 34px; gap:6px; margin-top:8px; align-items:center; }
+.expense-row { display:grid; grid-template-columns:1.2fr 1fr 34px; gap:8px; margin-top:8px; align-items:center; }
+.platform-row-form input, .platform-row-form select, .expense-row input, .expense-row select { padding:9px 8px; font-size:12px; }
+.rm-exp { width:34px; height:34px; border-radius:9px; background:rgba(247,107,107,0.12); border:1px solid rgba(247,107,107,0.4); color:var(--red); cursor:pointer; font-size:15px; }
+.fuel-preview { margin-top:14px; padding:11px 13px; border-radius:10px; background:rgba(255,176,32,0.08); border:1px solid rgba(255,176,32,0.35); display:flex; justify-content:space-between; align-items:center; }
+.fuel-preview .fp-label { font-size:12px; color:var(--amber); }
+.fuel-preview .fp-value { font-family:var(--font-mono); font-weight:700; color:var(--amber); font-size:15px; }
+.earn-preview { background:rgba(52,211,153,0.08); border-color:rgba(52,211,153,0.35); }
+.earn-preview .fp-label, .earn-preview .fp-value { color:var(--green); }
+.sheet-actions { display:flex; gap:10px; margin-top:22px; }
+.btn { flex:1; padding:13px; border-radius:12px; border:none; font-family:var(--font-display); font-weight:600; font-size:14px; cursor:pointer; text-align:center; text-decoration:none; display:inline-block; transition:filter 0.2s;}
+.btn:active { filter:brightness(0.9); }
+.btn-primary { background:linear-gradient(160deg,#ffc861,var(--amber)); color:#1a1300; }
+.btn-ghost { background:var(--panel-2); border:1px solid var(--hairline); color:var(--text); }
+.btn-danger { background:rgba(247,107,107,0.12); border:1px solid rgba(247,107,107,0.4); color:var(--red); flex:0 0 auto; width:46px; }
+.btn-danger-full { background:rgba(247,107,107,0.12); border:1px solid rgba(247,107,107,0.4); color:var(--red); width: 100%;}
+.helper-text { font-size:11px; color:var(--muted); margin-top:10px; line-height:1.5; }
+
+@media (prefers-reduced-motion: reduce){ .sheet, .overlay, .goal-fill, .dialog-box { transition:none !important; } }
 </style>
 </head>
 <body>
 
 <div id="printArea"></div>
-
 <div class="reminder-banner" id="reminderBanner"></div>
 
 <div class="topbar">
@@ -257,7 +235,6 @@ canvas.donut{ width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
 </div>
 
 <div class="wrap">
-
   <!-- ================= HOME VIEW ================= -->
   <div class="view active" data-view="home">
     <div class="section">
@@ -438,7 +415,7 @@ canvas.donut{ width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
         <textarea id="importBox" placeholder="Paste exported JSON here..." style="width:100%; margin-top:10px; background:var(--panel-2); border:1px solid var(--hairline); border-radius:10px; color:var(--text); font-family:var(--font-mono); font-size:11px; padding:10px; min-height:70px; display:none;"></textarea>
         <button class="btn btn-primary" style="padding:10px; font-size:12px; width:100%; margin-top:8px; display:none;" id="loadImportBtn">Load Data</button>
         <div class="divider"></div>
-        <button class="btn btn-danger" style="width:100%; font-size:12px; padding:10px;" id="clearDataBtn">Erase all data</button>
+        <button class="btn btn-danger-full" style="padding:10px; font-size:12px;" id="clearDataBtn">Erase all data</button>
       </div>
     </div>
   </div>
@@ -563,13 +540,25 @@ canvas.donut{ width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
   </div>
 </div>
 
+<!-- CUSTOM DIALOG BOX (Replaces alert/confirm) -->
+<div class="overlay" id="customDialogOverlay">
+  <div class="dialog-box">
+    <div class="dialog-title" id="dialogTitle">Confirm</div>
+    <div class="dialog-msg" id="dialogMsg">Message here</div>
+    <div class="dialog-actions">
+      <button class="btn btn-ghost" id="dialogCancelBtn" style="padding:10px 16px;">Cancel</button>
+      <button class="btn btn-primary" id="dialogConfirmBtn" style="padding:10px 16px;">OK</button>
+    </div>
+  </div>
+</div>
+
 <script>
 'use strict';
 
 /* ================= CONSTANTS & THEME ================= */
 const STORAGE_KEY = 'shiftmeter.v3';
 const OLD_KEY = 'shiftmeter.v2';
-const COLORS = { amber:'#FFB020', green:'#34D399', red:'#F76B6B', teal:'#38BDF8', violet:'#C084FC', blue:'#60A5FA', lime:'#A3E635', muted:'#7C8894', hairline:'#242C35' };
+const COLORS = { amber:'#FFB020', green:'#34D399', red:'#F76B6B', teal:'#38BDF8', violet:'#C084FC', blue:'#60A5FA', lime:'#A3E635', muted:'#7C8894', hairline:'#242C35', bg:'#0B0E11' };
 const PALETTE = [COLORS.teal, COLORS.violet, COLORS.blue, '#F472B6', COLORS.lime, '#FB923C', '#818CF8', COLORS.red, COLORS.green, '#2DD4BF'];
 const DEFAULT_PLATFORMS = ['Zepto','Blinkit','Swiggy','Zomato'];
 const DEFAULT_CATEGORIES = ['Fees','Maintenance','Uniform','Challan'];
@@ -620,13 +609,37 @@ function loadState(){
     } else {
       const parsed = JSON.parse(raw);
       state = Object.assign(defaultState(), parsed);
-      // Ensure all objects exist structurally
       if(!state.profile) state.profile = defaultState().profile;
       if(!state.vehicles || !state.vehicles.length) state.vehicles = defaultState().vehicles;
     }
   } catch(e) { console.warn('Load failed', e); state = defaultState(); }
 }
 function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+
+/* ================= CUSTOM DIALOGS ================= */
+let dialogResolve = null;
+const dialogOverlay = document.getElementById('customDialogOverlay');
+document.getElementById('dialogCancelBtn').onclick = () => { if(dialogResolve) dialogResolve(false); dialogOverlay.classList.remove('open'); };
+document.getElementById('dialogConfirmBtn').onclick = () => { if(dialogResolve) dialogResolve(true); dialogOverlay.classList.remove('open'); };
+
+function showConfirm(title, msg) {
+  return new Promise(resolve => {
+    dialogResolve = resolve;
+    document.getElementById('dialogTitle').textContent = title;
+    document.getElementById('dialogMsg').textContent = msg;
+    document.getElementById('dialogCancelBtn').style.display = 'block';
+    dialogOverlay.classList.add('open');
+  });
+}
+function showAlert(title, msg) {
+  return new Promise(resolve => {
+    dialogResolve = resolve;
+    document.getElementById('dialogTitle').textContent = title;
+    document.getElementById('dialogMsg').textContent = msg;
+    document.getElementById('dialogCancelBtn').style.display = 'none';
+    dialogOverlay.classList.add('open');
+  });
+}
 
 /* ================= AUTO-POST RECURRING ================= */
 function processRecurring(){
@@ -666,13 +679,14 @@ function colorFor(k){
   if(k==='Fuel') return COLORS.amber; if(k==='Net Profit') return COLORS.green; if(k==='Tips') return COLORS.lime;
   let h=0; for(let i=0;i<k.length;i++) h=(h*31+k.charCodeAt(i))>>>0; return PALETTE[h%PALETTE.length];
 }
+
 function getActiveEntries(){
   const all = [...state.entries].sort((a,b)=>a.date.localeCompare(b.date));
   return filterVehicleId === 'all' ? all : all.filter(e => e.vehicleId === filterVehicleId);
 }
 function getActiveFees(){
   const all = [...state.ledgerFees].sort((a,b)=>a.date.localeCompare(b.date));
-  return filterVehicleId === 'all' ? all : all; // Fees are global in this architecture, or we could tag them
+  return filterVehicleId === 'all' ? all : all;
 }
 
 function computeEntry(e){
@@ -687,6 +701,267 @@ function computeEntry(e){
   const exp = (e.expenses||[]).reduce((s,x)=>s+(Number(x.amount)||0),0);
   return { fares, tips, earnings, distance:dist, mileage:mil, fuelCost, otherTotal:exp, totalExpense: fuelCost+exp, profit: earnings-(fuelCost+exp) };
 }
+
+/* ================= INTERACTIVE CHART ENGINE ================= */
+let globalTooltip = null;
+function getTooltip() {
+  if(!globalTooltip) {
+     globalTooltip = document.createElement('div');
+     globalTooltip.className = 'chart-tooltip';
+     document.body.appendChild(globalTooltip);
+  }
+  return globalTooltip;
+}
+
+function bindTooltip(canvas) {
+  if(canvas._tt) return;
+  canvas._tt = true;
+  const tt = getTooltip();
+  
+  function handleMove(e) {
+    if(!canvas._hitRegions) return;
+    const rect = canvas.getBoundingClientRect();
+    const touch = (e.touches && e.touches.length > 0) ? e.touches[0] : e;
+    const x = touch.clientX - rect.left;
+    const y = touch.clientY - rect.top;
+    let hit = null;
+
+    if (canvas._chartType === 'donut') {
+      const cx = rect.width/2, cy = rect.height/2;
+      const dx = x - cx, dy = y - cy;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      const r = Math.min(rect.width, rect.height)/2 - 4;
+      const inn = r * 0.6;
+      if (dist >= inn && dist <= r) {
+         let ang = Math.atan2(dy, dx);
+         if (ang < -Math.PI/2) ang += 2*Math.PI;
+         hit = canvas._hitRegions.find(reg => ang >= reg.start && ang <= reg.end);
+      }
+    } else if (canvas._chartType === 'bar' || canvas._chartType === 'line') {
+      hit = canvas._hitRegions.find(reg => x >= reg.xLeft && x <= reg.xRight);
+    }
+
+    if (hit) {
+       tt.innerHTML = hit.html;
+       tt.style.display = 'block';
+       let tx = touch.clientX + 15;
+       let ty = touch.clientY + 15;
+       if (tx + tt.offsetWidth > window.innerWidth - 10) tx = touch.clientX - tt.offsetWidth - 15;
+       if (ty + tt.offsetHeight > window.innerHeight - 10) ty = touch.clientY - tt.offsetHeight - 15;
+       tt.style.left = tx + 'px';
+       tt.style.top = ty + 'px';
+    } else {
+       tt.style.display = 'none';
+    }
+  }
+
+  function handleLeave() { tt.style.display = 'none'; }
+
+  canvas.addEventListener('mousemove', handleMove);
+  canvas.addEventListener('touchstart', handleMove, {passive: true});
+  canvas.addEventListener('touchmove', handleMove, {passive: true});
+  canvas.addEventListener('mouseleave', handleLeave);
+  canvas.addEventListener('touchend', handleLeave);
+}
+
+const chartAnims = {};
+function runChartAnim(id, drawFn) {
+  if (chartAnims[id]) cancelAnimationFrame(chartAnims[id]);
+  if (REDUCE_MOTION) { drawFn(1); return; }
+  
+  const startTime = performance.now();
+  const duration = 750;
+  function step(now) {
+    let p = (now - startTime) / duration;
+    if (p >= 1) p = 1;
+    const ease = 1 - Math.pow(1 - p, 4); // Quartic ease out
+    drawFn(ease);
+    if (p < 1) chartAnims[id] = requestAnimationFrame(step);
+  }
+  chartAnims[id] = requestAnimationFrame(step);
+}
+
+function setupCanvas(canvas){
+  const r = canvas.getBoundingClientRect(); const dpr = window.devicePixelRatio||1;
+  const cw = r.width>1 ? r.width : (parseInt(getComputedStyle(canvas).width)||130);
+  const ch = r.height>1 ? r.height : (parseInt(getComputedStyle(canvas).height)||130);
+  canvas.width = cw*dpr; canvas.height = ch*dpr;
+  const ctx = canvas.getContext('2d'); ctx.scale(dpr,dpr); return {ctx, w:cw, h:ch};
+}
+
+function drawGaugeArc(canvas, margin){
+  const {ctx,w,h} = setupCanvas(canvas);
+  canvas.id = canvas.id || 'gaugeCanvas';
+  const r = Math.max(0.1, Math.min(w/2-14, h-24)), lw=13;
+  if(r <= 1) return;
+  const mt = t => Math.PI - ((clamp(t,-100,100)+100)/200)*Math.PI;
+
+  runChartAnim(canvas.id, (ease) => {
+    ctx.clearRect(0,0,w,h);
+    [{f:-100,t:0,c:COLORS.red},{f:0,t:30,c:COLORS.amber},{f:30,t:100,c:COLORS.green}].forEach(b=>{
+      ctx.beginPath(); ctx.lineWidth=lw; ctx.strokeStyle=b.c; ctx.globalAlpha=0.85;
+      ctx.arc(w/2, h-14, r, mt(b.f), mt(b.t), false); ctx.stroke();
+    });
+    ctx.globalAlpha=1;
+
+    const a = mt(margin * ease);
+    ctx.beginPath(); ctx.strokeStyle='#FFF'; ctx.lineWidth=3; ctx.lineCap='round';
+    ctx.moveTo(w/2, h-14); ctx.lineTo(w/2 + (r-10)*Math.cos(a), h-14 - (r-10)*Math.sin(a)); ctx.stroke();
+    ctx.beginPath(); ctx.fillStyle='#FFF'; ctx.arc(w/2, h-14, 5, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.fillStyle=COLORS.bg; ctx.arc(w/2, h-14, 2, 0, Math.PI*2); ctx.fill();
+  });
+}
+
+function drawSparkline(canvas, values, color, label){
+  const {ctx, w, h} = setupCanvas(canvas);
+  if(values.length < 2) return;
+  const min = Math.min(...values), max = Math.max(...values, 1), range = (max-min)||1, pad = 2;
+  canvas.id = canvas.id || 'sp'+Math.random().toString(36).slice(2,8);
+  canvas._chartType = 'line';
+  
+  const xs = values.map((v,i)=> (i/(values.length-1))*w);
+  canvas._hitRegions = values.map((v,i)=>{
+    const prevMid = i===0 ? 0 : (xs[i-1]+xs[i])/2;
+    const nextMid = i===values.length-1 ? w : (xs[i]+xs[i+1])/2;
+    return {
+      xLeft: prevMid, xRight: nextMid,
+      html: `<div class="ct-row"><i style="background:${color}"></i><span>${label||'Value'}</span><span style="margin-left:12px; font-weight:700;">${rupee(v)}</span></div>`
+    };
+  });
+  bindTooltip(canvas);
+  
+  runChartAnim(canvas.id, (ease) => {
+    ctx.clearRect(0,0,w,h);
+    ctx.beginPath(); ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.lineJoin = 'round';
+    const pts = Math.max(1, Math.ceil(ease * values.length));
+    for(let i=0; i<pts; i++){
+      const v = values[i];
+      const x = (i/(values.length-1))*w, y = h - pad - ((v-min)/range)*(h-pad*2);
+      i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+  });
+}
+
+function drawGroupedBarChart(canvas, dates, series){
+  const {ctx, w, h} = setupCanvas(canvas); if(!dates.length) return;
+  const padL=35, padR=5, padT=10, padB=20, plotW=w-padL-padR, plotH=h-padT-padB;
+  const maxV = Math.max(...series.flatMap(s=>s.values), 1);
+  const n = dates.length, slot = plotW/n, gW = slot*0.7, bW = gW/series.length;
+  canvas.id = canvas.id || 'gb'+Math.random().toString(36).slice(2,8);
+
+  canvas._chartType = 'bar';
+  canvas._hitRegions = dates.map((d, i) => {
+    let html = `<div class="ct-date">${fmtDateShort(d)}</div>`;
+    series.forEach(s => html += `<div class="ct-row"><i style="background:${s.color}"></i><span>${s.label||'Value'}</span><span style="margin-left:12px; font-weight:700;">${rupee(s.values[i])}</span></div>`);
+    return { xLeft: padL + slot*i, xRight: padL + slot*(i+1), html };
+  });
+  bindTooltip(canvas);
+
+  runChartAnim(canvas.id, (ease) => {
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle=COLORS.muted; ctx.font='10px JetBrains Mono'; ctx.textAlign='right'; ctx.textBaseline='middle';
+    [0, 0.5, 1].forEach(f=>{
+      const y = padT+plotH - f*plotH;
+      ctx.strokeStyle = COLORS.hairline; ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(w-padR,y); ctx.stroke();
+      ctx.fillText(rupeeCompact(f*maxV), padL-4, y);
+    });
+
+    series.forEach((s,si) => {
+      s.values.forEach((v,i) => {
+        const x = padL + slot*i + (slot-gW)/2 + si*bW;
+        const bh = (v/maxV)*plotH * ease;
+        ctx.fillStyle = s.color; ctx.fillRect(x, padT+plotH-bh, Math.max(1, bW-1), bh);
+      });
+    });
+    
+    ctx.fillStyle=COLORS.muted; ctx.textAlign='center';
+    const step = Math.max(1, Math.ceil(n/5));
+    dates.forEach((d,i) => {
+      if(i%step===0 || i===n-1) ctx.fillText(fmtDateShort(d), padL + slot*i + slot/2, h-5);
+    });
+  });
+}
+
+function drawCategoricalBar(canvas, items){
+  const {ctx, w, h} = setupCanvas(canvas); if(!items.length) return;
+  const padL=35, padR=5, padT=10, padB=20, plotW=w-padL-padR, plotH=h-padT-padB;
+  const maxV = Math.max(...items.map(it=>Math.abs(it.val)), 1);
+  const zeroY = padT+plotH/2;
+  const n = items.length, slot = plotW/n, bW = Math.min(20, slot*0.6);
+  canvas.id = canvas.id || 'cb'+Math.random().toString(36).slice(2,8);
+
+  canvas._chartType = 'bar';
+  canvas._hitRegions = items.map((it, i) => {
+    const c = it.val>=0 ? COLORS.green : COLORS.red;
+    return {
+      xLeft: padL + slot*i, xRight: padL + slot*(i+1),
+      html: `<div class="ct-date">${it.label}</div><div class="ct-row"><i style="background:${c}"></i><span>Avg Profit</span><span style="margin-left:12px; font-weight:700;">${rupee(it.val)}</span></div>`
+    };
+  });
+  bindTooltip(canvas);
+
+  runChartAnim(canvas.id, (ease) => {
+    ctx.clearRect(0,0,w,h);
+    ctx.strokeStyle = COLORS.hairline; ctx.beginPath(); ctx.moveTo(padL,zeroY); ctx.lineTo(w-padR,zeroY); ctx.stroke();
+    ctx.fillStyle=COLORS.muted; ctx.font='10px JetBrains Mono'; ctx.textAlign='right'; ctx.textBaseline='middle';
+    ctx.fillText(rupeeCompact(maxV), padL-4, padT+5); ctx.fillText(rupeeCompact(-maxV), padL-4, padT+plotH-5);
+
+    items.forEach((it,i) => {
+      const cx = padL + slot*i + slot/2;
+      const bh = (Math.abs(it.val)/maxV)*(plotH/2) * ease;
+      ctx.fillStyle = it.val>=0 ? COLORS.green : COLORS.red;
+      ctx.fillRect(cx - bW/2, it.val>=0 ? zeroY-bh : zeroY, bW, bh);
+      ctx.fillStyle=COLORS.muted; ctx.textAlign='center'; ctx.fillText(it.label, cx, h-5);
+    });
+  });
+}
+
+function drawDonut(canvas, data, empty){
+  const {ctx, w, h} = setupCanvas(canvas);
+  if(!data.length){ return; }
+  canvas.id = canvas.id || 'd'+Math.random().toString(36).slice(2,8);
+  const tot = data.reduce((s,x)=>s+x.v,0);
+  const cx=w/2, cy=h/2, r=Math.max(0.1, Math.min(w,h)/2-4), inn=r*0.6;
+  if(r <= 1) return;
+  
+  canvas._chartType = 'donut';
+  let startAngle = -Math.PI/2;
+  canvas._hitRegions = data.map(d => {
+    const slice = (d.v/tot)*Math.PI*2;
+    const endAngle = startAngle + slice;
+    const reg = {
+       start: startAngle, end: endAngle,
+       html: `<div class="ct-row"><i style="background:${colorFor(d.k)}"></i><span>${esc(d.k)}</span><span style="margin-left:12px; font-weight:700;">${rupee(d.v)} (${((d.v/tot)*100).toFixed(0)}%)</span></div>`
+    };
+    startAngle += slice;
+    return reg;
+  });
+  bindTooltip(canvas);
+
+  runChartAnim(canvas.id, (ease) => {
+    ctx.clearRect(0,0,w,h);
+    let start = -Math.PI/2;
+    data.forEach(d=>{
+      const slice = (d.v/tot)*Math.PI*2 * ease;
+      ctx.beginPath(); ctx.strokeStyle=colorFor(d.k); ctx.lineWidth=r-inn;
+      ctx.arc(cx,cy,(r+inn)/2, start, start+slice); ctx.stroke();
+      start+=slice;
+    });
+    ctx.fillStyle='#E8EDF2'; ctx.font='700 13px JetBrains Mono'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(rupeeCompact(tot * Math.max(ease, 0.01)), cx, cy-4);
+  });
+}
+function renderDonutHelper(holder, data, empty){
+  if(!data.length){ holder.innerHTML = `<div class="chart-empty">${empty}</div>`; return; }
+  const id = 'd'+Math.random().toString(36).slice(2,8);
+  const tot = data.reduce((s,x)=>s+x.v,0);
+  holder.innerHTML = `<div class="donut-layout"><canvas class="donut" id="${id}"></canvas><div class="donut-legend">
+    ${data.slice(0,5).map(d=>`<div class="donut-row"><i style="background:${colorFor(d.k)}"></i><span class="dname">${esc(d.k)}</span><span class="damt">${((d.v/tot)*100).toFixed(0)}%</span></div>`).join('')}
+  </div></div>`;
+  drawDonut(document.getElementById(id), data, empty);
+}
+
 
 /* ================= RENDER: HOME & DASH ================= */
 function renderHomeView(){
@@ -720,6 +995,9 @@ function renderHomeView(){
 
   renderGoalsWidget(entries, net);
   renderTodayStats(entries);
+  
+  // Trigger bar fill animation
+  setTimeout(()=> document.querySelectorAll('.goal-fill').forEach(el=> el.style.width = el.dataset.w), 50);
 }
 
 function renderGoalsWidget(entries, netLifetime){
@@ -730,11 +1008,8 @@ function renderGoalsWidget(entries, netLifetime){
   }
   
   const today = todayStr();
-  // Group entries by period
   const earnToday = entries.filter(e=>e.date===today).reduce((s,e)=>s+computeEntry(e).earnings,0);
-  const earn30d = entries.slice(-30).reduce((s,e)=>s+computeEntry(e).earnings,0);
   
-  // Calculate start of week (Monday)
   const d = new Date(); const day = d.getDay()||7; d.setDate(d.getDate() - day + 1);
   const startOfWeek = toISO(d);
   const earnWeek = entries.filter(e=>e.date>=startOfWeek).reduce((s,e)=>s+computeEntry(e).earnings,0);
@@ -754,7 +1029,7 @@ function renderGoalsWidget(entries, netLifetime){
     return `
       <div class="goal-item" onclick="openGoalSheet('${g.id}')">
         <div class="goal-head"><span class="goal-name">${esc(label)}</span><span class="goal-meta">${rupee(current)} / ${rupeeCompact(g.target)}</span></div>
-        <div class="goal-track"><div class="goal-fill" style="width:${pct}%; background:${color}"></div></div>
+        <div class="goal-track"><div class="goal-fill" data-w="${pct}%" style="width:0%; background:${color}"></div></div>
         <div class="goal-footer"><span>${esc(subtitle)}</span>${pct>=100?'<span class="streak-badge">Met! 🎉</span>':''}</div>
       </div>
     `;
@@ -776,9 +1051,9 @@ function renderTodayStats(entries){
     <div class="card stat-card"><div class="stat-title">Profit</div><div class="stat-value" style="color:${c.profit>=0?'var(--green)':'var(--red)'}">${rupee(c.profit)}</div><canvas class="spark" id="spProf"></canvas></div>
   `;
   requestAnimationFrame(()=>{
-    drawSparkline(document.getElementById('spEarn'), rec7.map(e=>computeEntry(e).earnings), COLORS.green);
-    drawSparkline(document.getElementById('spTip'), rec7.map(e=>computeEntry(e).tips), COLORS.lime);
-    drawSparkline(document.getElementById('spProf'), rec7.map(e=>computeEntry(e).profit), c.profit>=0?COLORS.green:COLORS.red);
+    drawSparkline(document.getElementById('spEarn'), rec7.map(e=>computeEntry(e).earnings), COLORS.green, 'Earnings');
+    drawSparkline(document.getElementById('spTip'), rec7.map(e=>computeEntry(e).tips), COLORS.lime, 'Tips');
+    drawSparkline(document.getElementById('spProf'), rec7.map(e=>computeEntry(e).profit), c.profit>=0?COLORS.green:COLORS.red, 'Profit');
   });
 
   chips.innerHTML = (last.platformEarnings||[]).filter(p=>p.amount>0||p.tip>0).map(p=>`
@@ -884,8 +1159,8 @@ function renderFuelView(){
 
   if(entries.length){
     drawGroupedBarChart(document.getElementById('petrolComboCanvas'), entries.map(e=>e.date), [
-      { color: COLORS.green, values: entries.map(e=>computeEntry(e).earnings) },
-      { color: COLORS.amber, values: entries.map(e=>computeEntry(e).fuelCost) }
+      { label: 'Earnings', color: COLORS.green, values: entries.map(e=>computeEntry(e).earnings) },
+      { label: 'Fuel Cost', color: COLORS.amber, values: entries.map(e=>computeEntry(e).fuelCost) }
     ]);
   } else document.getElementById('petrolComboHolder').innerHTML = `<div class="chart-empty">No data.</div>`;
 
@@ -938,10 +1213,10 @@ function renderInsightsView(){
   document.getElementById('insightTipPct').textContent = earn>0 ? Math.round((tips/earn)*100)+'%' : '0%';
 
   const pData = Object.keys(pMap).map(k=>({k, v:pMap[k]})).filter(x=>x.v>0).sort((a,b)=>b.v-a.v);
-  renderDonut(document.getElementById('platformDonutHolder'), pData, 'No platform earnings.');
+  renderDonutHelper(document.getElementById('platformDonutHolder'), pData, 'No platform earnings.');
   
   const cData = Object.keys(cMap).map(k=>({k, v:cMap[k]})).filter(x=>x.v>0).sort((a,b)=>b.v-a.v);
-  renderDonut(document.getElementById('categoryDonutHolder'), cData, 'No expenses.');
+  renderDonutHelper(document.getElementById('categoryDonutHolder'), cData, 'No expenses.');
 
   // Weekday
   const wMap = [0,0,0,0,0,0,0], wCnt = [0,0,0,0,0,0,0];
@@ -949,29 +1224,6 @@ function renderInsightsView(){
   const wData = [1,2,3,4,5,6,0].map((d,i)=>({ label:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][i], val:wCnt[d]?wMap[d]/wCnt[d]:0 }));
   if(entries.length) drawCategoricalBar(document.getElementById('weekdayCanvas'), wData);
   else document.getElementById('weekdayChartHolder').innerHTML = `<div class="chart-empty">No data.</div>`;
-}
-
-function renderDonut(holder, data, empty){
-  if(!data.length){ holder.innerHTML = `<div class="chart-empty">${empty}</div>`; return; }
-  const id = 'd'+Math.random().toString(36).slice(2,8);
-  const tot = data.reduce((s,x)=>s+x.v,0);
-  holder.innerHTML = `<div class="donut-layout"><canvas class="donut" id="${id}"></canvas><div class="donut-legend">
-    ${data.slice(0,5).map(d=>`<div class="donut-row"><i style="background:${colorFor(d.k)}"></i><span class="dname">${esc(d.k)}</span><span class="damt">${((d.v/tot)*100).toFixed(0)}%</span></div>`).join('')}
-  </div></div>`;
-  const canvas = document.getElementById(id);
-  const ctx = canvas.getContext('2d');
-  const dpr = window.devicePixelRatio||1;
-  const s = 130; canvas.width=s*dpr; canvas.height=s*dpr; ctx.scale(dpr,dpr);
-  const cx=s/2, cy=s/2, r=s/2-4, inn=r*0.6;
-  let ang = -Math.PI/2;
-  data.forEach(d=>{
-    const sl = (d.v/tot)*Math.PI*2;
-    ctx.beginPath(); ctx.strokeStyle=colorFor(d.k); ctx.lineWidth=r-inn;
-    ctx.arc(cx,cy,(r+inn)/2, ang, ang+sl); ctx.stroke();
-    ang+=sl;
-  });
-  ctx.fillStyle='#E8EDF2'; ctx.font='700 13px JetBrains Mono'; ctx.textAlign='center'; ctx.textBaseline='middle';
-  ctx.fillText(rupeeCompact(tot), cx, cy-4);
 }
 
 /* ================= RENDER: PROFILE ================= */
@@ -995,6 +1247,7 @@ function renderProfileView(){
     </div>
   `).join('');
 }
+
 document.getElementById('profileNameInput').addEventListener('input', e => {
   state.profile.name = e.target.value.trim();
   saveState(); updateHeader();
@@ -1014,95 +1267,24 @@ document.getElementById('globalVehicleFilter').addEventListener('change', e=>{
   filterVehicleId = e.target.value; renderView(currentView);
 });
 
-/* ================= CHARTS (CANVAS) ================= */
-function setupCanvas(canvas){
-  const r = canvas.getBoundingClientRect(); const dpr = window.devicePixelRatio||1;
-  const w = Math.max(1, r.width), h = Math.max(1, r.height);
-  canvas.width = w*dpr; canvas.height = h*dpr;
-  const ctx = canvas.getContext('2d'); ctx.scale(dpr,dpr); return {ctx, w, h};
-}
-function drawSparkline(canvas, values, color){
-  const {ctx, w, h} = setupCanvas(canvas);
-  if(values.length < 2) return;
-  const min = Math.min(...values), max = Math.max(...values, 1), range = (max-min)||1, pad = 2;
-  ctx.beginPath(); ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.lineJoin = 'round';
-  values.forEach((v,i) => {
-    const x = (i/(values.length-1))*w, y = h - pad - ((v-min)/range)*(h-pad*2);
-    i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
-  });
-  ctx.stroke();
-}
-function drawGroupedBarChart(canvas, dates, series){
-  const {ctx, w, h} = setupCanvas(canvas); if(!dates.length) return;
-  const padL=35, padR=5, padT=10, padB=20, plotW=w-padL-padR, plotH=h-padT-padB;
-  const maxV = Math.max(...series.flatMap(s=>s.values), 1);
-  const n = dates.length, slot = plotW/n, gW = slot*0.7, bW = gW/series.length;
-
-  ctx.fillStyle=COLORS.muted; ctx.font='10px JetBrains Mono'; ctx.textAlign='right'; ctx.textBaseline='middle';
-  [0, 0.5, 1].forEach(f=>{
-    const y = padT+plotH - f*plotH;
-    ctx.strokeStyle = COLORS.hairline; ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(w-padR,y); ctx.stroke();
-    ctx.fillText(rupeeCompact(f*maxV), padL-4, y);
-  });
-
-  series.forEach((s,si) => {
-    s.values.forEach((v,i) => {
-      const x = padL + slot*i + (slot-gW)/2 + si*bW;
-      const bh = (v/maxV)*plotH;
-      ctx.fillStyle = s.color; ctx.fillRect(x, padT+plotH-bh, Math.max(1, bW-1), bh);
-    });
-  });
-}
-function drawCategoricalBar(canvas, items){
-  const {ctx, w, h} = setupCanvas(canvas); if(!items.length) return;
-  const padL=35, padR=5, padT=10, padB=20, plotW=w-padL-padR, plotH=h-padT-padB;
-  const maxV = Math.max(...items.map(it=>Math.abs(it.val)), 1);
-  const zeroY = padT+plotH/2;
-  const n = items.length, slot = plotW/n, bW = Math.min(20, slot*0.6);
-
-  ctx.strokeStyle = COLORS.hairline; ctx.beginPath(); ctx.moveTo(padL,zeroY); ctx.lineTo(w-padR,zeroY); ctx.stroke();
-  ctx.fillStyle=COLORS.muted; ctx.font='10px JetBrains Mono'; ctx.textAlign='right'; ctx.textBaseline='middle';
-  ctx.fillText(rupeeCompact(maxV), padL-4, padT+5); ctx.fillText(rupeeCompact(-maxV), padL-4, padT+plotH-5);
-
-  items.forEach((it,i) => {
-    const cx = padL + slot*i + slot/2;
-    const bh = (Math.abs(it.val)/maxV)*(plotH/2);
-    ctx.fillStyle = it.val>=0 ? COLORS.green : COLORS.red;
-    ctx.fillRect(cx - bW/2, it.val>=0 ? zeroY-bh : zeroY, bW, bh);
-    ctx.fillStyle=COLORS.muted; ctx.textAlign='center'; ctx.fillText(it.label, cx, h-5);
-  });
-}
-function drawGaugeArc(canvas, margin){
-  const {ctx,w,h} = setupCanvas(canvas);
-  const cx=w/2, cy=h-14, r=Math.max(0.1, Math.min(w/2-14, h-24)), lw=13;
-  if(r <= 1) return; // Prevent IndexSizeError on unrendered canvases
-  const mt = t => Math.PI - ((clamp(t,-100,100)+100)/200)*Math.PI;
-
-  [{f:-100,t:0,c:COLORS.red},{f:0,t:30,c:COLORS.amber},{f:30,t:100,c:COLORS.green}].forEach(b=>{
-    ctx.beginPath(); ctx.lineWidth=lw; ctx.strokeStyle=b.c; ctx.globalAlpha=0.85;
-    ctx.arc(cx,cy,r, mt(b.f), mt(b.t), false); ctx.stroke();
-  });
-  ctx.globalAlpha=1;
-
-  const a = mt(margin);
-  ctx.beginPath(); ctx.strokeStyle='#FFF'; ctx.lineWidth=3; ctx.lineCap='round';
-  ctx.moveTo(cx,cy); ctx.lineTo(cx + (r-10)*Math.cos(a), cy - (r-10)*Math.sin(a)); ctx.stroke();
-  ctx.beginPath(); ctx.fillStyle='#FFF'; ctx.arc(cx,cy,5,0,Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.fillStyle=COLORS.bg; ctx.arc(cx,cy,2,0,Math.PI*2); ctx.fill();
-}
-
-/* ================= TABS & NAV ================= */
 document.querySelectorAll('.nav-item').forEach(el=> el.addEventListener('click', ()=>{
   currentView = el.dataset.view; renderView(currentView);
 }));
 document.querySelectorAll('.tabs[data-page]').forEach(grp=>{
   grp.querySelectorAll('.tab').forEach(t=>{
     t.addEventListener('click', ()=>{
+      if(t.dataset.range === 'custom' && grp.dataset.page === 'ledger') {
+        document.getElementById('ledgerCustomRange').classList.add('active');
+      } else {
+        document.getElementById('ledgerCustomRange').classList.remove('active');
+      }
       grp.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); t.classList.add('active');
       ranges[grp.dataset.page] = t.dataset.range; renderView(currentView);
     });
   });
 });
+document.getElementById('applyPnlDates').addEventListener('click', () => { renderView('ledger'); });
+
 function renderView(view){
   document.querySelectorAll('.view').forEach(v=> v.classList.toggle('active', v.dataset.view===view));
   document.querySelectorAll('.nav-item').forEach(n=> n.classList.toggle('active', n.dataset.view===view));
@@ -1152,12 +1334,14 @@ document.getElementById('entryClose').onclick = ()=> entryOverlay.classList.remo
 document.getElementById('cancelEntryBtn').onclick = ()=> entryOverlay.classList.remove('open');
 
 function getOpts(list, sel){ return list.map(x=>`<option value="${esc(x)}" ${x===sel?'selected':''}>${esc(x)}</option>`).join('')+`<option value="__new__">+ New</option>`; }
+
 function addPlatformRow(plat, amt, tip){
   const div = document.createElement('div'); div.className='platform-row-form';
   div.innerHTML = `<select>${getOpts(state.settings.platforms, plat)}</select><input type="number" step="1" placeholder="Fares (₹)" value="${amt||''}"><input type="number" step="1" placeholder="Tip (₹)" value="${tip||''}"><button type="button" class="rm-exp">✕</button>`;
-  div.querySelector('select').onchange = e=>{
+  div.querySelector('select').onchange = async e=>{
     if(e.target.value==='__new__'){
-      const n=prompt('Platform name:'); if(n && !state.settings.platforms.includes(n)) { state.settings.platforms.push(n); saveState(); }
+      const n = prompt('Platform name:'); 
+      if(n && !state.settings.platforms.includes(n)) { state.settings.platforms.push(n); saveState(); }
       e.target.innerHTML = getOpts(state.settings.platforms, n||state.settings.platforms[0]);
     }
   };
@@ -1170,9 +1354,10 @@ document.getElementById('addPlatformBtn').onclick = ()=> addPlatformRow(state.se
 function addExpenseRow(cat, amt){
   const div = document.createElement('div'); div.className='expense-row';
   div.innerHTML = `<select>${getOpts(state.settings.categories, cat)}</select><input type="number" step="1" placeholder="₹" value="${amt||''}"><button type="button" class="rm-exp">✕</button>`;
-  div.querySelector('select').onchange = e=>{
+  div.querySelector('select').onchange = async e=>{
     if(e.target.value==='__new__'){
-      const n=prompt('Category:'); if(n && !state.settings.categories.includes(n)) { state.settings.categories.push(n); saveState(); }
+      const n = prompt('Category:'); 
+      if(n && !state.settings.categories.includes(n)) { state.settings.categories.push(n); saveState(); }
       e.target.innerHTML = getOpts(state.settings.categories, n||state.settings.categories[0]);
     }
   };
@@ -1227,8 +1412,11 @@ document.getElementById('entryForm').onsubmit = e => {
   }
   saveState(); entryOverlay.classList.remove('open'); renderView(currentView);
 };
-document.getElementById('deleteEntryBtn').onclick = ()=>{
-  if(confirm('Delete trip?')){ state.entries = state.entries.filter(x=>x.id!==editingId.entry); saveState(); entryOverlay.classList.remove('open'); renderView(currentView); }
+
+document.getElementById('deleteEntryBtn').onclick = async ()=>{
+  if(await showConfirm('Delete Trip?', 'Are you sure you want to delete this trip record?')) {
+    state.entries = state.entries.filter(x=>x.id!==editingId.entry); saveState(); entryOverlay.classList.remove('open'); renderView(currentView);
+  }
 };
 
 /* ================= GOALS SHEET ================= */
@@ -1268,14 +1456,18 @@ function updateGoalSuggest(){
 }
 document.getElementById('manageGoalsLink').onclick = ()=> openGoalSheet(null);
 document.getElementById('goalClose').onclick = ()=> goalOverlay.classList.remove('open');
-document.getElementById('saveGoalBtn').onclick = ()=>{
+document.getElementById('saveGoalBtn').onclick = async ()=>{
   const payload = { id: editingId.goal||uid(), type: document.getElementById('gType').value, target: Number(document.getElementById('gTarget').value)||0, name: document.getElementById('gName').value };
-  if(payload.target<=0) return alert('Enter a valid target');
+  if(payload.target<=0) { await showAlert('Error', 'Enter a valid target amount above 0.'); return; }
   if(editingId.goal) state.goals = state.goals.map(x=> x.id===editingId.goal ? payload : x);
   else state.goals.push(payload);
   saveState(); goalOverlay.classList.remove('open'); renderView(currentView);
 };
-document.getElementById('deleteGoalBtn').onclick = ()=>{ state.goals = state.goals.filter(x=>x.id!==editingId.goal); saveState(); goalOverlay.classList.remove('open'); renderView(currentView); };
+document.getElementById('deleteGoalBtn').onclick = async ()=>{ 
+  if(await showConfirm('Delete Goal?', 'Are you sure you want to remove this goal?')) {
+    state.goals = state.goals.filter(x=>x.id!==editingId.goal); saveState(); goalOverlay.classList.remove('open'); renderView(currentView); 
+  }
+};
 
 /* ================= VEHICLE SHEET ================= */
 const vehOverlay = document.getElementById('vehicleOverlay');
@@ -1299,7 +1491,11 @@ document.getElementById('saveVehicleBtn').onclick = ()=>{
   if(editingId.vehicle) state.vehicles = state.vehicles.map(x=>x.id===editingId.vehicle ? p : x); else state.vehicles.push(p);
   saveState(); vehOverlay.classList.remove('open'); renderView(currentView);
 };
-document.getElementById('deleteVehicleBtn').onclick = ()=>{ if(confirm('Delete vehicle? Trips will stay linked.')){ state.vehicles = state.vehicles.filter(x=>x.id!==editingId.vehicle); saveState(); vehOverlay.classList.remove('open'); renderView(currentView); } };
+document.getElementById('deleteVehicleBtn').onclick = async ()=>{ 
+  if(await showConfirm('Delete vehicle?', 'Trips linked to this vehicle will remain in history, but may lack a proper name label.')){ 
+    state.vehicles = state.vehicles.filter(x=>x.id!==editingId.vehicle); saveState(); vehOverlay.classList.remove('open'); renderView(currentView); 
+  } 
+};
 
 /* ================= RECURRING SHEET ================= */
 const recOverlay = document.getElementById('recurringOverlay');
@@ -1325,7 +1521,11 @@ document.getElementById('saveRecurringBtn').onclick = ()=>{
   if(editingId.recurring) state.recurring = state.recurring.map(x=>x.id===editingId.recurring ? p : x); else state.recurring.push(p);
   saveState(); processRecurring(); recOverlay.classList.remove('open'); renderView(currentView);
 };
-document.getElementById('deleteRecurringBtn').onclick = ()=>{ state.recurring = state.recurring.filter(x=>x.id!==editingId.recurring); saveState(); recOverlay.classList.remove('open'); renderView(currentView); };
+document.getElementById('deleteRecurringBtn').onclick = async ()=>{ 
+  if(await showConfirm('Delete recurring expense?', 'This stops future postings but keeps past ones.')) {
+    state.recurring = state.recurring.filter(x=>x.id!==editingId.recurring); saveState(); recOverlay.classList.remove('open'); renderView(currentView); 
+  }
+};
 
 /* ================= EXPORT & IMPORT ================= */
 document.getElementById('exportJsonBtn').onclick = ()=>{
@@ -1334,14 +1534,16 @@ document.getElementById('exportJsonBtn').onclick = ()=>{
   a.download = `shiftmeter-backup-${todayStr()}.json`; a.click(); document.getElementById('reminderBanner').style.display='none';
 };
 document.getElementById('importJsonBtn').onclick = ()=>{ document.getElementById('importBox').style.display='block'; document.getElementById('loadImportBtn').style.display='block'; };
-document.getElementById('loadImportBtn').onclick = ()=>{
+document.getElementById('loadImportBtn').onclick = async ()=>{
   try{
     const d = JSON.parse(document.getElementById('importBox').value);
-    if(d.entries) { Object.assign(state, d); saveState(); alert('Import successful!'); location.reload(); }
-  } catch(e){ alert('Invalid JSON format.'); }
+    if(d.entries) { Object.assign(state, d); saveState(); await showAlert('Success', 'Import successful!'); location.reload(); }
+  } catch(e){ await showAlert('Error', 'Invalid JSON format.'); }
 };
-document.getElementById('clearDataBtn').onclick = ()=>{
-  if(confirm('Erase all local data permanently?')){ localStorage.clear(); location.reload(); }
+document.getElementById('clearDataBtn').onclick = async ()=>{
+  if(await showConfirm('Erase Data', 'Erase all local data permanently? This action cannot be undone.')){ 
+    localStorage.clear(); location.reload(); 
+  }
 };
 document.getElementById('exportCsvBtn').onclick = ()=>{
   let csv = 'Date,Vehicle,Platform,Fares,Tips,Distance,FuelCost,OtherExpenses,NetProfit,Note\n';
@@ -1407,19 +1609,15 @@ document.getElementById('installDismissBtn').onclick = ()=> instOverlay.classLis
 /* ================= INIT & DYNAMIC PWA BLOB ================= */
 function setupDynamicPWA(){
   try {
-    // Generate Icon DataURI
     const cvs = document.createElement('canvas'); cvs.width=192; cvs.height=192; const ctx = cvs.getContext('2d');
     const gr = ctx.createLinearGradient(0,0,192,192); gr.addColorStop(0,'#FFC861'); gr.addColorStop(1,'#FFB020'); ctx.fillStyle=gr;
     ctx.beginPath(); ctx.roundRect(0,0,192,192,40); ctx.fill(); ctx.fillStyle='#191300'; ctx.font='bold 90px Arial'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('S', 96, 105);
     const iconUrl = cvs.toDataURL();
     
-    // Manifest
     const manifest = { name: 'SHIFTMETER', short_name: 'Shiftmeter', start_url: '.', display: 'standalone', background_color: '#0B0E11', theme_color: '#0B0E11', icons: [{ src: iconUrl, sizes: '192x192', type: 'image/png' }] };
     const mLink = document.createElement('link'); mLink.rel = 'manifest'; mLink.href = URL.createObjectURL(new Blob([JSON.stringify(manifest)], {type:'application/manifest+json'})); document.head.appendChild(mLink);
     const aLink = document.createElement('link'); aLink.rel = 'apple-touch-icon'; aLink.href = iconUrl; document.head.appendChild(aLink);
     
-    // Single-file Service Worker injection for offline support.
-    // Note: Due to browser security, blob Service Workers inherit origin scope but some strict setups might ignore them. It provides best-effort PWA offline support in a single HTML file.
     if('serviceWorker' in navigator){
       const swCode = `
         const CACHE_NAME = 'shiftmeter-v3';
