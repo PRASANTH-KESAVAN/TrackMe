@@ -107,6 +107,17 @@ canvas.spark { width:100%; height:26px; display:block; margin-top:6px; cursor:po
 .mini-chip { background:var(--panel-2); border:1px solid var(--hairline); border-radius:8px; padding:5px 9px; font-size:11px; font-family:var(--font-mono); display:flex; align-items:center; gap:5px; }
 .mini-chip i { width:6px; height:6px; border-radius:2px; }
 
+/* ---------- New Analytics Classes ---------- */
+.trend-badge { display:inline-block; padding:2px 6px; border-radius:4px; font-size:10px; font-family:var(--font-mono); font-weight:600; margin-left:6px; vertical-align:middle; }
+.trend-badge.pos { color:var(--green); background:rgba(52,211,153,0.15); }
+.trend-badge.neg { color:var(--red); background:rgba(247,107,107,0.15); }
+.trend-badge.neu { color:var(--muted); background:rgba(124,136,148,0.15); }
+.analysis-highlight { display:flex; align-items:center; gap:12px; padding:14px; background:var(--panel-2); border:1px solid var(--hairline); border-radius:var(--radius-sm); margin-bottom:10px; }
+.analysis-highlight .icon { width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; }
+.analysis-highlight .info { flex:1; }
+.analysis-highlight .info-label { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; font-family:var(--font-display); }
+.analysis-highlight .info-val { font-size:15px; font-weight:600; color:var(--text); font-family:var(--font-mono); margin-top:3px; }
+
 .tabs { display:flex; gap:8px; }
 .tab { flex:1; text-align:center; padding:8px 0; border-radius:10px; background:var(--panel-2); border:1px solid var(--hairline); font-family:var(--font-mono); font-size:12px; color:var(--muted); cursor:pointer; transition:all 0.2s; }
 .tab.active { background:rgba(255,176,32,0.12); border-color:rgba(255,176,32,0.5); color:var(--amber); }
@@ -124,6 +135,7 @@ canvas.spark { width:100%; height:26px; display:block; margin-top:6px; cursor:po
 .chart-legend span { display:flex; align-items:center; gap:5px; }
 .chart-legend i { width:9px; height:3px; border-radius:2px; }
 canvas.linechart, canvas.barchart, canvas.catbar { width:100%; height:160px; display:block; cursor:pointer; touch-action:pan-y; }
+canvas.multiline { width:100%; height:180px; display:block; cursor:pointer; touch-action:pan-y; }
 .chart-empty { text-align:center; padding:28px 10px; color:var(--muted); font-size:12px; }
 .donut-layout { display:flex; align-items:center; gap:16px; }
 canvas.donut { width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
@@ -204,7 +216,6 @@ canvas.donut { width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
 .btn-ghost { background:var(--panel-2); border:1px solid var(--hairline); color:var(--text); }
 .btn-danger { background:rgba(247,107,107,0.12); border:1px solid rgba(247,107,107,0.4); color:var(--red); flex:0 0 auto; width:46px; }
 .btn-danger-full { background:rgba(247,107,107,0.12); border:1px solid rgba(247,107,107,0.4); color:var(--red); width: 100%;}
-.helper-text { font-size:11px; color:var(--muted); margin-top:10px; line-height:1.5; }
 
 @media (prefers-reduced-motion: reduce){ .sheet, .overlay, .goal-fill, .dialog-box { transition:none !important; } }
 </style>
@@ -263,6 +274,26 @@ canvas.donut { width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
       </div>
     </div>
 
+    <!-- NEW: Performance Trends -->
+    <div class="section">
+      <div class="tabs" data-page="home">
+        <div class="tab" data-range="7">7D vs Prev</div>
+        <div class="tab active" data-range="30">30D vs Prev</div>
+      </div>
+    </div>
+    
+    <div class="section">
+      <div class="section-head"><div class="section-title">Performance Trend</div></div>
+      <div class="stat-grid" id="trendStatsRow"></div>
+      <div class="card" style="margin-top:10px;">
+        <div class="chart-legend">
+          <span><i style="background:var(--green)"></i>Gross Earnings</span>
+          <span><i style="background:var(--red)"></i>Total Expenses</span>
+        </div>
+        <canvas class="multiline" id="homeTrendCanvas"></canvas>
+      </div>
+    </div>
+
     <div class="section">
       <div class="section-head"><div class="section-title">Active Goals</div><div class="section-link" id="manageGoalsLink">Manage →</div></div>
       <div class="goal-list" id="activeGoalsList"></div>
@@ -288,6 +319,15 @@ canvas.donut { width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
         <div class="field" style="margin-top:0;"><label>Start</label><input type="date" id="pnlStart"></div>
         <div class="field" style="margin-top:0;"><label>End</label><input type="date" id="pnlEnd"></div>
         <button class="btn-sm" id="applyPnlDates">Apply</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head">
+        <div class="section-title">Daily Net Profit</div>
+      </div>
+      <div class="card">
+        <canvas class="barchart" id="dailyProfitBarCanvas"></canvas>
       </div>
     </div>
 
@@ -347,10 +387,32 @@ canvas.donut { width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
         <div class="tab" data-range="all">All</div>
       </div>
     </div>
+    
+    <!-- NEW: Advanced Highlights -->
+    <div class="section" id="analysisHighlights"></div>
 
+    <!-- NEW: Per Trip Stats -->
     <div class="section">
-      <div class="section-head"><div class="section-title">Per kilometre</div></div>
-      <div class="stat-row-3" id="perKmStats" style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; text-align:center;"></div>
+      <div class="section-head"><div class="section-title">Per Trip Averages</div></div>
+      <div class="stat-row-3" id="perTripStats" style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; text-align:center;"></div>
+    </div>
+
+    <!-- NEW: Multi-line Platform Chart -->
+    <div class="section">
+      <div class="section-head"><div class="section-title">Platform Performance Trend</div></div>
+      <div class="card">
+        <div class="chart-legend" id="platformTrendLegend"></div>
+        <canvas class="multiline" id="platformTrendCanvas"></canvas>
+      </div>
+    </div>
+    
+    <!-- NEW: Cost per KM Trend -->
+    <div class="section">
+      <div class="section-head"><div class="section-title">Cost per KM Trend</div></div>
+      <div class="card">
+        <div class="chart-legend"><span><i style="background:var(--red)"></i>Cost/KM (Lower is better)</span></div>
+        <canvas class="multiline" id="costPerKmCanvas"></canvas>
+      </div>
     </div>
 
     <div class="section">
@@ -484,7 +546,7 @@ canvas.donut { width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
   <div class="sheet" id="goalSheet">
     <div class="sheet-handle"></div>
     <div class="sheet-title"><span>Set Goal</span><span class="sheet-close" id="goalClose">✕</span></div>
-    <div class="field"><label>Goal Type</label><select id="gType"><option value="daily_earn">Daily Earnings</option><option value="weekly_earn">Weekly Earnings</option><option value="monthly_earn">Monthly Earnings</option><option value="savings">Savings / Payoff (Break-even)</option></select></div>
+    <div class="field"><label>Goal Type</label><select id="gType"><option value="daily_earn">Daily Earnings</option><option value="weekly_earn">Weekly Earnings</option><option value="monthly_earn">Monthly Earnings</option><option value="savings">Savings / Payoff (Break-even)</option><option value="custom_purchase">Custom Purchase (from Profit)</option></select></div>
     <div class="field"><label>Target Amount (₹)</label><input type="number" id="gTarget" step="10" placeholder="e.g. 1000"></div>
     <div id="goalSuggestWrap" class="helper-text" style="color:var(--amber); cursor:pointer; display:none;">💡 Suggestion: ₹<span id="gSuggestVal"></span> based on past 30 days. Tap to use.</div>
     <div class="field" id="gNameField" style="display:none;"><label>Goal Name</label><input type="text" id="gName" placeholder="e.g. Bike EMI, New Phone"></div>
@@ -540,7 +602,7 @@ canvas.donut { width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
   </div>
 </div>
 
-<!-- CUSTOM DIALOG BOX (Replaces alert/confirm) -->
+<!-- CUSTOM DIALOG BOX -->
 <div class="overlay" id="customDialogOverlay">
   <div class="dialog-box">
     <div class="dialog-title" id="dialogTitle">Confirm</div>
@@ -556,8 +618,8 @@ canvas.donut { width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
 'use strict';
 
 /* ================= CONSTANTS & THEME ================= */
-const STORAGE_KEY = 'shiftmeter.v3';
-const OLD_KEY = 'shiftmeter.v2';
+const STORAGE_KEY = 'shiftmeter.v4';
+const OLD_KEY = 'shiftmeter.v3';
 const COLORS = { amber:'#FFB020', green:'#34D399', red:'#F76B6B', teal:'#38BDF8', violet:'#C084FC', blue:'#60A5FA', lime:'#A3E635', muted:'#7C8894', hairline:'#242C35', bg:'#0B0E11' };
 const PALETTE = [COLORS.teal, COLORS.violet, COLORS.blue, '#F472B6', COLORS.lime, '#FB923C', '#818CF8', COLORS.red, COLORS.green, '#2DD4BF'];
 const DEFAULT_PLATFORMS = ['Zepto','Blinkit','Swiggy','Zomato'];
@@ -568,7 +630,7 @@ const REDUCE_MOTION = window.matchMedia && window.matchMedia('(prefers-reduced-m
 let state = defaultState();
 let currentView = 'home';
 let filterVehicleId = 'all';
-let ranges = { ledger:'30', fuel:'30', insights:'30' };
+let ranges = { home:'30', ledger:'30', fuel:'30', insights:'30' };
 let editingId = { entry:null, goal:null, vehicle:null, recurring:null };
 
 function uid(){ return 'e' + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
@@ -588,21 +650,7 @@ function loadState(){
       raw = localStorage.getItem(OLD_KEY);
       if(raw) {
         const old = JSON.parse(raw);
-        state = defaultState();
-        state.settings.platforms = old.settings.platforms || DEFAULT_PLATFORMS;
-        state.settings.categories = old.settings.categories || DEFAULT_CATEGORIES;
-        state.vehicles[0].fuelPrice = old.settings.petrolPrice || 110;
-        
-        if(old.settings.breakEvenTarget > 0) {
-          state.goals.push({ id:uid(), type:'savings', target:old.settings.breakEvenTarget, name:'Break-even Goal' });
-        }
-        state.entries = (old.entries||[]).map(e => ({
-          id: e.id || uid(), date: e.date, vehicleId: 'v1',
-          platformEarnings: (e.platformEarnings||[]).map(p => ({ platform:p.platform, amount:Number(p.amount)||0, tip:0 })),
-          distance: Number(e.distance)||0, mileage: Number(e.mileage)||0, fuelPrice: old.settings.petrolPrice || 110,
-          expenses: (e.expenses||[]).map(x => ({ cat:x.cat, amount:Number(x.amount)||0 })), note: e.note || ''
-        }));
-        state.ledgerFees = (old.fees||[]).map(f => ({ id:f.id||uid(), date:f.date, label:f.label, category:f.category, amount:Number(f.amount)||0 }));
+        state = Object.assign(defaultState(), old);
         saveState();
         return;
       }
@@ -658,7 +706,7 @@ function processRecurring(){
   if(changed) saveState();
 }
 
-/* ================= HELPERS ================= */
+/* ================= DATA HELPERS ================= */
 function todayStr(){ const d=new Date(); return new Date(d - d.getTimezoneOffset()*60000).toISOString().slice(0,10); }
 function toISO(d){ return new Date(d - d.getTimezoneOffset()*60000).toISOString().slice(0,10); }
 function parseLocalDate(str){ return new Date(str + 'T00:00:00'); }
@@ -702,6 +750,35 @@ function computeEntry(e){
   return { fares, tips, earnings, distance:dist, mileage:mil, fuelCost, otherTotal:exp, totalExpense: fuelCost+exp, profit: earnings-(fuelCost+exp) };
 }
 
+function aggregateByDate(entries) {
+  const map = {};
+  entries.forEach(e => {
+    if (!map[e.date]) map[e.date] = { date: e.date, earnings: 0, expenses: 0, profit: 0, fuel: 0, dist: 0, plats: {} };
+    const c = computeEntry(e);
+    map[e.date].earnings += c.earnings;
+    map[e.date].expenses += c.totalExpense;
+    map[e.date].profit += c.profit;
+    map[e.date].fuel += c.fuelCost;
+    map[e.date].dist += c.distance;
+    (e.platformEarnings||[]).forEach(p => {
+       map[e.date].plats[p.platform] = (map[e.date].plats[p.platform]||0) + p.amount + p.tip;
+    });
+  });
+  return Object.values(map).sort((a,b) => a.date.localeCompare(b.date));
+}
+
+function getTrendStr(curr, prev) {
+  if (prev === 0 && curr > 0) return { text: '+100%', class: 'pos' };
+  if (prev === 0 && curr === 0) return { text: '0%', class: 'neu' };
+  if (prev === 0 && curr < 0) return { text: '-100%', class: 'neg' };
+  const pct = ((curr - prev) / Math.abs(prev)) * 100;
+  if(Math.abs(pct) < 0.5) return { text: '0%', class: 'neu' };
+  return {
+    text: (pct > 0 ? '▲ ' : '▼ ') + Math.abs(pct).toFixed(1) + '%',
+    class: pct > 0 ? 'pos' : 'neg'
+  };
+}
+
 /* ================= INTERACTIVE CHART ENGINE ================= */
 let globalTooltip = null;
 function getTooltip() {
@@ -737,7 +814,7 @@ function bindTooltip(canvas) {
          if (ang < -Math.PI/2) ang += 2*Math.PI;
          hit = canvas._hitRegions.find(reg => ang >= reg.start && ang <= reg.end);
       }
-    } else if (canvas._chartType === 'bar' || canvas._chartType === 'line') {
+    } else if (canvas._chartType === 'bar' || canvas._chartType === 'line' || canvas._chartType === 'multiline') {
       hit = canvas._hitRegions.find(reg => x >= reg.xLeft && x <= reg.xRight);
     }
 
@@ -774,7 +851,7 @@ function runChartAnim(id, drawFn) {
   function step(now) {
     let p = (now - startTime) / duration;
     if (p >= 1) p = 1;
-    const ease = 1 - Math.pow(1 - p, 4); // Quartic ease out
+    const ease = 1 - Math.pow(1 - p, 4); 
     drawFn(ease);
     if (p < 1) chartAnims[id] = requestAnimationFrame(step);
   }
@@ -843,6 +920,63 @@ function drawSparkline(canvas, values, color, label){
   });
 }
 
+function drawMultiLineChart(canvas, dates, series) {
+  const {ctx, w, h} = setupCanvas(canvas); if(!dates.length) return;
+  const padL=35, padR=10, padT=10, padB=20, plotW=w-padL-padR, plotH=h-padT-padB;
+  const allVals = series.flatMap(s=>s.values);
+  const maxV = Math.max(...allVals, 1);
+  const n = dates.length;
+  canvas.id = canvas.id || 'ml'+Math.random().toString(36).slice(2,8);
+
+  canvas._chartType = 'multiline';
+  canvas._hitRegions = dates.map((d, i) => {
+    let html = `<div class="ct-date">${fmtDateShort(d)}</div>`;
+    series.forEach(s => html += `<div class="ct-row"><i style="background:${s.color}"></i><span>${s.label||'Value'}</span><span style="margin-left:12px; font-weight:700;">${rupee(s.values[i])}</span></div>`);
+    const prevX = i===0 ? padL : padL + ((i-0.5)/(n-1))*plotW;
+    const nextX = i===n-1 ? w-padR : padL + ((i+0.5)/(n-1))*plotW;
+    return { xLeft: prevX, xRight: nextX, html };
+  });
+  bindTooltip(canvas);
+
+  runChartAnim(canvas.id, (ease) => {
+    ctx.clearRect(0,0,w,h);
+    
+    ctx.fillStyle=COLORS.muted; ctx.font='10px JetBrains Mono'; ctx.textAlign='right'; ctx.textBaseline='middle';
+    [0, 0.5, 1].forEach(f=>{
+      const y = padT+plotH - f*plotH;
+      ctx.strokeStyle = COLORS.hairline; ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(w-padR,y); ctx.stroke();
+      ctx.fillText(rupeeCompact(f*maxV), padL-4, y);
+    });
+
+    const pts = Math.max(1, Math.ceil(ease * n));
+    series.forEach(s => {
+      ctx.beginPath(); ctx.strokeStyle = s.color; ctx.lineWidth = 2; ctx.lineJoin = 'round';
+      for(let i=0; i<pts; i++){
+        const x = padL + (n>1 ? (i/(n-1))*plotW : plotW/2);
+        const y = padT+plotH - (s.values[i]/maxV)*plotH;
+        i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+      }
+      ctx.stroke();
+      
+      ctx.fillStyle = s.color;
+      for(let i=0; i<pts; i++){
+        const x = padL + (n>1 ? (i/(n-1))*plotW : plotW/2);
+        const y = padT+plotH - (s.values[i]/maxV)*plotH;
+        ctx.beginPath(); ctx.arc(x,y,2.5,0,Math.PI*2); ctx.fill();
+      }
+    });
+
+    ctx.fillStyle=COLORS.muted; ctx.textAlign='center';
+    const step = Math.max(1, Math.ceil(n/5));
+    dates.forEach((d,i) => {
+      if(i%step===0 || i===n-1) {
+        const x = padL + (n>1 ? (i/(n-1))*plotW : plotW/2);
+        ctx.fillText(fmtDateShort(d), x, h-5);
+      }
+    });
+  });
+}
+
 function drawGroupedBarChart(canvas, dates, series){
   const {ctx, w, h} = setupCanvas(canvas); if(!dates.length) return;
   const padL=35, padR=5, padT=10, padB=20, plotW=w-padL-padR, plotH=h-padT-padB;
@@ -896,7 +1030,7 @@ function drawCategoricalBar(canvas, items){
     const c = it.val>=0 ? COLORS.green : COLORS.red;
     return {
       xLeft: padL + slot*i, xRight: padL + slot*(i+1),
-      html: `<div class="ct-date">${it.label}</div><div class="ct-row"><i style="background:${c}"></i><span>Avg Profit</span><span style="margin-left:12px; font-weight:700;">${rupee(it.val)}</span></div>`
+      html: `<div class="ct-date">${it.label}</div><div class="ct-row"><i style="background:${c}"></i><span>Amount</span><span style="margin-left:12px; font-weight:700;">${rupee(it.val)}</span></div>`
     };
   });
   bindTooltip(canvas);
@@ -996,7 +1130,43 @@ function renderHomeView(){
   renderGoalsWidget(entries, net);
   renderTodayStats(entries);
   
-  // Trigger bar fill animation
+  // NEW: Home Performance Trends
+  const range = ranges.home;
+  let currDays = Number(range);
+  let currStart = new Date(); currStart.setDate(currStart.getDate() - currDays + 1);
+  let prevStart = new Date(currStart); prevStart.setDate(prevStart.getDate() - currDays);
+
+  const currEntries = entries.filter(e => e.date >= toISO(currStart));
+  const prevEntries = entries.filter(e => e.date >= toISO(prevStart) && e.date < toISO(currStart));
+  
+  const cEarn = currEntries.reduce((s,e)=>s+computeEntry(e).earnings,0);
+  const cExp = currEntries.reduce((s,e)=>s+computeEntry(e).totalExpense,0);
+  const cProf = cEarn - cExp;
+
+  const pEarn = prevEntries.reduce((s,e)=>s+computeEntry(e).earnings,0);
+  const pExp = prevEntries.reduce((s,e)=>s+computeEntry(e).totalExpense,0);
+  const pProf = pEarn - pExp;
+
+  const trEarn = getTrendStr(cEarn, pEarn);
+  const trProf = getTrendStr(cProf, pProf);
+  const trExp = getTrendStr(cExp, pExp); // Lower is better for expenses technically, but we just show change
+
+  document.getElementById('trendStatsRow').innerHTML = currEntries.length ? `
+    <div class="card stat-card"><div class="stat-title">Gross</div><div class="stat-value" style="color:var(--green)">${rupeeCompact(cEarn)}</div><div style="margin-top:4px"><span class="trend-badge ${trEarn.class}">${trEarn.text}</span></div></div>
+    <div class="card stat-card"><div class="stat-title">Profit</div><div class="stat-value" style="color:${cProf>=0?'var(--green)':'var(--red)'}">${rupeeCompact(cProf)}</div><div style="margin-top:4px"><span class="trend-badge ${trProf.class}">${trProf.text}</span></div></div>
+    <div class="card stat-card"><div class="stat-title">Expenses</div><div class="stat-value" style="color:var(--red)">${rupeeCompact(cExp)}</div><div style="margin-top:4px"><span class="trend-badge ${trExp.class}">${trExp.text}</span></div></div>
+  ` : `<div class="stat-empty">Not enough data to calculate trends.</div>`;
+
+  const aggData = aggregateByDate(currEntries);
+  if(aggData.length) {
+    drawMultiLineChart(document.getElementById('homeTrendCanvas'), aggData.map(a=>a.date), [
+      { label: 'Gross', color: COLORS.green, values: aggData.map(a=>a.earnings) },
+      { label: 'Expenses', color: COLORS.red, values: aggData.map(a=>a.expenses) }
+    ]);
+  } else {
+    document.getElementById('homeTrendCanvas').style.display='none'; // Handled via stat-empty above
+  }
+  
   setTimeout(()=> document.querySelectorAll('.goal-fill').forEach(el=> el.style.width = el.dataset.w), 50);
 }
 
@@ -1017,12 +1187,23 @@ function renderGoalsWidget(entries, netLifetime){
   const startOfMonth = today.slice(0,7)+'-01';
   const earnMonth = entries.filter(e=>e.date>=startOfMonth).reduce((s,e)=>s+computeEntry(e).earnings,0);
 
+  let unallocatedProfit = netLifetime;
+
   list.innerHTML = state.goals.map(g => {
-    let current = 0, label = '', subtitle='';
+    let current = 0, label = '', subtitle='', actionHtml='';
     if(g.type==='daily_earn'){ current = earnToday; label = 'Daily Earn'; }
-    if(g.type==='weekly_earn'){ current = earnWeek; label = 'Weekly Earn'; subtitle=`Need ${rupee(Math.max(0, g.target-current))} more by Sunday`; }
-    if(g.type==='monthly_earn'){ current = earnMonth; label = 'Monthly Earn'; }
-    if(g.type==='savings'){ current = netLifetime; label = g.name || 'Break-even'; subtitle=`${rupee(Math.max(0, g.target-current))} remaining`; }
+    else if(g.type==='weekly_earn'){ current = earnWeek; label = 'Weekly Earn'; subtitle=`Need ${rupee(Math.max(0, g.target-current))} more by Sunday`; }
+    else if(g.type==='monthly_earn'){ current = earnMonth; label = 'Monthly Earn'; }
+    else if(g.type==='savings'){ current = netLifetime; label = g.name || 'Break-even'; subtitle=`${rupee(Math.max(0, g.target-current))} remaining`; }
+    else if(g.type==='custom_purchase'){ 
+      current = Math.max(0, Math.min(unallocatedProfit, g.target));
+      unallocatedProfit -= current; // Waterfall deduction
+      label = g.name || 'Purchase Goal';
+      subtitle = current >= g.target ? 'Ready to buy!' : `Need ${rupee(Math.max(0, g.target-current))} more profit`;
+      if(current >= g.target) {
+        actionHtml = `<button class="btn-primary" style="padding:4px 8px; font-size:10px; border-radius:6px; border:none; margin-left:8px;" onclick="event.stopPropagation(); completePurchaseGoal('${g.id}')">Buy & Log Expense</button>`;
+      }
+    }
 
     const pct = clamp((current/g.target)*100, 0, 100);
     const color = pct>=100 ? 'var(--green)' : 'var(--amber)';
@@ -1030,11 +1211,25 @@ function renderGoalsWidget(entries, netLifetime){
       <div class="goal-item" onclick="openGoalSheet('${g.id}')">
         <div class="goal-head"><span class="goal-name">${esc(label)}</span><span class="goal-meta">${rupee(current)} / ${rupeeCompact(g.target)}</span></div>
         <div class="goal-track"><div class="goal-fill" data-w="${pct}%" style="width:0%; background:${color}"></div></div>
-        <div class="goal-footer"><span>${esc(subtitle)}</span>${pct>=100?'<span class="streak-badge">Met! 🎉</span>':''}</div>
+        <div class="goal-footer" style="align-items:center;"><span>${esc(subtitle)}</span><div>${pct>=100 && g.type!=='custom_purchase'?'<span class="streak-badge">Met! 🎉</span>':''}${actionHtml}</div></div>
       </div>
     `;
   }).join('');
 }
+
+window.completePurchaseGoal = async function(id) {
+  const goal = state.goals.find(g => g.id === id);
+  if(!goal) return;
+  if(await showConfirm('Log Purchase?', `Did you buy ${esc(goal.name)}? This will convert the goal into an expense of ${rupee(goal.target)} and remove it from your goals.`)) {
+    state.goals = state.goals.filter(g => g.id !== id);
+    if(!state.settings.categories.includes('Goal Purchase')) {
+      state.settings.categories.push('Goal Purchase');
+    }
+    state.ledgerFees.push({ id: uid(), date: todayStr(), label: goal.name || 'Purchase', category: 'Goal Purchase', amount: goal.target });
+    saveState();
+    renderView(currentView);
+  }
+};
 
 function renderTodayStats(entries){
   const grid = document.getElementById('statGrid'), chips = document.getElementById('platformTodayChips'), lbl = document.getElementById('quickStatsLabel');
@@ -1075,6 +1270,11 @@ function renderLedgerView(){
     const start = document.getElementById('pnlStart').value || '2000-01-01';
     const end = document.getElementById('pnlEnd').value || '2100-01-01';
     entries = entries.filter(e=>e.date>=start && e.date<=end); fees = fees.filter(f=>f.date>=start && f.date<=end);
+  }
+  
+  const aggData = aggregateByDate(entries);
+  if(aggData.length) {
+      drawCategoricalBar(document.getElementById('dailyProfitBarCanvas'), aggData.map(a=>({ label:fmtDateShort(a.date), val:a.profit })));
   }
 
   // Aggregate P&L
@@ -1202,6 +1402,33 @@ function renderInsightsView(){
     (e.expenses||[]).forEach(x=> cMap[x.cat] = (cMap[x.cat]||0)+x.amount);
     (e.platformEarnings||[]).forEach(p=> pMap[p.platform] = (pMap[p.platform]||0)+(p.amount+p.tip));
   });
+  
+  // Highlghts Analysis
+  const hl = document.getElementById('analysisHighlights');
+  if (entries.length > 0) {
+      let topPlat = Object.keys(pMap).reduce((a, b) => pMap[a] > pMap[b] ? a : b, Object.keys(pMap)[0]);
+      let topExp = Object.keys(cMap).reduce((a, b) => cMap[a] > cMap[b] ? a : b, Object.keys(cMap)[0]);
+      hl.innerHTML = `
+        <div class="analysis-highlight">
+            <div class="icon" style="background:rgba(52,211,153,0.15); color:var(--green)">🏆</div>
+            <div class="info"><div class="info-label">Top Earning Platform</div><div class="info-val">${esc(topPlat) || 'None'}</div></div>
+        </div>
+        <div class="analysis-highlight">
+            <div class="icon" style="background:rgba(247,107,107,0.15); color:var(--red)">💸</div>
+            <div class="info"><div class="info-label">Highest Expense</div><div class="info-val">${esc(topExp) || 'None'}</div></div>
+        </div>
+      `;
+  } else {
+      hl.innerHTML = '';
+  }
+  
+  // Per Trip Stats
+  document.getElementById('perTripStats').innerHTML = entries.length ? `
+    <div class="card stat-card"><div class="stat-title">Earn / Trip</div><div class="stat-value" style="color:var(--green)">${rupee(earn/entries.length)}</div></div>
+    <div class="card stat-card"><div class="stat-title">Exp / Trip</div><div class="stat-value" style="color:var(--red)">${rupee(exp/entries.length)}</div></div>
+    <div class="card stat-card"><div class="stat-title">Dist / Trip</div><div class="stat-value">${(dist/entries.length).toFixed(1)} km</div></div>
+  ` : `<div class="stat-empty" style="grid-column:1/-1">No data.</div>`;
+
 
   document.getElementById('perKmStats').innerHTML = entries.length ? `
     <div class="card stat-card"><div class="stat-title">Earn/km</div><div class="stat-value" style="color:var(--green)">${rupee(dist>0?earn/dist:0,{dec:true})}</div></div>
@@ -1217,6 +1444,30 @@ function renderInsightsView(){
   
   const cData = Object.keys(cMap).map(k=>({k, v:cMap[k]})).filter(x=>x.v>0).sort((a,b)=>b.v-a.v);
   renderDonutHelper(document.getElementById('categoryDonutHolder'), cData, 'No expenses.');
+
+  // Advanced Multi-line Trends
+  const aggData = aggregateByDate(entries);
+  if(aggData.length) {
+      // 1. Platform trends (top 3)
+      const top3Plats = pData.slice(0,3).map(p=>p.k);
+      if(top3Plats.length) {
+          document.getElementById('platformTrendLegend').innerHTML = top3Plats.map(p=>`<span><i style="background:${colorFor(p)}"></i>${esc(p)}</span>`).join('');
+          const pSeries = top3Plats.map(plat => ({
+              label: plat, color: colorFor(plat),
+              values: aggData.map(a => a.plats[plat] || 0)
+          }));
+          drawMultiLineChart(document.getElementById('platformTrendCanvas'), aggData.map(a=>a.date), pSeries);
+      }
+      
+      // 2. Cost per KM Trend
+      const costKmSeries = [{
+          label: 'Cost / KM', color: COLORS.red,
+          values: aggData.map(a => a.dist > 0 ? a.expenses / a.dist : 0)
+      }];
+      drawMultiLineChart(document.getElementById('costPerKmCanvas'), aggData.map(a=>a.date), costKmSeries);
+  } else {
+      document.getElementById('platformTrendLegend').innerHTML = '';
+  }
 
   // Weekday
   const wMap = [0,0,0,0,0,0,0], wCnt = [0,0,0,0,0,0,0];
@@ -1433,7 +1684,8 @@ function openGoalSheet(id){
     document.getElementById('deleteGoalBtn').style.display='none'; updateGoalSuggest();
   }
   document.getElementById('gType').onchange = ()=>{
-    gN.style.display = document.getElementById('gType').value==='savings' ? 'block' : 'none';
+    const v = document.getElementById('gType').value;
+    gN.style.display = (v === 'savings' || v === 'custom_purchase') ? 'block' : 'none';
     if(!id) updateGoalSuggest();
   };
   document.getElementById('gType').dispatchEvent(new Event('change'));
@@ -1441,16 +1693,25 @@ function openGoalSheet(id){
 }
 function updateGoalSuggest(){
   const t = document.getElementById('gType').value;
+  const sw = document.getElementById('goalSuggestWrap');
+  
+  if(t === 'custom_purchase') {
+    sw.style.display = 'block';
+    sw.innerHTML = `💡 Custom purchases are funded sequentially using your available all-time net profit. Once fully funded, you can convert it to an expense.`;
+    sw.onclick = null;
+    return;
+  }
+
   const entries30 = state.entries.slice(-30);
   const earn30 = entries30.reduce((s,e)=>s+computeEntry(e).earnings,0);
   let sug = 0;
   if(t==='daily_earn') sug = entries30.length>7 ? (earn30/30)*1.1 : 1000;
   if(t==='weekly_earn') sug = entries30.length>7 ? (earn30/30)*7*1.1 : 7000;
   if(t==='monthly_earn') sug = entries30.length>7 ? (earn30/30)*30*1.1 : 30000;
-  const sw = document.getElementById('goalSuggestWrap');
+  
   if(sug>0){
     sw.style.display='block';
-    document.getElementById('gSuggestVal').textContent = Math.round(sug/100)*100;
+    sw.innerHTML = `💡 Suggestion: ₹<span id="gSuggestVal">${Math.round(sug/100)*100}</span> based on past 30 days. Tap to use.`;
     sw.onclick = ()=> document.getElementById('gTarget').value = Math.round(sug/100)*100;
   } else sw.style.display='none';
 }
@@ -1581,7 +1842,7 @@ function checkReminders(){
   const daysSinceBackup = (Date.now() - (state.profile.lastBackup||0)) / 86400000;
   if(daysSinceBackup > 14 && state.entries.length > 5){
     rb.textContent = "⚠️ It's been over 14 days since your last backup. Tap to export your data.";
-    rb.style.display = 'block'; rb.onclick = ()=> { setView('profile'); }; return;
+    rb.style.display = 'block'; rb.onclick = ()=> { renderView('profile'); }; return;
   }
   const lastDate = state.entries.length ? state.entries[state.entries.length-1].date : null;
   const hr = new Date().getHours();
