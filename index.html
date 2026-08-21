@@ -6,8 +6,8 @@
 <meta name="theme-color" content="#0B0E11">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Shiftmeter">
-<title>SHIFTMETER — Daily Trip Ledger</title>
+<meta name="apple-mobile-web-app-title" content="Track Me">
+<title>Track Me — Daily Trip Ledger</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -16,7 +16,7 @@
   --bg:#0B0E11; --panel:#141920; --panel-2:#1B222B; --hairline:#242C35;
   --text:#E8EDF2; --muted:#7C8894; --amber:#FFB020; --green:#34D399;
   --red:#F76B6B; --teal:#38BDF8; --violet:#C084FC; --blue:#60A5FA;
-  --lime:#A3E635; --orange:#FB923C;
+  --lime:#A3E635; --orange:#FB923C; --indigo:#818CF8;
   --radius:18px; --radius-sm:12px;
   --font-display:'Chakra Petch', sans-serif;
   --font-mono:'JetBrains Mono', monospace;
@@ -94,7 +94,7 @@ canvas.gauge { width:100%; height:150px; display:block; }
 .goal-meta { color:var(--muted); }
 .goal-track { height:8px; border-radius:4px; background:rgba(255,255,255,0.05); overflow:hidden; position:relative; }
 .goal-fill { height:100%; border-radius:4px; transition:width 0.4s cubic-bezier(0.2,0.8,0.2,1); }
-.goal-footer { display:flex; justify-content:space-between; margin-top:6px; font-size:10.5px; color:var(--muted); font-family:var(--font-mono); }
+.goal-footer { display:flex; justify-content:space-between; margin-top:6px; font-size:10.5px; color:var(--muted); font-family:var(--font-mono); align-items:center;}
 .streak-badge { background:rgba(255,176,32,0.15); color:var(--amber); padding:2px 6px; border-radius:6px; font-weight:bold; }
 
 .stat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
@@ -107,7 +107,6 @@ canvas.spark { width:100%; height:26px; display:block; margin-top:6px; cursor:po
 .mini-chip { background:var(--panel-2); border:1px solid var(--hairline); border-radius:8px; padding:5px 9px; font-size:11px; font-family:var(--font-mono); display:flex; align-items:center; gap:5px; }
 .mini-chip i { width:6px; height:6px; border-radius:2px; }
 
-/* ---------- New Analytics Classes ---------- */
 .trend-badge { display:inline-block; padding:2px 6px; border-radius:4px; font-size:10px; font-family:var(--font-mono); font-weight:600; margin-left:6px; vertical-align:middle; }
 .trend-badge.pos { color:var(--green); background:rgba(52,211,153,0.15); }
 .trend-badge.neg { color:var(--red); background:rgba(247,107,107,0.15); }
@@ -193,7 +192,6 @@ canvas.donut { width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
 .sheet-title { font-family:var(--font-display); font-weight:700; font-size:17px; margin-bottom:4px; display:flex; justify-content:space-between; align-items:center; }
 .sheet-close { color:var(--muted); font-size:20px; cursor:pointer; padding:4px; }
 
-/* Custom Dialog Box */
 .dialog-box { position:absolute; top:50%; left:50%; transform:translate(-50%, -50%) scale(0.95); width:90%; max-width:320px; background:var(--panel-2); border:1px solid var(--hairline); border-radius:var(--radius); padding:20px; box-shadow:0 15px 35px rgba(0,0,0,0.5); transition:transform 0.2s cubic-bezier(0.2,0.9,0.25,1); }
 .overlay.open .dialog-box { transform:translate(-50%, -50%) scale(1); }
 .dialog-title { font-family:var(--font-display); font-size:18px; font-weight:700; color:var(--text); margin-bottom:10px;}
@@ -230,7 +228,7 @@ canvas.donut { width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
     <div class="brand" id="profileHeaderBtn">
       <div class="avatar-initial" id="avatarInit">S</div>
       <div class="brand-text">
-        <div class="brand-name" id="userNameLabel">SHIFTMETER</div>
+        <div class="brand-name" id="userNameLabel">Track Me</div>
         <div class="brand-sub" id="todayLabel">Daily trip ledger</div>
       </div>
     </div>
@@ -246,7 +244,7 @@ canvas.donut { width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
 </div>
 
 <div class="wrap">
-  <!-- ================= HOME VIEW ================= -->
+  <!-- ================= HOME VIEW (5 CHARTS) ================= -->
   <div class="view active" data-view="home">
     <div class="section">
       <div class="card hero">
@@ -254,6 +252,7 @@ canvas.donut { width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
           <div class="hero-label">Net Profit Margin</div>
           <div class="hero-range" id="entryCount">0 trips</div>
         </div>
+        <!-- Chart 1: Gauge -->
         <div class="gauge-wrap">
           <canvas class="gauge" id="gaugeCanvas"></canvas>
           <div class="gauge-readout">
@@ -274,7 +273,6 @@ canvas.donut { width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
       </div>
     </div>
 
-    <!-- NEW: Performance Trends -->
     <div class="section">
       <div class="tabs" data-page="home">
         <div class="tab" data-range="7">7D vs Prev</div>
@@ -290,7 +288,31 @@ canvas.donut { width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
           <span><i style="background:var(--green)"></i>Gross Earnings</span>
           <span><i style="background:var(--red)"></i>Total Expenses</span>
         </div>
+        <!-- Chart 2: Multiline Trend -->
         <canvas class="multiline" id="homeTrendCanvas"></canvas>
+      </div>
+    </div>
+
+    <!-- Chart 3: Sparklines inside stats -->
+    <div class="section">
+      <div class="section-head"><div class="section-title" id="quickStatsLabel">Today</div></div>
+      <div class="stat-grid" id="statGrid"></div>
+      <div class="platform-today-chips" id="platformTodayChips"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Last 7 Days</div></div>
+      <div class="card">
+        <!-- Chart 4: Categorical Bar -->
+        <canvas class="catbar" id="homeRecentBarCanvas"></canvas>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Platform Mix</div></div>
+      <div class="card">
+         <!-- Chart 5: Donut -->
+        <div id="homePlatformDonutHolder"></div>
       </div>
     </div>
 
@@ -298,15 +320,9 @@ canvas.donut { width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
       <div class="section-head"><div class="section-title">Active Goals</div><div class="section-link" id="manageGoalsLink">Manage →</div></div>
       <div class="goal-list" id="activeGoalsList"></div>
     </div>
-
-    <div class="section">
-      <div class="section-head"><div class="section-title" id="quickStatsLabel">Today</div></div>
-      <div class="stat-grid" id="statGrid"></div>
-      <div class="platform-today-chips" id="platformTodayChips"></div>
-    </div>
   </div>
 
-  <!-- ================= LEDGER (P&L + History) ================= -->
+  <!-- ================= LEDGER (4 CHARTS) ================= -->
   <div class="view" data-view="ledger">
     <div class="section">
       <div class="tabs" data-page="ledger">
@@ -323,11 +339,36 @@ canvas.donut { width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
     </div>
 
     <div class="section">
-      <div class="section-head">
-        <div class="section-title">Daily Net Profit</div>
-      </div>
+      <div class="section-head"><div class="section-title">Daily Net Profit</div></div>
       <div class="card">
+        <!-- Chart 1: Bar -->
         <canvas class="barchart" id="dailyProfitBarCanvas"></canvas>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Cumulative Growth</div></div>
+      <div class="card">
+        <div class="chart-legend"><span><i style="background:var(--green)"></i>Total Net Profit</span></div>
+        <!-- Chart 2: Cumulative Line -->
+        <canvas class="multiline" id="cumulativeProfitCanvas"></canvas>
+      </div>
+    </div>
+
+    <div class="section" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+      <div>
+        <div class="section-head"><div class="section-title" style="font-size:11px;">Revenue</div></div>
+        <div class="card" style="padding:12px;">
+          <!-- Chart 3: Revenue Donut -->
+          <canvas class="donut" id="ledgerRevenueDonut" style="width:100%; height:110px;"></canvas>
+        </div>
+      </div>
+      <div>
+        <div class="section-head"><div class="section-title" style="font-size:11px;">Deductions</div></div>
+        <div class="card" style="padding:12px;">
+          <!-- Chart 4: Expense Donut -->
+          <canvas class="donut" id="ledgerExpenseDonut" style="width:100%; height:110px;"></canvas>
+        </div>
       </div>
     </div>
 
@@ -353,7 +394,7 @@ canvas.donut { width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
     </div>
   </div>
 
-  <!-- ================= FUEL & MAINT ================= -->
+  <!-- ================= FUEL & MAINT (4 CHARTS) ================= -->
   <div class="view" data-view="fuel">
     <div class="section">
       <div class="tabs" data-page="fuel">
@@ -373,12 +414,39 @@ canvas.donut { width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
       <div class="section-head"><div class="section-title">Fuel vs Earnings</div></div>
       <div class="card">
         <div class="chart-legend"><span><i style="background:var(--green)"></i>Earnings</span><span><i style="background:var(--amber)"></i>Fuel cost</span></div>
+        <!-- Chart 1: Grouped Bar -->
         <div id="petrolComboHolder"><canvas class="barchart" id="petrolComboCanvas"></canvas></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Distance Driven</div></div>
+      <div class="card">
+        <div class="chart-legend"><span><i style="background:var(--teal)"></i>Kilometers</span></div>
+        <!-- Chart 2: Bar (Distance) -->
+        <canvas class="barchart" id="fuelDistanceCanvas"></canvas>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Cost per KM Trend</div></div>
+      <div class="card">
+        <div class="chart-legend"><span><i style="background:var(--amber)"></i>Fuel Cost/KM</span></div>
+        <!-- Chart 3: Line (Fuel Efficiency) -->
+        <canvas class="multiline" id="fuelCostKmLine"></canvas>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Fuel vs Maintenance</div></div>
+      <div class="card">
+        <!-- Chart 4: Donut (Expense split) -->
+        <div id="fuelExpenseDonutHolder"></div>
       </div>
     </div>
   </div>
 
-  <!-- ================= INSIGHTS ================= -->
+  <!-- ================= INSIGHTS (6 CHARTS) ================= -->
   <div class="view" data-view="insights">
     <div class="section">
       <div class="tabs" data-page="insights">
@@ -388,54 +456,62 @@ canvas.donut { width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
       </div>
     </div>
     
-    <!-- NEW: Advanced Highlights -->
     <div class="section" id="analysisHighlights"></div>
 
-    <!-- NEW: Per Trip Stats -->
     <div class="section">
       <div class="section-head"><div class="section-title">Per Trip Averages</div></div>
       <div class="stat-row-3" id="perTripStats" style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; text-align:center;"></div>
     </div>
 
-    <!-- NEW: Multi-line Platform Chart -->
+    <div class="section">
+      <div class="section-head"><div class="section-title">Tips vs Fares Trend</div></div>
+      <div class="card">
+        <div class="chart-legend"><span><i style="background:var(--green)"></i>Base Fares</span><span><i style="background:var(--lime)"></i>Tips</span></div>
+        <!-- Chart 1: Multiline -->
+        <canvas class="multiline" id="insightTipsLine"></canvas>
+      </div>
+    </div>
+
     <div class="section">
       <div class="section-head"><div class="section-title">Platform Performance Trend</div></div>
       <div class="card">
         <div class="chart-legend" id="platformTrendLegend"></div>
+        <!-- Chart 2: Multiline -->
         <canvas class="multiline" id="platformTrendCanvas"></canvas>
       </div>
     </div>
     
-    <!-- NEW: Cost per KM Trend -->
     <div class="section">
-      <div class="section-head"><div class="section-title">Cost per KM Trend</div></div>
+      <div class="section-head"><div class="section-title">Total Cost per KM Trend</div></div>
       <div class="card">
         <div class="chart-legend"><span><i style="background:var(--red)"></i>Cost/KM (Lower is better)</span></div>
+        <!-- Chart 3: Multiline -->
         <canvas class="multiline" id="costPerKmCanvas"></canvas>
       </div>
     </div>
 
     <div class="section">
-      <div class="section-head"><div class="section-title">Tips & Extra</div></div>
-      <div class="card" style="display:flex; justify-content:space-around; text-align:center; padding:14px;">
-        <div><div style="font-size:10px; color:var(--muted); text-transform:uppercase; font-family:var(--font-display);">Total Tips</div><div id="insightTotalTips" style="font-family:var(--font-mono); font-weight:700; font-size:18px; color:var(--lime); margin-top:4px;">₹0</div></div>
-        <div><div style="font-size:10px; color:var(--muted); text-transform:uppercase; font-family:var(--font-display);">Tips % of Gross</div><div id="insightTipPct" style="font-family:var(--font-mono); font-weight:700; font-size:18px; margin-top:4px;">0%</div></div>
-      </div>
-    </div>
-
-    <div class="section">
       <div class="section-head"><div class="section-title">Platform Share</div></div>
-      <div class="card"><div id="platformDonutHolder"></div></div>
+      <div class="card">
+        <!-- Chart 4: Donut -->
+        <div id="platformDonutHolder"></div>
+      </div>
     </div>
     
     <div class="section">
       <div class="section-head"><div class="section-title">Expense Breakdown</div></div>
-      <div class="card"><div id="categoryDonutHolder"></div></div>
+      <div class="card">
+        <!-- Chart 5: Donut -->
+        <div id="categoryDonutHolder"></div>
+      </div>
     </div>
 
     <div class="section">
       <div class="section-head"><div class="section-title">Avg profit by weekday</div></div>
-      <div class="card"><div id="weekdayChartHolder"><canvas class="catbar" id="weekdayCanvas"></canvas></div></div>
+      <div class="card">
+        <!-- Chart 6: Categorical Bar -->
+        <div id="weekdayChartHolder"><canvas class="catbar" id="weekdayCanvas"></canvas></div>
+      </div>
     </div>
   </div>
 
@@ -593,7 +669,7 @@ canvas.donut { width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
 <div class="overlay" id="installOverlay">
   <div class="sheet" id="installSheet">
     <div class="sheet-handle"></div>
-    <div class="sheet-title"><span>Install SHIFTMETER</span><span class="sheet-close" id="installClose">✕</span></div>
+    <div class="sheet-title"><span>Install Track Me</span><span class="sheet-close" id="installClose">✕</span></div>
     <div id="installBody"></div>
     <div class="sheet-actions">
       <button type="button" class="btn btn-primary" id="installActionBtn" style="display:none;">Install</button>
@@ -618,8 +694,8 @@ canvas.donut { width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
 'use strict';
 
 /* ================= CONSTANTS & THEME ================= */
-const STORAGE_KEY = 'shiftmeter.v4';
-const OLD_KEY = 'shiftmeter.v3';
+const STORAGE_KEY = 'Track Me.v5';
+const OLD_KEY = 'Track Me.v4';
 const COLORS = { amber:'#FFB020', green:'#34D399', red:'#F76B6B', teal:'#38BDF8', violet:'#C084FC', blue:'#60A5FA', lime:'#A3E635', muted:'#7C8894', hairline:'#242C35', bg:'#0B0E11' };
 const PALETTE = [COLORS.teal, COLORS.violet, COLORS.blue, '#F472B6', COLORS.lime, '#FB923C', '#818CF8', COLORS.red, COLORS.green, '#2DD4BF'];
 const DEFAULT_PLATFORMS = ['Zepto','Blinkit','Swiggy','Zomato'];
@@ -724,7 +800,9 @@ function rupeeCompact(n){
 function clamp(v,lo,hi){ return Math.max(lo,Math.min(hi,v)); }
 function esc(s){ return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function colorFor(k){
-  if(k==='Fuel') return COLORS.amber; if(k==='Net Profit') return COLORS.green; if(k==='Tips') return COLORS.lime;
+  if(k==='Fuel') return COLORS.amber; if(k==='Net Profit' || k==='Cumulative') return COLORS.green; 
+  if(k==='Tips') return COLORS.lime; if(k==='Fares') return COLORS.teal; 
+  if(k==='Maintenance') return COLORS.blue; if(k==='Fees') return COLORS.violet;
   let h=0; for(let i=0;i<k.length;i++) h=(h*31+k.charCodeAt(i))>>>0; return PALETTE[h%PALETTE.length];
 }
 
@@ -753,13 +831,19 @@ function computeEntry(e){
 function aggregateByDate(entries) {
   const map = {};
   entries.forEach(e => {
-    if (!map[e.date]) map[e.date] = { date: e.date, earnings: 0, expenses: 0, profit: 0, fuel: 0, dist: 0, plats: {} };
+    if (!map[e.date]) map[e.date] = { date: e.date, earnings: 0, fares: 0, tips: 0, expenses: 0, profit: 0, fuel: 0, maint: 0, otherExp: 0, dist: 0, plats: {} };
     const c = computeEntry(e);
     map[e.date].earnings += c.earnings;
+    map[e.date].fares += c.fares;
+    map[e.date].tips += c.tips;
     map[e.date].expenses += c.totalExpense;
     map[e.date].profit += c.profit;
     map[e.date].fuel += c.fuelCost;
     map[e.date].dist += c.distance;
+    (e.expenses||[]).forEach(x=>{
+      if(x.cat.toLowerCase().includes('maintenance')) map[e.date].maint += x.amount;
+      else map[e.date].otherExp += x.amount;
+    });
     (e.platformEarnings||[]).forEach(p => {
        map[e.date].plats[p.platform] = (map[e.date].plats[p.platform]||0) + p.amount + p.tip;
     });
@@ -773,10 +857,7 @@ function getTrendStr(curr, prev) {
   if (prev === 0 && curr < 0) return { text: '-100%', class: 'neg' };
   const pct = ((curr - prev) / Math.abs(prev)) * 100;
   if(Math.abs(pct) < 0.5) return { text: '0%', class: 'neu' };
-  return {
-    text: (pct > 0 ? '▲ ' : '▼ ') + Math.abs(pct).toFixed(1) + '%',
-    class: pct > 0 ? 'pos' : 'neg'
-  };
+  return { text: (pct > 0 ? '▲ ' : '▼ ') + Math.abs(pct).toFixed(1) + '%', class: pct > 0 ? 'pos' : 'neg' };
 }
 
 /* ================= INTERACTIVE CHART ENGINE ================= */
@@ -923,15 +1004,21 @@ function drawSparkline(canvas, values, color, label){
 function drawMultiLineChart(canvas, dates, series) {
   const {ctx, w, h} = setupCanvas(canvas); if(!dates.length) return;
   const padL=35, padR=10, padT=10, padB=20, plotW=w-padL-padR, plotH=h-padT-padB;
+  
+  // Find Global Max/Min for Y-Axis scaling
   const allVals = series.flatMap(s=>s.values);
   const maxV = Math.max(...allVals, 1);
+  const minV = Math.min(...allVals, 0); 
+  const range = (maxV - Math.min(0, minV)) || 1;
+  const baseZero = Math.min(0, minV);
+  
   const n = dates.length;
   canvas.id = canvas.id || 'ml'+Math.random().toString(36).slice(2,8);
 
   canvas._chartType = 'multiline';
   canvas._hitRegions = dates.map((d, i) => {
     let html = `<div class="ct-date">${fmtDateShort(d)}</div>`;
-    series.forEach(s => html += `<div class="ct-row"><i style="background:${s.color}"></i><span>${s.label||'Value'}</span><span style="margin-left:12px; font-weight:700;">${rupee(s.values[i])}</span></div>`);
+    series.forEach(s => html += `<div class="ct-row"><i style="background:${s.color}"></i><span>${s.label||'Value'}</span><span style="margin-left:12px; font-weight:700;">${s.prefix||''}${rupee(s.values[i])}</span></div>`);
     const prevX = i===0 ? padL : padL + ((i-0.5)/(n-1))*plotW;
     const nextX = i===n-1 ? w-padR : padL + ((i+0.5)/(n-1))*plotW;
     return { xLeft: prevX, xRight: nextX, html };
@@ -943,17 +1030,24 @@ function drawMultiLineChart(canvas, dates, series) {
     
     ctx.fillStyle=COLORS.muted; ctx.font='10px JetBrains Mono'; ctx.textAlign='right'; ctx.textBaseline='middle';
     [0, 0.5, 1].forEach(f=>{
-      const y = padT+plotH - f*plotH;
+      const val = baseZero + f * range;
+      const y = padT+plotH - ((val - baseZero)/range)*plotH;
       ctx.strokeStyle = COLORS.hairline; ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(w-padR,y); ctx.stroke();
-      ctx.fillText(rupeeCompact(f*maxV), padL-4, y);
+      ctx.fillText(rupeeCompact(val), padL-4, y);
     });
+
+    // Zero Line
+    if (minV < 0) {
+        const zy = padT+plotH - ((0 - baseZero)/range)*plotH;
+        ctx.strokeStyle = 'rgba(255,255,255,0.1)'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(padL,zy); ctx.lineTo(w-padR,zy); ctx.stroke();
+    }
 
     const pts = Math.max(1, Math.ceil(ease * n));
     series.forEach(s => {
       ctx.beginPath(); ctx.strokeStyle = s.color; ctx.lineWidth = 2; ctx.lineJoin = 'round';
       for(let i=0; i<pts; i++){
         const x = padL + (n>1 ? (i/(n-1))*plotW : plotW/2);
-        const y = padT+plotH - (s.values[i]/maxV)*plotH;
+        const y = padT+plotH - ((s.values[i] - baseZero)/range)*plotH;
         i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
       }
       ctx.stroke();
@@ -961,7 +1055,7 @@ function drawMultiLineChart(canvas, dates, series) {
       ctx.fillStyle = s.color;
       for(let i=0; i<pts; i++){
         const x = padL + (n>1 ? (i/(n-1))*plotW : plotW/2);
-        const y = padT+plotH - (s.values[i]/maxV)*plotH;
+        const y = padT+plotH - ((s.values[i] - baseZero)/range)*plotH;
         ctx.beginPath(); ctx.arc(x,y,2.5,0,Math.PI*2); ctx.fill();
       }
     });
@@ -1030,7 +1124,7 @@ function drawCategoricalBar(canvas, items){
     const c = it.val>=0 ? COLORS.green : COLORS.red;
     return {
       xLeft: padL + slot*i, xRight: padL + slot*(i+1),
-      html: `<div class="ct-date">${it.label}</div><div class="ct-row"><i style="background:${c}"></i><span>Amount</span><span style="margin-left:12px; font-weight:700;">${rupee(it.val)}</span></div>`
+      html: `<div class="ct-date">${it.label}</div><div class="ct-row"><i style="background:${c}"></i><span>${it.valName||'Amount'}</span><span style="margin-left:12px; font-weight:700;">${rupee(it.val)}</span></div>`
     };
   });
   bindTooltip(canvas);
@@ -1083,7 +1177,11 @@ function drawDonut(canvas, data, empty){
       start+=slice;
     });
     ctx.fillStyle='#E8EDF2'; ctx.font='700 13px JetBrains Mono'; ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText(rupeeCompact(tot * Math.max(ease, 0.01)), cx, cy-4);
+    
+    // Fit text inside inner circle safely
+    const valStr = rupeeCompact(tot * Math.max(ease, 0.01));
+    if(inn < 35) ctx.font = '700 10px JetBrains Mono';
+    ctx.fillText(valStr, cx, cy);
   });
 }
 function renderDonutHelper(holder, data, empty){
@@ -1108,6 +1206,7 @@ function renderHomeView(){
   const net = tEarn - tExp;
   const margin = tEarn>0 ? (net/tEarn)*100 : 0;
 
+  // Chart 1: Gauge
   const gm = document.getElementById('gaugeMargin'), gs = document.getElementById('gaugeSub');
   if(!entries.length){
     gm.textContent = '—'; gm.style.color = 'var(--muted)'; gs.textContent = 'Log a trip to begin';
@@ -1130,7 +1229,7 @@ function renderHomeView(){
   renderGoalsWidget(entries, net);
   renderTodayStats(entries);
   
-  // NEW: Home Performance Trends
+  // Chart 2: Multiline Performance Trend
   const range = ranges.home;
   let currDays = Number(range);
   let currStart = new Date(); currStart.setDate(currStart.getDate() - currDays + 1);
@@ -1149,7 +1248,7 @@ function renderHomeView(){
 
   const trEarn = getTrendStr(cEarn, pEarn);
   const trProf = getTrendStr(cProf, pProf);
-  const trExp = getTrendStr(cExp, pExp); // Lower is better for expenses technically, but we just show change
+  const trExp = getTrendStr(cExp, pExp); 
 
   document.getElementById('trendStatsRow').innerHTML = currEntries.length ? `
     <div class="card stat-card"><div class="stat-title">Gross</div><div class="stat-value" style="color:var(--green)">${rupeeCompact(cEarn)}</div><div style="margin-top:4px"><span class="trend-badge ${trEarn.class}">${trEarn.text}</span></div></div>
@@ -1159,14 +1258,30 @@ function renderHomeView(){
 
   const aggData = aggregateByDate(currEntries);
   if(aggData.length) {
+    document.getElementById('homeTrendCanvas').style.display='block';
     drawMultiLineChart(document.getElementById('homeTrendCanvas'), aggData.map(a=>a.date), [
       { label: 'Gross', color: COLORS.green, values: aggData.map(a=>a.earnings) },
       { label: 'Expenses', color: COLORS.red, values: aggData.map(a=>a.expenses) }
     ]);
   } else {
-    document.getElementById('homeTrendCanvas').style.display='none'; // Handled via stat-empty above
+    document.getElementById('homeTrendCanvas').style.display='none'; 
   }
   
+  // Chart 4: Last 7 Days (Bar Chart)
+  const recentWeek = entries.slice(-7);
+  if (recentWeek.length) {
+      const wkAgg = aggregateByDate(recentWeek);
+      drawCategoricalBar(document.getElementById('homeRecentBarCanvas'), wkAgg.map(a=>({ label:fmtDateShort(a.date), val:a.profit, valName:'Profit' })));
+  }
+  
+  // Chart 5: Platform Donut for Selected Period
+  const pMap = {};
+  currEntries.forEach(e => {
+      (e.platformEarnings||[]).forEach(p=> pMap[p.platform] = (pMap[p.platform]||0)+(p.amount+p.tip));
+  });
+  const pData = Object.keys(pMap).map(k=>({k, v:pMap[k]})).filter(x=>x.v>0).sort((a,b)=>b.v-a.v);
+  renderDonutHelper(document.getElementById('homePlatformDonutHolder'), pData, 'No platform earnings.');
+
   setTimeout(()=> document.querySelectorAll('.goal-fill').forEach(el=> el.style.width = el.dataset.w), 50);
 }
 
@@ -1197,7 +1312,7 @@ function renderGoalsWidget(entries, netLifetime){
     else if(g.type==='savings'){ current = netLifetime; label = g.name || 'Break-even'; subtitle=`${rupee(Math.max(0, g.target-current))} remaining`; }
     else if(g.type==='custom_purchase'){ 
       current = Math.max(0, Math.min(unallocatedProfit, g.target));
-      unallocatedProfit -= current; // Waterfall deduction
+      unallocatedProfit -= current; 
       label = g.name || 'Purchase Goal';
       subtitle = current >= g.target ? 'Ready to buy!' : `Need ${rupee(Math.max(0, g.target-current))} more profit`;
       if(current >= g.target) {
@@ -1232,6 +1347,7 @@ window.completePurchaseGoal = async function(id) {
 };
 
 function renderTodayStats(entries){
+  // Chart 3: Sparklines
   const grid = document.getElementById('statGrid'), chips = document.getElementById('platformTodayChips'), lbl = document.getElementById('quickStatsLabel');
   if(!entries.length){ grid.innerHTML = `<div class="stat-empty">No trips logged.</div>`; chips.innerHTML=''; return; }
   
@@ -1274,10 +1390,18 @@ function renderLedgerView(){
   
   const aggData = aggregateByDate(entries);
   if(aggData.length) {
-      drawCategoricalBar(document.getElementById('dailyProfitBarCanvas'), aggData.map(a=>({ label:fmtDateShort(a.date), val:a.profit })));
+      // Chart 1: Daily Profit Bar
+      drawCategoricalBar(document.getElementById('dailyProfitBarCanvas'), aggData.map(a=>({ label:fmtDateShort(a.date), val:a.profit, valName:'Net Profit' })));
+      
+      // Chart 2: Cumulative Profit Line
+      let cum = 0;
+      const cumVals = aggData.map(a => { cum += a.profit; return cum; });
+      drawMultiLineChart(document.getElementById('cumulativeProfitCanvas'), aggData.map(a=>a.date), [
+          { label: 'Cumulative Profit', color: COLORS.green, values: cumVals }
+      ]);
   }
 
-  // Aggregate P&L
+  // Aggregate P&L for Charts 3 & 4 and Table
   let fares=0, tips=0, fuel=0, other=0;
   const maintMap = {}, feeMap = {};
   
@@ -1296,6 +1420,16 @@ function renderLedgerView(){
   const ledgerFeesTotal = Object.values(feeMap).reduce((a,b)=>a+b,0);
   const totalExp = fuel + maintTotal + other + ledgerFeesTotal;
   const net = gross - totalExp;
+
+  // Chart 3: Revenue Donut
+  renderDonutHelper(document.getElementById('ledgerRevenueDonut').parentElement, [
+      {k: 'Fares', v: fares}, {k: 'Tips', v: tips}
+  ].filter(x=>x.v>0), 'No revenue');
+
+  // Chart 4: Expense Donut
+  renderDonutHelper(document.getElementById('ledgerExpenseDonut').parentElement, [
+      {k: 'Fuel', v: fuel}, {k: 'Maintenance', v: maintTotal}, {k: 'Fees', v: ledgerFeesTotal}, {k: 'Other', v: other}
+  ].filter(x=>x.v>0), 'No expenses');
 
   document.getElementById('pnlTableHolder').innerHTML = `
     <table class="pnl-table">
@@ -1350,19 +1484,47 @@ function renderFuelView(){
     entries = entries.filter(e=>e.date>=st);
   }
 
-  let fuel=0, dist=0; entries.forEach(e=>{ const c=computeEntry(e); fuel+=c.fuelCost; dist+=c.distance; });
+  let fuel=0, dist=0, maint=0, other=0; 
+  entries.forEach(e=>{ 
+      const c=computeEntry(e); fuel+=c.fuelCost; dist+=c.distance; 
+      (e.expenses||[]).forEach(x=>{
+        if(x.cat.toLowerCase().includes('maintenance')) maint += x.amount;
+        else other += x.amount;
+      });
+  });
   document.getElementById('petrolStatRow').innerHTML = entries.length ? `
     <div class="card stat-card"><div class="stat-title">Fuel Spent</div><div class="stat-value" style="color:var(--amber)">${rupee(fuel)}</div></div>
     <div class="card stat-card"><div class="stat-title">Distance</div><div class="stat-value">${dist} km</div></div>
     <div class="card stat-card"><div class="stat-title">Cost / km</div><div class="stat-value" style="color:var(--red)">${rupee(dist>0?fuel/dist:0,{dec:true})}</div></div>
   ` : `<div class="stat-empty" style="grid-column:1/-1;">No data.</div>`;
 
-  if(entries.length){
-    drawGroupedBarChart(document.getElementById('petrolComboCanvas'), entries.map(e=>e.date), [
-      { label: 'Earnings', color: COLORS.green, values: entries.map(e=>computeEntry(e).earnings) },
-      { label: 'Fuel Cost', color: COLORS.amber, values: entries.map(e=>computeEntry(e).fuelCost) }
+  const aggData = aggregateByDate(entries);
+  if(aggData.length){
+    // Chart 1: Earnings vs Fuel
+    drawGroupedBarChart(document.getElementById('petrolComboCanvas'), aggData.map(a=>a.date), [
+      { label: 'Earnings', color: COLORS.green, values: aggData.map(a=>a.earnings) },
+      { label: 'Fuel Cost', color: COLORS.amber, values: aggData.map(a=>a.fuel) }
     ]);
-  } else document.getElementById('petrolComboHolder').innerHTML = `<div class="chart-empty">No data.</div>`;
+    
+    // Chart 2: Distance Driven Bar
+    drawGroupedBarChart(document.getElementById('fuelDistanceCanvas'), aggData.map(a=>a.date), [
+      { label: 'Kilometers', color: COLORS.teal, values: aggData.map(a=>a.dist) }
+    ]);
+    
+    // Chart 3: Cost per KM
+    drawMultiLineChart(document.getElementById('fuelCostKmLine'), aggData.map(a=>a.date), [
+      { label: 'Fuel Cost/KM', color: COLORS.amber, values: aggData.map(a=> a.dist > 0 ? a.fuel/a.dist : 0) }
+    ]);
+  } else {
+    document.getElementById('petrolComboHolder').innerHTML = `<div class="chart-empty">No data.</div>`;
+    document.getElementById('fuelDistanceCanvas').style.display = 'none';
+    document.getElementById('fuelCostKmLine').style.display = 'none';
+  }
+
+  // Chart 4: Expense Split Donut
+  renderDonutHelper(document.getElementById('fuelExpenseDonutHolder'), [
+      {k: 'Fuel', v: fuel}, {k: 'Maintenance', v: maint}, {k: 'Other', v: other}
+  ].filter(x=>x.v>0), 'No expenses recorded.');
 
   // Maintenance Banner
   const mH = document.getElementById('maintenanceBannerHolder');
@@ -1406,16 +1568,16 @@ function renderInsightsView(){
   // Highlghts Analysis
   const hl = document.getElementById('analysisHighlights');
   if (entries.length > 0) {
-      let topPlat = Object.keys(pMap).reduce((a, b) => pMap[a] > pMap[b] ? a : b, Object.keys(pMap)[0]);
-      let topExp = Object.keys(cMap).reduce((a, b) => cMap[a] > cMap[b] ? a : b, Object.keys(cMap)[0]);
+      let topPlat = Object.keys(pMap).length ? Object.keys(pMap).reduce((a, b) => pMap[a] > pMap[b] ? a : b, Object.keys(pMap)[0]) : 'None';
+      let topExp = Object.keys(cMap).length ? Object.keys(cMap).reduce((a, b) => cMap[a] > cMap[b] ? a : b, Object.keys(cMap)[0]) : 'None';
       hl.innerHTML = `
         <div class="analysis-highlight">
             <div class="icon" style="background:rgba(52,211,153,0.15); color:var(--green)">🏆</div>
-            <div class="info"><div class="info-label">Top Earning Platform</div><div class="info-val">${esc(topPlat) || 'None'}</div></div>
+            <div class="info"><div class="info-label">Top Earning Platform</div><div class="info-val">${esc(topPlat)}</div></div>
         </div>
         <div class="analysis-highlight">
             <div class="icon" style="background:rgba(247,107,107,0.15); color:var(--red)">💸</div>
-            <div class="info"><div class="info-label">Highest Expense</div><div class="info-val">${esc(topExp) || 'None'}</div></div>
+            <div class="info"><div class="info-label">Highest Expense</div><div class="info-val">${esc(topExp)}</div></div>
         </div>
       `;
   } else {
@@ -1429,26 +1591,25 @@ function renderInsightsView(){
     <div class="card stat-card"><div class="stat-title">Dist / Trip</div><div class="stat-value">${(dist/entries.length).toFixed(1)} km</div></div>
   ` : `<div class="stat-empty" style="grid-column:1/-1">No data.</div>`;
 
-
-  document.getElementById('perKmStats').innerHTML = entries.length ? `
-    <div class="card stat-card"><div class="stat-title">Earn/km</div><div class="stat-value" style="color:var(--green)">${rupee(dist>0?earn/dist:0,{dec:true})}</div></div>
-    <div class="card stat-card"><div class="stat-title">Cost/km</div><div class="stat-value" style="color:var(--red)">${rupee(dist>0?exp/dist:0,{dec:true})}</div></div>
-    <div class="card stat-card"><div class="stat-title">Profit/km</div><div class="stat-value" style="color:var(--amber)">${rupee(dist>0?(earn-exp)/dist:0,{dec:true})}</div></div>
-  ` : `<div class="stat-empty" style="grid-column:1/-1">No data.</div>`;
-
   document.getElementById('insightTotalTips').textContent = rupee(tips);
   document.getElementById('insightTipPct').textContent = earn>0 ? Math.round((tips/earn)*100)+'%' : '0%';
 
+  // Chart 4 & 5: Donuts
   const pData = Object.keys(pMap).map(k=>({k, v:pMap[k]})).filter(x=>x.v>0).sort((a,b)=>b.v-a.v);
   renderDonutHelper(document.getElementById('platformDonutHolder'), pData, 'No platform earnings.');
   
   const cData = Object.keys(cMap).map(k=>({k, v:cMap[k]})).filter(x=>x.v>0).sort((a,b)=>b.v-a.v);
   renderDonutHelper(document.getElementById('categoryDonutHolder'), cData, 'No expenses.');
 
-  // Advanced Multi-line Trends
   const aggData = aggregateByDate(entries);
   if(aggData.length) {
-      // 1. Platform trends (top 3)
+      // Chart 1: Tips vs Fares Trend
+      drawMultiLineChart(document.getElementById('insightTipsLine'), aggData.map(a=>a.date), [
+          { label: 'Base Fares', color: COLORS.green, values: aggData.map(a=>a.fares) },
+          { label: 'Tips', color: COLORS.lime, values: aggData.map(a=>a.tips) }
+      ]);
+      
+      // Chart 2: Platform trends (top 3)
       const top3Plats = pData.slice(0,3).map(p=>p.k);
       if(top3Plats.length) {
           document.getElementById('platformTrendLegend').innerHTML = top3Plats.map(p=>`<span><i style="background:${colorFor(p)}"></i>${esc(p)}</span>`).join('');
@@ -1459,20 +1620,21 @@ function renderInsightsView(){
           drawMultiLineChart(document.getElementById('platformTrendCanvas'), aggData.map(a=>a.date), pSeries);
       }
       
-      // 2. Cost per KM Trend
-      const costKmSeries = [{
-          label: 'Cost / KM', color: COLORS.red,
-          values: aggData.map(a => a.dist > 0 ? a.expenses / a.dist : 0)
-      }];
-      drawMultiLineChart(document.getElementById('costPerKmCanvas'), aggData.map(a=>a.date), costKmSeries);
+      // Chart 3: Cost per KM Trend
+      drawMultiLineChart(document.getElementById('costPerKmCanvas'), aggData.map(a=>a.date), [
+          { label: 'Total Cost / KM', color: COLORS.red, values: aggData.map(a => a.dist > 0 ? a.expenses / a.dist : 0) }
+      ]);
   } else {
       document.getElementById('platformTrendLegend').innerHTML = '';
+      document.getElementById('insightTipsLine').style.display='none';
+      document.getElementById('platformTrendCanvas').style.display='none';
+      document.getElementById('costPerKmCanvas').style.display='none';
   }
 
-  // Weekday
+  // Chart 6: Weekday
   const wMap = [0,0,0,0,0,0,0], wCnt = [0,0,0,0,0,0,0];
   entries.forEach(e=>{ const d = parseLocalDate(e.date).getDay(); wMap[d]+=computeEntry(e).profit; wCnt[d]++; });
-  const wData = [1,2,3,4,5,6,0].map((d,i)=>({ label:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][i], val:wCnt[d]?wMap[d]/wCnt[d]:0 }));
+  const wData = [1,2,3,4,5,6,0].map((d,i)=>({ label:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][i], val:wCnt[d]?wMap[d]/wCnt[d]:0, valName:'Avg Profit' }));
   if(entries.length) drawCategoricalBar(document.getElementById('weekdayCanvas'), wData);
   else document.getElementById('weekdayChartHolder').innerHTML = `<div class="chart-empty">No data.</div>`;
 }
@@ -1505,7 +1667,7 @@ document.getElementById('profileNameInput').addEventListener('input', e => {
 });
 
 function updateHeader(){
-  document.getElementById('userNameLabel').textContent = state.profile.name || 'SHIFTMETER';
+  document.getElementById('userNameLabel').textContent = state.profile.name || 'Track Me';
   document.getElementById('avatarInit').textContent = (state.profile.name||'S').charAt(0).toUpperCase();
   document.getElementById('todayLabel').textContent = new Date().toLocaleDateString('en-IN', {weekday:'short', day:'numeric', month:'short'});
   
@@ -1792,7 +1954,7 @@ document.getElementById('deleteRecurringBtn').onclick = async ()=>{
 document.getElementById('exportJsonBtn').onclick = ()=>{
   state.profile.lastBackup = Date.now(); saveState();
   const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(state,null,2)], {type:'application/json'}));
-  a.download = `shiftmeter-backup-${todayStr()}.json`; a.click(); document.getElementById('reminderBanner').style.display='none';
+  a.download = `Track Me-backup-${todayStr()}.json`; a.click(); document.getElementById('reminderBanner').style.display='none';
 };
 document.getElementById('importJsonBtn').onclick = ()=>{ document.getElementById('importBox').style.display='block'; document.getElementById('loadImportBtn').style.display='block'; };
 document.getElementById('loadImportBtn').onclick = async ()=>{
@@ -1815,14 +1977,14 @@ document.getElementById('exportCsvBtn').onclick = ()=>{
     csv += `${e.date},${v.name||''},${plats},${c.fares},${c.tips},${c.distance},${c.fuelCost},${c.otherTotal},${c.profit},"${(e.note||'').replace(/"/g,'""')}"\n`;
   });
   const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'}));
-  a.download = `shiftmeter-export-${todayStr()}.csv`; a.click();
+  a.download = `Track Me-export-${todayStr()}.csv`; a.click();
 };
 
 /* ================= PDF PRINT ================= */
 document.getElementById('printPnlBtn').onclick = ()=>{
   const pA = document.getElementById('printArea');
   pA.innerHTML = `
-    <h2 style="font-family:var(--font-display); margin-bottom:5px;">SHIFTMETER Statement</h2>
+    <h2 style="font-family:var(--font-display); margin-bottom:5px;">Track Me Statement</h2>
     <p style="margin-top:0; color:#555;">Generated: ${new Date().toLocaleString('en-IN')}</p>
     <div class="print-card">
       <h3 style="margin-top:0;">Profit & Loss Breakdown</h3>
@@ -1859,7 +2021,7 @@ const instOverlay = document.getElementById('installOverlay');
 document.getElementById('installBtn').onclick = ()=>{
   const ib = document.getElementById('installBody'); const ab = document.getElementById('installActionBtn'); ab.style.display='none'; ab.onclick=null;
   if(window.matchMedia('(display-mode: standalone)').matches){ ib.innerHTML=`<div class="helper-text">You're already using the installed app. 🎉</div>`; }
-  else if(defPrompt){ ib.innerHTML=`<div class="helper-text">Install SHIFTMETER for quick, full-screen access.</div>`; ab.style.display='block'; ab.onclick=async()=>{ instOverlay.classList.remove('open'); defPrompt.prompt(); await defPrompt.userChoice; defPrompt=null; }; }
+  else if(defPrompt){ ib.innerHTML=`<div class="helper-text">Install Track Me for quick, full-screen access.</div>`; ab.style.display='block'; ab.onclick=async()=>{ instOverlay.classList.remove('open'); defPrompt.prompt(); await defPrompt.userChoice; defPrompt=null; }; }
   else if(/iphone|ipad|ipod/i.test(navigator.userAgent)){ ib.innerHTML=`<div class="helper-text">To add to Home Screen:<br>1. Tap the <b>Share</b> icon.<br>2. Tap <b>Add to Home Screen</b>.</div>`; }
   else { ib.innerHTML=`<div class="helper-text">Open your browser menu (⋮) and choose <b>Install app</b>.</div>`; }
   instOverlay.classList.add('open');
@@ -1875,13 +2037,13 @@ function setupDynamicPWA(){
     ctx.beginPath(); ctx.roundRect(0,0,192,192,40); ctx.fill(); ctx.fillStyle='#191300'; ctx.font='bold 90px Arial'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('S', 96, 105);
     const iconUrl = cvs.toDataURL();
     
-    const manifest = { name: 'SHIFTMETER', short_name: 'Shiftmeter', start_url: '.', display: 'standalone', background_color: '#0B0E11', theme_color: '#0B0E11', icons: [{ src: iconUrl, sizes: '192x192', type: 'image/png' }] };
+    const manifest = { name: 'Track Me', short_name: 'Track Me', start_url: '.', display: 'standalone', background_color: '#0B0E11', theme_color: '#0B0E11', icons: [{ src: iconUrl, sizes: '192x192', type: 'image/png' }] };
     const mLink = document.createElement('link'); mLink.rel = 'manifest'; mLink.href = URL.createObjectURL(new Blob([JSON.stringify(manifest)], {type:'application/manifest+json'})); document.head.appendChild(mLink);
     const aLink = document.createElement('link'); aLink.rel = 'apple-touch-icon'; aLink.href = iconUrl; document.head.appendChild(aLink);
     
     if('serviceWorker' in navigator){
       const swCode = `
-        const CACHE_NAME = 'shiftmeter-v3';
+        const CACHE_NAME = 'Track Me-v5';
         self.addEventListener('install', e => { self.skipWaiting(); e.waitUntil(caches.open(CACHE_NAME).then(c => c.add('.'))); });
         self.addEventListener('fetch', e => { e.respondWith(caches.match(e.request).then(res => res || fetch(e.request))); });
       `;
