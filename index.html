@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B0E11">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Shiftmeter">
+<title>SHIFTMETER — Daily Trip Ledger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B0E11;
+  --panel:#141920;
+  --panel-2:#1B222B;
+  --hairline:#242C35;
+  --text:#E8EDF2;
+  --muted:#7C8894;
+  --amber:#FFB020;
+  --green:#34D399;
+  --red:#F76B6B;
+  --teal:#38BDF8;
+  --violet:#C084FC;
+  --blue:#60A5FA;
+  --pink:#F472B6;
+  --lime:#A3E635;
+  --orange:#FB923C;
+  --indigo:#818CF8;
+  --radius:18px;
+  --radius-sm:12px;
+  --font-display:'Chakra Petch', sans-serif;
+  --font-mono:'JetBrains Mono', monospace;
+  --font-body:'Inter', sans-serif;
+  color-scheme: dark;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{margin:0; padding:0; background:var(--bg);}
+body{
+  background: radial-gradient(ellipse 900px 500px at 50% -10%, #1a2028 0%, var(--bg) 55%);
+  color:var(--text); font-family:var(--font-body); min-height:100vh; padding-bottom:104px;
+}
+.wrap{max-width:520px; margin:0 auto; padding:0 16px;}
+
+/* ---------- Print Styles ---------- */
+@media print {
+  body { background: white !important; color: black !important; padding: 0 !important; }
+  .topbar, .bottomnav, .fab, .view, .overlay, .reminder-banner { display: none !important; }
+  #printArea { display: block !important; }
+  * { color: black !important; box-shadow: none !important; text-shadow: none !important; }
+  .print-card { border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; break-inside: avoid; }
+  .print-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; }
+  .print-table th, .print-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+  .print-table th { background: #f5f5f5; font-weight: bold; }
+  .print-text-right { text-align: right !important; }
+}
+#printArea { display: none; }
+
+/* ---------- Top bar ---------- */
+.topbar{ position:sticky; top:0; z-index:20; backdrop-filter:blur(10px); background:rgba(11,14,17,0.82); border-bottom:1px solid var(--hairline); }
+.topbar-inner{ max-width:520px; margin:0 auto; padding:14px 16px; display:flex; align-items:center; justify-content:space-between; }
+.brand{ display:flex; align-items:center; gap:10px; cursor:pointer; }
+.avatar-initial{ width:36px; height:36px; border-radius:10px; background:linear-gradient(135deg, var(--amber), var(--orange)); color:#1a1300; font-family:var(--font-display); font-weight:700; font-size:18px; display:flex; align-items:center; justify-content:center; }
+.brand-text{ display:flex; flex-direction:column; line-height:1.1; }
+.brand-name{ font-family:var(--font-display); font-weight:700; font-size:16px; letter-spacing:0.5px; }
+.brand-sub{ font-size:11px; color:var(--muted); margin-top:2px; font-family:var(--font-mono); }
+.top-actions{ display:flex; gap:8px; align-items:center; }
+.global-vehicle-sel{ background:var(--panel-2); border:1px solid var(--hairline); color:var(--amber); border-radius:8px; padding:6px 26px 6px 10px; font-size:11px; font-family:var(--font-mono); appearance:none; background-image:url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23FFB020%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E"); background-repeat:no-repeat; background-position:right 6px center; cursor:pointer; }
+.icon-btn{ width:36px; height:36px; border-radius:10px; background:var(--panel-2); border:1px solid var(--hairline); display:flex; align-items:center; justify-content:center; color:var(--text); cursor:pointer; }
+.icon-btn:active{ background:#242c37; }
+.icon-btn svg{ width:17px; height:17px; }
+
+/* ---------- Banner ---------- */
+.reminder-banner{ background:rgba(255,176,32,0.15); border-bottom:1px solid rgba(255,176,32,0.3); color:var(--amber); padding:10px 16px; font-size:12px; font-family:var(--font-mono); text-align:center; display:none; cursor:pointer; }
+
+/* ---------- General ---------- */
+.section{ margin-top:22px; }
+.section-head{ display:flex; align-items:baseline; justify-content:space-between; margin-bottom:10px; }
+.section-title{ font-family:var(--font-display); font-size:13px; font-weight:600; letter-spacing:1.2px; color:var(--muted); text-transform:uppercase; }
+.section-link{ font-size:11.5px; color:var(--amber); font-family:var(--font-mono); cursor:pointer; }
+.card{ background:linear-gradient(180deg, var(--panel) 0%, var(--panel-2) 100%); border:1px solid var(--hairline); border-radius:var(--radius); padding:18px; }
+.card + .card{ margin-top:12px; }
+.divider{ height:1px; background:var(--hairline); margin:16px 0; }
+
+/* ---------- Hero & Gauge ---------- */
+.hero{ padding:20px 18px 18px; }
+.hero-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:2px; }
+.hero-label{ font-family:var(--font-display); font-size:12px; letter-spacing:1.4px; color:var(--muted); text-transform:uppercase; }
+.hero-range{ font-size:11px; color:var(--muted); font-family:var(--font-mono); }
+.gauge-wrap{ position:relative; width:100%; height:150px; margin-top:4px; }
+canvas.gauge{ width:100%; height:150px; display:block; }
+.gauge-readout{ position:absolute; left:0; right:0; bottom:6px; text-align:center; }
+.gauge-margin{ font-family:var(--font-mono); font-weight:700; font-size:34px; letter-spacing:-0.5px; }
+.gauge-sub{ font-size:11.5px; color:var(--muted); margin-top:2px; font-family:var(--font-mono); }
+.gauge-legend{ display:flex; justify-content:center; gap:14px; margin-top:8px; font-size:10.5px; color:var(--muted); font-family:var(--font-mono); }
+.gauge-legend span{ display:flex; align-items:center; gap:4px; }
+.gauge-legend i{ width:7px; height:7px; border-radius:2px; display:inline-block; }
+
+.odometer-row{ display:flex; align-items:flex-end; justify-content:space-between; }
+.odometer-label{ font-size:11px; color:var(--muted); letter-spacing:0.6px; text-transform:uppercase; font-family:var(--font-display); }
+.odometer-value{ font-family:var(--font-mono); font-weight:700; font-size:26px; font-variant-numeric:tabular-nums; margin-top:4px; }
+.odometer-value.pos{ color:var(--green); }
+.odometer-value.neg{ color:var(--red); }
+.odometer-days{ font-family:var(--font-mono); font-size:11px; color:var(--muted); text-align:right; }
+
+/* ---------- Goals UI ---------- */
+.goal-list{ display:flex; flex-direction:column; gap:12px; }
+.goal-item{ background:var(--panel-2); border:1px solid var(--hairline); border-radius:12px; padding:12px; }
+.goal-head{ display:flex; justify-content:space-between; margin-bottom:8px; font-size:12px; font-family:var(--font-mono); }
+.goal-name{ color:var(--text); font-weight:600; }
+.goal-meta{ color:var(--muted); }
+.goal-track{ height:8px; border-radius:4px; background:rgba(255,255,255,0.05); overflow:hidden; position:relative; }
+.goal-fill{ height:100%; border-radius:4px; transition:width 0.4s ease; }
+.goal-footer{ display:flex; justify-content:space-between; margin-top:6px; font-size:10.5px; color:var(--muted); font-family:var(--font-mono); }
+.streak-badge{ background:rgba(255,176,32,0.15); color:var(--amber); padding:2px 6px; border-radius:6px; font-weight:bold; }
+
+/* ---------- Stats & Chips ---------- */
+.stat-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.stat-card{ padding:12px; }
+.stat-title{ font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:0.6px; font-family:var(--font-display); }
+.stat-value{ font-family:var(--font-mono); font-weight:600; font-size:16px; margin-top:6px; white-space:nowrap; }
+canvas.spark{ width:100%; height:26px; display:block; margin-top:6px; }
+.stat-empty{ grid-column:1/-1; text-align:center; padding:16px 10px; color:var(--muted); font-size:12px; border:1px dashed var(--hairline); border-radius:var(--radius-sm); }
+.platform-today-chips{ display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+.mini-chip{ background:var(--panel-2); border:1px solid var(--hairline); border-radius:8px; padding:5px 9px; font-size:11px; font-family:var(--font-mono); display:flex; align-items:center; gap:5px; }
+.mini-chip i{ width:6px; height:6px; border-radius:2px; }
+
+/* ---------- Tabs & Forms ---------- */
+.tabs{ display:flex; gap:8px; }
+.tab{ flex:1; text-align:center; padding:8px 0; border-radius:10px; background:var(--panel-2); border:1px solid var(--hairline); font-family:var(--font-mono); font-size:12px; color:var(--muted); cursor:pointer; }
+.tab.active{ background:rgba(255,176,32,0.12); border-color:rgba(255,176,32,0.5); color:var(--amber); }
+
+.field{ margin-top:14px; }
+.field label{ display:block; font-size:11.5px; color:var(--muted); margin-bottom:6px; letter-spacing:0.3px; }
+.field input, .field select{ width:100%; background:var(--panel-2); border:1px solid var(--hairline); border-radius:10px; padding:11px 12px; color:var(--text); font-size:14px; font-family:var(--font-mono); }
+.field input:focus, .field select:focus{ outline:2px solid rgba(255,176,32,0.55); outline-offset:1px; }
+.row2{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+
+/* ---------- Custom Range Picker ---------- */
+.custom-range-picker{ display:none; grid-template-columns:1fr 1fr auto; gap:8px; margin-top:10px; align-items:flex-end; }
+.custom-range-picker.active{ display:grid; }
+.btn-sm{ padding:10px; border-radius:10px; background:var(--panel-2); border:1px solid var(--hairline); color:var(--amber); cursor:pointer; font-family:var(--font-mono); font-size:12px; }
+
+/* ---------- Charts ---------- */
+.chart-legend{ display:flex; gap:12px; margin-bottom:10px; font-size:11px; color:var(--muted); font-family:var(--font-mono); flex-wrap:wrap; }
+.chart-legend span{ display:flex; align-items:center; gap:5px; }
+.chart-legend i{ width:9px; height:3px; border-radius:2px; }
+canvas.linechart, canvas.barchart, canvas.catbar{ width:100%; height:160px; display:block; cursor:pointer; touch-action:pan-y; }
+.chart-empty{ text-align:center; padding:28px 10px; color:var(--muted); font-size:12px; }
+.donut-layout{ display:flex; align-items:center; gap:16px; }
+canvas.donut{ width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
+.donut-legend{ flex:1; display:flex; flex-direction:column; gap:8px; min-width:0; }
+.donut-row{ display:flex; align-items:center; gap:8px; font-size:12px; }
+.donut-row i{ width:8px; height:8px; border-radius:2px; flex:0 0 8px; }
+.donut-row .dname{ flex:1; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.donut-row .damt{ font-family:var(--font-mono); color:var(--muted); font-size:11px; }
+
+.chart-tooltip{ position:fixed; z-index:60; display:none; pointer-events:none; background:#1B222B; border:1px solid var(--hairline); border-radius:10px; padding:8px 10px; font-family:var(--font-mono); font-size:11px; box-shadow:0 10px 24px rgba(0,0,0,0.4); max-width:220px; }
+.chart-tooltip .ct-date{ color:var(--muted); font-size:10px; text-transform:uppercase; letter-spacing:0.4px; margin-bottom:5px; }
+.chart-tooltip .ct-row{ display:flex; align-items:center; gap:6px; white-space:nowrap; margin-top:3px; }
+.chart-tooltip .ct-row i{ width:7px; height:7px; border-radius:2px; }
+.chart-tooltip .ct-row span{ margin-left:auto; padding-left:10px; color:var(--text); font-weight:600; }
+
+/* ---------- P&L Breakdown ---------- */
+.pnl-table{ width:100%; font-family:var(--font-mono); font-size:12px; border-collapse:collapse; }
+.pnl-table td{ padding:8px 0; border-bottom:1px dashed var(--hairline); }
+.pnl-table tr:last-child td{ border-bottom:none; }
+.pnl-table .val{ text-align:right; font-weight:600; }
+.pnl-table .indent{ padding-left:15px; color:var(--muted); font-size:11px; }
+.pnl-table .subtotal td{ border-top:1px solid var(--hairline); padding-top:10px; margin-top:5px; font-weight:bold; }
+.pnl-table .net-profit td{ font-size:14px; color:var(--green); border-top:2px solid var(--hairline); padding-top:12px; }
+.pnl-table .net-loss td{ font-size:14px; color:var(--red); border-top:2px solid var(--hairline); padding-top:12px; }
+
+/* ---------- History List ---------- */
+.history-list{ display:flex; flex-direction:column; gap:8px; }
+.hist-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px 14px; border-radius:var(--radius-sm); background:var(--panel-2); border:1px solid var(--hairline); cursor:pointer; }
+.hist-row:active{ background:#232b35; }
+.hist-date{ font-family:var(--font-mono); font-size:11px; color:var(--muted); width:52px; flex:0 0 52px; }
+.hist-mid{ flex:1; min-width:0; }
+.hist-earn{ font-size:13px; font-family:var(--font-mono); }
+.hist-meta{ font-size:10.5px; color:var(--muted); margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.hist-profit{ font-family:var(--font-mono); font-weight:600; font-size:13px; text-align:right; white-space:nowrap; }
+.hist-profit.pos{ color:var(--green); }
+.hist-profit.neg{ color:var(--red); }
+
+/* ---------- Misc UI ---------- */
+.chip-row{ display:flex; flex-wrap:wrap; gap:8px; }
+.chip{ display:inline-flex; align-items:center; gap:7px; background:var(--panel-2); border:1px solid var(--hairline); border-radius:20px; padding:6px 8px 6px 12px; font-size:12px; font-family:var(--font-mono); color:var(--text); }
+.chip i{ width:7px; height:7px; border-radius:2px; }
+.chip button{ background:rgba(247,107,107,0.14); border:none; color:var(--red); cursor:pointer; font-size:11px; padding:2px 6px; border-radius:8px; }
+.view{ display:none; }
+.view.active{ display:block; }
+.bottomnav{ position:fixed; left:0; right:0; bottom:0; z-index:35; background:rgba(11,14,17,0.92); backdrop-filter:blur(10px); border-top:1px solid var(--hairline); }
+.bottomnav-inner{ max-width:520px; margin:0 auto; display:flex; padding:6px 4px calc(6px + env(safe-area-inset-bottom)); overflow-x:auto; scrollbar-width:none; }
+.bottomnav-inner::-webkit-scrollbar{ display:none; }
+.nav-item{ flex:1 0 auto; min-width:65px; display:flex; flex-direction:column; align-items:center; gap:3px; padding:7px 4px 5px; color:var(--muted); cursor:pointer; font-size:9.5px; font-family:var(--font-mono); }
+.nav-item svg{ width:20px; height:20px; }
+.nav-item.active{ color:var(--amber); }
+
+/* ---------- FAB & Sheets ---------- */
+.fab{ position:fixed; right:20px; bottom:82px; z-index:30; width:56px; height:56px; border-radius:50%; background:linear-gradient(160deg, #ffc861, var(--amber)); color:#1a1300; border:none; box-shadow:0 8px 22px rgba(255,176,32,0.35); font-size:27px; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+.fab:active{ transform:scale(0.94); }
+.overlay{ position:fixed; inset:0; background:rgba(5,7,9,0.6); backdrop-filter:blur(2px); z-index:40; opacity:0; pointer-events:none; transition:opacity .25s ease; }
+.overlay.open{ opacity:1; pointer-events:auto; }
+.sheet{ position:fixed; left:0; right:0; bottom:0; z-index:41; max-width:520px; margin:0 auto; background:var(--panel); border:1px solid var(--hairline); border-bottom:none; border-radius:22px 22px 0 0; max-height:88vh; overflow-y:auto; transform:translateY(100%); transition:transform .3s cubic-bezier(.2,.9,.25,1); padding:10px 18px calc(24px + env(safe-area-inset-bottom)); }
+.overlay.open .sheet{ transform:translateY(0); }
+.sheet-handle{ width:40px; height:4px; background:var(--hairline); border-radius:3px; margin:8px auto 14px; }
+.sheet-title{ font-family:var(--font-display); font-weight:700; font-size:17px; margin-bottom:4px; display:flex; justify-content:space-between; align-items:center; }
+.sheet-close{ color:var(--muted); font-size:20px; cursor:pointer; padding:4px; }
+
+/* ---------- Form Details ---------- */
+.platform-row-form{ display:grid; grid-template-columns:1fr 0.8fr 0.8fr 34px; gap:6px; margin-top:8px; align-items:center; }
+.expense-row{ display:grid; grid-template-columns:1.2fr 1fr 34px; gap:8px; margin-top:8px; align-items:center; }
+.platform-row-form input, .platform-row-form select, .expense-row input, .expense-row select{ padding:9px 8px; font-size:12px; }
+.rm-exp{ width:34px; height:34px; border-radius:9px; background:rgba(247,107,107,0.12); border:1px solid rgba(247,107,107,0.4); color:var(--red); cursor:pointer; font-size:15px; }
+.fuel-preview{ margin-top:14px; padding:11px 13px; border-radius:10px; background:rgba(255,176,32,0.08); border:1px solid rgba(255,176,32,0.35); display:flex; justify-content:space-between; align-items:center; }
+.fuel-preview .fp-label{ font-size:12px; color:var(--amber); }
+.fuel-preview .fp-value{ font-family:var(--font-mono); font-weight:700; color:var(--amber); font-size:15px; }
+.earn-preview{ background:rgba(52,211,153,0.08); border-color:rgba(52,211,153,0.35); }
+.earn-preview .fp-label, .earn-preview .fp-value{ color:var(--green); }
+.sheet-actions{ display:flex; gap:10px; margin-top:22px; }
+.btn{ flex:1; padding:13px; border-radius:12px; border:none; font-family:var(--font-display); font-weight:600; font-size:14px; cursor:pointer; text-align:center; text-decoration:none; display:inline-block;}
+.btn-primary{ background:linear-gradient(160deg,#ffc861,var(--amber)); color:#1a1300; }
+.btn-ghost{ background:var(--panel-2); border:1px solid var(--hairline); color:var(--text); }
+.btn-danger{ background:rgba(247,107,107,0.12); border:1px solid rgba(247,107,107,0.4); color:var(--red); flex:0 0 auto; width:46px; }
+.helper-text{ font-size:11px; color:var(--muted); margin-top:10px; line-height:1.5; }
+
+@media (prefers-reduced-motion: reduce){ .sheet, .overlay, .goal-fill { transition:none !important; } }
+</style>
+</head>
+<body>
+
+<div id="printArea"></div>
+
+<div class="reminder-banner" id="reminderBanner"></div>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand" id="profileHeaderBtn">
+      <div class="avatar-initial" id="avatarInit">S</div>
+      <div class="brand-text">
+        <div class="brand-name" id="userNameLabel">SHIFTMETER</div>
+        <div class="brand-sub" id="todayLabel">Daily trip ledger</div>
+      </div>
+    </div>
+    <div class="top-actions">
+      <select id="globalVehicleFilter" class="global-vehicle-sel" aria-label="Vehicle Filter">
+        <option value="all">All Vehicles</option>
+      </select>
+      <button class="icon-btn" id="installBtn" aria-label="Install app">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- ================= HOME VIEW ================= -->
+  <div class="view active" data-view="home">
+    <div class="section">
+      <div class="card hero">
+        <div class="hero-top">
+          <div class="hero-label">Net Profit Margin</div>
+          <div class="hero-range" id="entryCount">0 trips</div>
+        </div>
+        <div class="gauge-wrap">
+          <canvas class="gauge" id="gaugeCanvas"></canvas>
+          <div class="gauge-readout">
+            <div class="gauge-margin" id="gaugeMargin">—</div>
+            <div class="gauge-sub" id="gaugeSub">Log a trip to begin</div>
+          </div>
+        </div>
+        <div class="gauge-legend">
+          <span><i style="background:var(--red)"></i>Loss</span>
+          <span><i style="background:var(--amber)"></i>Thin</span>
+          <span><i style="background:var(--green)"></i>Healthy</span>
+        </div>
+        <div class="divider"></div>
+        <div class="odometer-row">
+          <div><div class="odometer-label">Net profit (Filtered)</div><div class="odometer-value" id="odometerValue">₹0</div></div>
+          <div class="odometer-days" id="paceLabel"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Active Goals</div><div class="section-link" id="manageGoalsLink">Manage →</div></div>
+      <div class="goal-list" id="activeGoalsList"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title" id="quickStatsLabel">Today</div></div>
+      <div class="stat-grid" id="statGrid"></div>
+      <div class="platform-today-chips" id="platformTodayChips"></div>
+    </div>
+  </div>
+
+  <!-- ================= LEDGER (P&L + History) ================= -->
+  <div class="view" data-view="ledger">
+    <div class="section">
+      <div class="tabs" data-page="ledger">
+        <div class="tab" data-range="7">7D</div>
+        <div class="tab active" data-range="30">30D</div>
+        <div class="tab" data-range="all">All</div>
+        <div class="tab" data-range="custom">Dates</div>
+      </div>
+      <div class="custom-range-picker" id="ledgerCustomRange">
+        <div class="field" style="margin-top:0;"><label>Start</label><input type="date" id="pnlStart"></div>
+        <div class="field" style="margin-top:0;"><label>End</label><input type="date" id="pnlEnd"></div>
+        <button class="btn-sm" id="applyPnlDates">Apply</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head">
+        <div class="section-title">Profit & Loss Statement</div>
+        <div class="section-link" id="printPnlBtn">PDF / Print</div>
+      </div>
+      <div class="card" style="padding:16px;">
+        <div id="pnlTableHolder"></div>
+      </div>
+    </div>
+
+    <div class="section" id="lossDaysSection" style="display:none;">
+      <div class="section-head"><div class="section-title">Loss Days Warning</div></div>
+      <div class="history-list" id="lossDaysList"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Trip History</div></div>
+      <div class="history-list" id="ledgerHistoryList"></div>
+      <div class="show-more" id="showMoreBtn" style="display:none; text-align:center; padding:10px; color:var(--amber); font-family:var(--font-mono); cursor:pointer;">Show more</div>
+    </div>
+  </div>
+
+  <!-- ================= FUEL & MAINT ================= -->
+  <div class="view" data-view="fuel">
+    <div class="section">
+      <div class="tabs" data-page="fuel">
+        <div class="tab" data-range="7">7D</div>
+        <div class="tab active" data-range="30">30D</div>
+        <div class="tab" data-range="all">All</div>
+      </div>
+    </div>
+
+    <div class="section" id="maintenanceBannerHolder"></div>
+
+    <div class="section">
+      <div class="stat-row-3" id="petrolStatRow" style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; text-align:center;"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Fuel vs Earnings</div></div>
+      <div class="card">
+        <div class="chart-legend"><span><i style="background:var(--green)"></i>Earnings</span><span><i style="background:var(--amber)"></i>Fuel cost</span></div>
+        <div id="petrolComboHolder"><canvas class="barchart" id="petrolComboCanvas"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= INSIGHTS ================= -->
+  <div class="view" data-view="insights">
+    <div class="section">
+      <div class="tabs" data-page="insights">
+        <div class="tab" data-range="7">7D</div>
+        <div class="tab active" data-range="30">30D</div>
+        <div class="tab" data-range="all">All</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Per kilometre</div></div>
+      <div class="stat-row-3" id="perKmStats" style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; text-align:center;"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Tips & Extra</div></div>
+      <div class="card" style="display:flex; justify-content:space-around; text-align:center; padding:14px;">
+        <div><div style="font-size:10px; color:var(--muted); text-transform:uppercase; font-family:var(--font-display);">Total Tips</div><div id="insightTotalTips" style="font-family:var(--font-mono); font-weight:700; font-size:18px; color:var(--lime); margin-top:4px;">₹0</div></div>
+        <div><div style="font-size:10px; color:var(--muted); text-transform:uppercase; font-family:var(--font-display);">Tips % of Gross</div><div id="insightTipPct" style="font-family:var(--font-mono); font-weight:700; font-size:18px; margin-top:4px;">0%</div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Platform Share</div></div>
+      <div class="card"><div id="platformDonutHolder"></div></div>
+    </div>
+    
+    <div class="section">
+      <div class="section-head"><div class="section-title">Expense Breakdown</div></div>
+      <div class="card"><div id="categoryDonutHolder"></div></div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Avg profit by weekday</div></div>
+      <div class="card"><div id="weekdayChartHolder"><canvas class="catbar" id="weekdayCanvas"></canvas></div></div>
+    </div>
+  </div>
+
+  <!-- ================= PROFILE / SETTINGS ================= -->
+  <div class="view" data-view="profile">
+    <div class="section">
+      <div class="card" style="display:flex; align-items:center; gap:16px;">
+        <div class="avatar-initial" style="width:50px; height:50px; font-size:24px;" id="profileBigAvatar">S</div>
+        <div style="flex:1;">
+          <input type="text" id="profileNameInput" placeholder="Your Name" style="background:none; border:none; color:var(--text); font-family:var(--font-display); font-size:18px; font-weight:700; width:100%; outline:none; margin-bottom:4px;">
+          <div class="helper-text" style="margin:0;">Settings & Data Management</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Your Vehicles & Jobs</div></div>
+      <div class="card" id="vehiclesList"></div>
+      <button class="btn btn-ghost" id="addVehicleBtn" style="width:100%; margin-top:8px;">+ Add Vehicle/Job</button>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Recurring Expenses & Loans</div></div>
+      <div class="card" id="recurringList"></div>
+      <button class="btn btn-ghost" id="addRecurringBtn" style="width:100%; margin-top:8px;">+ Add Recurring/EMI</button>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Data & Export</div></div>
+      <div class="card">
+        <div class="helper-text" style="margin-top:0;">Your data is saved securely on this device only.</div>
+        <div style="display:flex; gap:8px; margin-top:12px;">
+          <button class="btn btn-primary" style="padding:10px; font-size:12px;" id="exportCsvBtn">Export CSV</button>
+          <button class="btn btn-ghost" style="padding:10px; font-size:12px;" id="exportJsonBtn">Export JSON</button>
+        </div>
+        <div style="display:flex; gap:8px; margin-top:8px;">
+          <button class="btn btn-ghost" style="padding:10px; font-size:12px; width:100%;" id="importJsonBtn">Import JSON</button>
+        </div>
+        <textarea id="importBox" placeholder="Paste exported JSON here..." style="width:100%; margin-top:10px; background:var(--panel-2); border:1px solid var(--hairline); border-radius:10px; color:var(--text); font-family:var(--font-mono); font-size:11px; padding:10px; min-height:70px; display:none;"></textarea>
+        <button class="btn btn-primary" style="padding:10px; font-size:12px; width:100%; margin-top:8px; display:none;" id="loadImportBtn">Load Data</button>
+        <div class="divider"></div>
+        <button class="btn btn-danger" style="width:100%; font-size:12px; padding:10px;" id="clearDataBtn">Erase all data</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<button class="fab" id="fabAdd" aria-label="Add trip">+</button>
+
+<div class="bottomnav">
+  <div class="bottomnav-inner">
+    <div class="nav-item active" data-view="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg>Home</div>
+    <div class="nav-item" data-view="ledger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="9" y1="16" x2="15" y2="16"/></svg>Ledger</div>
+    <div class="nav-item" data-view="fuel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 22V6a2 2 0 012-2h6a2 2 0 012 2v16"/><path d="M3 22h10"/><path d="M13 9h2a2 2 0 012 2v2.5a1.5 1.5 0 003 0V9c0-1-1-3-3-4"/><path d="M5 6h6"/></svg>Fuel</div>
+    <div class="nav-item" data-view="insights"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>Insights</div>
+    <div class="nav-item" data-view="profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profile</div>
+  </div>
+</div>
+
+<!-- ENTRY SHEET -->
+<div class="overlay" id="entryOverlay">
+  <div class="sheet" id="entrySheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title"><span id="entrySheetTitle">Log Trip</span><span class="sheet-close" id="entryClose">✕</span></div>
+    <form id="entryForm">
+      <div class="row2">
+        <div class="field"><label>Date</label><input type="date" id="fDate" required></div>
+        <div class="field"><label>Vehicle / Job</label><select id="fVehicle"></select></div>
+      </div>
+
+      <div class="field">
+        <label>Platform Fares & Tips</label>
+        <div id="platformRows"></div>
+        <button type="button" class="btn btn-ghost" id="addPlatformBtn" style="padding:6px 10px; font-size:11.5px; width:auto; margin-top:8px;">+ Add platform</button>
+        <div class="fuel-preview earn-preview">
+          <span class="fp-label">Gross Earnings</span><span class="fp-value" id="platformTotalPreview">₹0</span>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="field"><label>Distance (km)</label><input type="number" id="fDistance" min="0" step="0.1" placeholder="0"></div>
+        <div class="field"><label>Mileage (km/L)</label><input type="number" id="fMileage" min="0" step="0.1" placeholder="e.g. 35"></div>
+      </div>
+      <div class="fuel-preview">
+        <span class="fp-label">Fuel cost (auto @ ₹<span id="petrolPriceLabel">0</span>/L)</span><span class="fp-value" id="fuelPreview">₹0</span>
+      </div>
+
+      <div class="field" style="margin-top:18px;">
+        <label style="display:flex;justify-content:space-between;">Other Expenses <button type="button" class="btn btn-ghost" id="addExpenseBtn" style="padding:4px 8px; font-size:10px; width:auto;">+ Add</button></label>
+        <div id="expenseRows"></div>
+        <div class="helper-text" id="noExpHint">No other expenses added.</div>
+      </div>
+
+      <div class="field"><label>Note (optional)</label><input type="text" id="fNote" placeholder="e.g. rainy day, festival rush..."></div>
+
+      <div class="sheet-actions">
+        <button type="button" class="btn btn-danger" id="deleteEntryBtn" style="display:none;">🗑</button>
+        <button type="button" class="btn btn-ghost" id="cancelEntryBtn">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save trip</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- GOAL EDIT SHEET -->
+<div class="overlay" id="goalOverlay">
+  <div class="sheet" id="goalSheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title"><span>Set Goal</span><span class="sheet-close" id="goalClose">✕</span></div>
+    <div class="field"><label>Goal Type</label><select id="gType"><option value="daily_earn">Daily Earnings</option><option value="weekly_earn">Weekly Earnings</option><option value="monthly_earn">Monthly Earnings</option><option value="savings">Savings / Payoff (Break-even)</option></select></div>
+    <div class="field"><label>Target Amount (₹)</label><input type="number" id="gTarget" step="10" placeholder="e.g. 1000"></div>
+    <div id="goalSuggestWrap" class="helper-text" style="color:var(--amber); cursor:pointer; display:none;">💡 Suggestion: ₹<span id="gSuggestVal"></span> based on past 30 days. Tap to use.</div>
+    <div class="field" id="gNameField" style="display:none;"><label>Goal Name</label><input type="text" id="gName" placeholder="e.g. Bike EMI, New Phone"></div>
+    <div class="sheet-actions"><button type="button" class="btn btn-danger" id="deleteGoalBtn" style="display:none;">🗑</button><button type="button" class="btn btn-primary" id="saveGoalBtn">Save Goal</button></div>
+  </div>
+</div>
+
+<!-- VEHICLE EDIT SHEET -->
+<div class="overlay" id="vehicleOverlay">
+  <div class="sheet" id="vehicleSheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title"><span>Vehicle/Job Details</span><span class="sheet-close" id="vehicleClose">✕</span></div>
+    <div class="field"><label>Name</label><input type="text" id="vName" placeholder="e.g. Bike - Zomato"></div>
+    <div class="row2">
+      <div class="field"><label>Avg Mileage (km/L)</label><input type="number" id="vMileage" step="0.1"></div>
+      <div class="field"><label>Fuel Price (₹/L)</label><input type="number" id="vFuelPrice" step="0.1"></div>
+    </div>
+    <div class="field"><label>Service Interval (km)</label><input type="number" id="vInterval" placeholder="e.g. 3000"></div>
+    <div class="helper-text">App will warn you when distance logged since last "Maintenance" expense exceeds this interval.</div>
+    <div class="sheet-actions"><button type="button" class="btn btn-danger" id="deleteVehicleBtn" style="display:none;">🗑</button><button type="button" class="btn btn-primary" id="saveVehicleBtn">Save</button></div>
+  </div>
+</div>
+
+<!-- RECURRING EDIT SHEET -->
+<div class="overlay" id="recurringOverlay">
+  <div class="sheet" id="recurringSheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title"><span>Recurring / Loan</span><span class="sheet-close" id="recurringClose">✕</span></div>
+    <div class="field"><label>Label</label><input type="text" id="rLabel" placeholder="e.g. Bike EMI, Platform Fee"></div>
+    <div class="row2">
+      <div class="field"><label>Amount (₹)</label><input type="number" id="rAmount" step="1"></div>
+      <div class="field"><label>Category</label><input type="text" id="rCat" value="Fees"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Frequency</label><select id="rFreq"><option value="weekly">Weekly</option><option value="monthly">Monthly</option></select></div>
+      <div class="field"><label>Next Post Date</label><input type="date" id="rNextDate"></div>
+    </div>
+    <div class="helper-text">This will automatically log an expense on the scheduled date when you open the app.</div>
+    <div class="sheet-actions"><button type="button" class="btn btn-danger" id="deleteRecurringBtn" style="display:none;">🗑</button><button type="button" class="btn btn-primary" id="saveRecurringBtn">Save</button></div>
+  </div>
+</div>
+
+<!-- INSTALL SHEET -->
+<div class="overlay" id="installOverlay">
+  <div class="sheet" id="installSheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title"><span>Install SHIFTMETER</span><span class="sheet-close" id="installClose">✕</span></div>
+    <div id="installBody"></div>
+    <div class="sheet-actions">
+      <button type="button" class="btn btn-primary" id="installActionBtn" style="display:none;">Install</button>
+      <button type="button" class="btn btn-ghost" id="installDismissBtn">Got it</button>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+/* ================= CONSTANTS & THEME ================= */
+const STORAGE_KEY = 'shiftmeter.v3';
+const OLD_KEY = 'shiftmeter.v2';
+const COLORS = { amber:'#FFB020', green:'#34D399', red:'#F76B6B', teal:'#38BDF8', violet:'#C084FC', blue:'#60A5FA', lime:'#A3E635', muted:'#7C8894', hairline:'#242C35' };
+const PALETTE = [COLORS.teal, COLORS.violet, COLORS.blue, '#F472B6', COLORS.lime, '#FB923C', '#818CF8', COLORS.red, COLORS.green, '#2DD4BF'];
+const DEFAULT_PLATFORMS = ['Zepto','Blinkit','Swiggy','Zomato'];
+const DEFAULT_CATEGORIES = ['Fees','Maintenance','Uniform','Challan'];
+const REDUCE_MOTION = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ================= STATE MANAGEMENT ================= */
+let state = defaultState();
+let currentView = 'home';
+let filterVehicleId = 'all';
+let ranges = { ledger:'30', fuel:'30', insights:'30' };
+let editingId = { entry:null, goal:null, vehicle:null, recurring:null };
+
+function uid(){ return 'e' + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+function defaultState(){
+  return {
+    profile: { name: 'Driver', phone: '', lastBackup: 0 },
+    vehicles: [{ id:'v1', name:'Primary Vehicle', mileage: 40, fuelPrice: 110, serviceInterval: 3000 }],
+    settings: { platforms: [...DEFAULT_PLATFORMS], categories: [...DEFAULT_CATEGORIES], shiftEnd: '22:00' },
+    goals: [], recurring: [], entries: [], ledgerFees: []
+  };
+}
+
+function loadState(){
+  try {
+    let raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) {
+      raw = localStorage.getItem(OLD_KEY);
+      if(raw) {
+        const old = JSON.parse(raw);
+        state = defaultState();
+        state.settings.platforms = old.settings.platforms || DEFAULT_PLATFORMS;
+        state.settings.categories = old.settings.categories || DEFAULT_CATEGORIES;
+        state.vehicles[0].fuelPrice = old.settings.petrolPrice || 110;
+        
+        if(old.settings.breakEvenTarget > 0) {
+          state.goals.push({ id:uid(), type:'savings', target:old.settings.breakEvenTarget, name:'Break-even Goal' });
+        }
+        state.entries = (old.entries||[]).map(e => ({
+          id: e.id || uid(), date: e.date, vehicleId: 'v1',
+          platformEarnings: (e.platformEarnings||[]).map(p => ({ platform:p.platform, amount:Number(p.amount)||0, tip:0 })),
+          distance: Number(e.distance)||0, mileage: Number(e.mileage)||0, fuelPrice: old.settings.petrolPrice || 110,
+          expenses: (e.expenses||[]).map(x => ({ cat:x.cat, amount:Number(x.amount)||0 })), note: e.note || ''
+        }));
+        state.ledgerFees = (old.fees||[]).map(f => ({ id:f.id||uid(), date:f.date, label:f.label, category:f.category, amount:Number(f.amount)||0 }));
+        saveState();
+        return;
+      }
+    } else {
+      const parsed = JSON.parse(raw);
+      state = Object.assign(defaultState(), parsed);
+      // Ensure all objects exist structurally
+      if(!state.profile) state.profile = defaultState().profile;
+      if(!state.vehicles || !state.vehicles.length) state.vehicles = defaultState().vehicles;
+    }
+  } catch(e) { console.warn('Load failed', e); state = defaultState(); }
+}
+function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+
+/* ================= AUTO-POST RECURRING ================= */
+function processRecurring(){
+  const today = todayStr();
+  let changed = false;
+  state.recurring.forEach(r => {
+    while(r.nextDate && r.nextDate <= today) {
+      state.ledgerFees.push({ id:uid(), date:r.nextDate, label:r.label, category:r.category, amount:r.amount, isRecurring:true });
+      const d = parseLocalDate(r.nextDate);
+      if(r.freq === 'weekly') d.setDate(d.getDate() + 7);
+      else if(r.freq === 'monthly') d.setMonth(d.getMonth() + 1);
+      r.nextDate = toISO(d);
+      changed = true;
+    }
+  });
+  if(changed) saveState();
+}
+
+/* ================= HELPERS ================= */
+function todayStr(){ const d=new Date(); return new Date(d - d.getTimezoneOffset()*60000).toISOString().slice(0,10); }
+function toISO(d){ return new Date(d - d.getTimezoneOffset()*60000).toISOString().slice(0,10); }
+function parseLocalDate(str){ return new Date(str + 'T00:00:00'); }
+function fmtDateShort(str){ return parseLocalDate(str).toLocaleDateString('en-IN', {day:'2-digit', month:'short'}); }
+function rupee(n, opts={}){
+  const v = Math.round((n||0) * (opts.dec ? 100 : 1)) / (opts.dec ? 100 : 1);
+  return (v<0?'-':'') + '₹' + Math.abs(v).toLocaleString('en-IN', {maximumFractionDigits:opts.dec?2:0});
+}
+function rupeeCompact(n){
+  const a = Math.abs(n);
+  if(a>=100000) return (n<0?'-':'')+'₹'+(a/100000).toFixed(1)+'L';
+  if(a>=1000) return (n<0?'-':'')+'₹'+(a/1000).toFixed(1)+'k';
+  return rupee(n);
+}
+function clamp(v,lo,hi){ return Math.max(lo,Math.min(hi,v)); }
+function esc(s){ return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function colorFor(k){
+  if(k==='Fuel') return COLORS.amber; if(k==='Net Profit') return COLORS.green; if(k==='Tips') return COLORS.lime;
+  let h=0; for(let i=0;i<k.length;i++) h=(h*31+k.charCodeAt(i))>>>0; return PALETTE[h%PALETTE.length];
+}
+function getActiveEntries(){
+  const all = [...state.entries].sort((a,b)=>a.date.localeCompare(b.date));
+  return filterVehicleId === 'all' ? all : all.filter(e => e.vehicleId === filterVehicleId);
+}
+function getActiveFees(){
+  const all = [...state.ledgerFees].sort((a,b)=>a.date.localeCompare(b.date));
+  return filterVehicleId === 'all' ? all : all; // Fees are global in this architecture, or we could tag them
+}
+
+function computeEntry(e){
+  const pes = e.platformEarnings || [];
+  const fares = pes.reduce((s,p)=>s+(Number(p.amount)||0),0);
+  const tips = pes.reduce((s,p)=>s+(Number(p.tip)||0),0);
+  const earnings = fares + tips;
+  const dist = Number(e.distance)||0;
+  const mil = Number(e.mileage)||0;
+  const fp = Number(e.fuelPrice)||0;
+  const fuelCost = mil>0 ? (dist/mil)*fp : 0;
+  const exp = (e.expenses||[]).reduce((s,x)=>s+(Number(x.amount)||0),0);
+  return { fares, tips, earnings, distance:dist, mileage:mil, fuelCost, otherTotal:exp, totalExpense: fuelCost+exp, profit: earnings-(fuelCost+exp) };
+}
+
+/* ================= RENDER: HOME & DASH ================= */
+function renderHomeView(){
+  const entries = getActiveEntries();
+  document.getElementById('entryCount').textContent = entries.length + (entries.length===1?' trip':' trips');
+  
+  let tEarn=0, tExp=0;
+  entries.forEach(e=>{ const c=computeEntry(e); tEarn+=c.earnings; tExp+=c.totalExpense; });
+  getActiveFees().forEach(f=> tExp += Number(f.amount)||0);
+  const net = tEarn - tExp;
+  const margin = tEarn>0 ? (net/tEarn)*100 : 0;
+
+  const gm = document.getElementById('gaugeMargin'), gs = document.getElementById('gaugeSub');
+  if(!entries.length){
+    gm.textContent = '—'; gm.style.color = 'var(--muted)'; gs.textContent = 'Log a trip to begin';
+    drawGaugeArc(document.getElementById('gaugeCanvas'), 0);
+  } else {
+    gm.textContent = (margin>=0?'+':'') + margin.toFixed(1) + '%';
+    gm.style.color = margin<0 ? 'var(--red)' : margin<30 ? 'var(--amber)' : 'var(--green)';
+    gs.textContent = `${rupee(tEarn)} gross · ${rupee(tExp)} exp`;
+    drawGaugeArc(document.getElementById('gaugeCanvas'), margin);
+  }
+
+  const odo = document.getElementById('odometerValue');
+  odo.textContent = (net<0?'-':'') + rupee(Math.abs(net));
+  odo.className = 'odometer-value ' + (net>=0?'pos':'neg');
+
+  const rec = entries.slice(-7);
+  const recAvg = rec.length ? rec.reduce((s,e)=>s+computeEntry(e).profit,0)/rec.length : 0;
+  document.getElementById('paceLabel').textContent = rec.length ? (recAvg>=0?'+':'')+rupeeCompact(recAvg)+'/day pace' : '';
+
+  renderGoalsWidget(entries, net);
+  renderTodayStats(entries);
+}
+
+function renderGoalsWidget(entries, netLifetime){
+  const list = document.getElementById('activeGoalsList');
+  if(!state.goals.length){
+    list.innerHTML = `<div class="stat-empty">No goals set. <button class="btn-ghost" style="padding:4px 8px; font-size:11px;" onclick="openGoalSheet(null)">Create one</button></div>`;
+    return;
+  }
+  
+  const today = todayStr();
+  // Group entries by period
+  const earnToday = entries.filter(e=>e.date===today).reduce((s,e)=>s+computeEntry(e).earnings,0);
+  const earn30d = entries.slice(-30).reduce((s,e)=>s+computeEntry(e).earnings,0);
+  
+  // Calculate start of week (Monday)
+  const d = new Date(); const day = d.getDay()||7; d.setDate(d.getDate() - day + 1);
+  const startOfWeek = toISO(d);
+  const earnWeek = entries.filter(e=>e.date>=startOfWeek).reduce((s,e)=>s+computeEntry(e).earnings,0);
+
+  const startOfMonth = today.slice(0,7)+'-01';
+  const earnMonth = entries.filter(e=>e.date>=startOfMonth).reduce((s,e)=>s+computeEntry(e).earnings,0);
+
+  list.innerHTML = state.goals.map(g => {
+    let current = 0, label = '', subtitle='';
+    if(g.type==='daily_earn'){ current = earnToday; label = 'Daily Earn'; }
+    if(g.type==='weekly_earn'){ current = earnWeek; label = 'Weekly Earn'; subtitle=`Need ${rupee(Math.max(0, g.target-current))} more by Sunday`; }
+    if(g.type==='monthly_earn'){ current = earnMonth; label = 'Monthly Earn'; }
+    if(g.type==='savings'){ current = netLifetime; label = g.name || 'Break-even'; subtitle=`${rupee(Math.max(0, g.target-current))} remaining`; }
+
+    const pct = clamp((current/g.target)*100, 0, 100);
+    const color = pct>=100 ? 'var(--green)' : 'var(--amber)';
+    return `
+      <div class="goal-item" onclick="openGoalSheet('${g.id}')">
+        <div class="goal-head"><span class="goal-name">${esc(label)}</span><span class="goal-meta">${rupee(current)} / ${rupeeCompact(g.target)}</span></div>
+        <div class="goal-track"><div class="goal-fill" style="width:${pct}%; background:${color}"></div></div>
+        <div class="goal-footer"><span>${esc(subtitle)}</span>${pct>=100?'<span class="streak-badge">Met! 🎉</span>':''}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderTodayStats(entries){
+  const grid = document.getElementById('statGrid'), chips = document.getElementById('platformTodayChips'), lbl = document.getElementById('quickStatsLabel');
+  if(!entries.length){ grid.innerHTML = `<div class="stat-empty">No trips logged.</div>`; chips.innerHTML=''; return; }
+  
+  const last = entries[entries.length-1];
+  lbl.textContent = last.date === todayStr() ? 'Today' : `Most recent (${fmtDateShort(last.date)})`;
+  const c = computeEntry(last);
+  const rec7 = entries.slice(-7);
+
+  grid.innerHTML = `
+    <div class="card stat-card"><div class="stat-title">Earnings</div><div class="stat-value" style="color:var(--green)">${rupee(c.earnings)}</div><canvas class="spark" id="spEarn"></canvas></div>
+    <div class="card stat-card"><div class="stat-title">Tips</div><div class="stat-value" style="color:var(--lime)">${rupee(c.tips)}</div><canvas class="spark" id="spTip"></canvas></div>
+    <div class="card stat-card"><div class="stat-title">Profit</div><div class="stat-value" style="color:${c.profit>=0?'var(--green)':'var(--red)'}">${rupee(c.profit)}</div><canvas class="spark" id="spProf"></canvas></div>
+  `;
+  requestAnimationFrame(()=>{
+    drawSparkline(document.getElementById('spEarn'), rec7.map(e=>computeEntry(e).earnings), COLORS.green);
+    drawSparkline(document.getElementById('spTip'), rec7.map(e=>computeEntry(e).tips), COLORS.lime);
+    drawSparkline(document.getElementById('spProf'), rec7.map(e=>computeEntry(e).profit), c.profit>=0?COLORS.green:COLORS.red);
+  });
+
+  chips.innerHTML = (last.platformEarnings||[]).filter(p=>p.amount>0||p.tip>0).map(p=>`
+    <div class="mini-chip"><i style="background:${colorFor(p.platform)}"></i>${esc(p.platform)} ${rupee(p.amount+p.tip)}</div>
+  `).join('');
+}
+
+/* ================= RENDER: LEDGER (P&L) ================= */
+function renderLedgerView(){
+  const range = ranges.ledger;
+  document.getElementById('ledgerCustomRange').classList.toggle('active', range==='custom');
+  
+  let entries = getActiveEntries(), fees = getActiveFees();
+  if(range !== 'all' && range !== 'custom'){
+    const d = new Date(); d.setDate(d.getDate()-(Number(range)-1));
+    const st = toISO(d);
+    entries = entries.filter(e=>e.date>=st); fees = fees.filter(f=>f.date>=st);
+  } else if(range === 'custom'){
+    const start = document.getElementById('pnlStart').value || '2000-01-01';
+    const end = document.getElementById('pnlEnd').value || '2100-01-01';
+    entries = entries.filter(e=>e.date>=start && e.date<=end); fees = fees.filter(f=>f.date>=start && f.date<=end);
+  }
+
+  // Aggregate P&L
+  let fares=0, tips=0, fuel=0, other=0;
+  const maintMap = {}, feeMap = {};
+  
+  entries.forEach(e=>{
+    const c = computeEntry(e);
+    fares += c.fares; tips += c.tips; fuel += c.fuelCost;
+    (e.expenses||[]).forEach(x=>{
+      if(x.cat.toLowerCase().includes('maintenance')) maintMap[x.cat] = (maintMap[x.cat]||0)+x.amount;
+      else other += x.amount;
+    });
+  });
+  fees.forEach(f=>{ feeMap[f.category] = (feeMap[f.category]||0)+f.amount; });
+  
+  const gross = fares+tips;
+  const maintTotal = Object.values(maintMap).reduce((a,b)=>a+b,0);
+  const ledgerFeesTotal = Object.values(feeMap).reduce((a,b)=>a+b,0);
+  const totalExp = fuel + maintTotal + other + ledgerFeesTotal;
+  const net = gross - totalExp;
+
+  document.getElementById('pnlTableHolder').innerHTML = `
+    <table class="pnl-table">
+      <tr><td>Fares</td><td class="val">${rupee(fares)}</td></tr>
+      <tr><td>Tips</td><td class="val" style="color:var(--lime)">${rupee(tips)}</td></tr>
+      <tr class="subtotal"><td>Gross Earnings</td><td class="val">${rupee(gross)}</td></tr>
+      <tr><td colspan="2" style="height:12px;"></td></tr>
+      <tr><td>Fuel Cost</td><td class="val">${rupee(fuel)}</td></tr>
+      ${Object.keys(feeMap).map(k=>`<tr><td>${esc(k)} <span style="color:var(--muted);font-size:10px">(Deductions)</span></td><td class="val">${rupee(feeMap[k])}</td></tr>`).join('')}
+      ${Object.keys(maintMap).map(k=>`<tr><td>${esc(k)} <span style="color:var(--muted);font-size:10px">(Maint)</span></td><td class="val">${rupee(maintMap[k])}</td></tr>`).join('')}
+      <tr><td>Other Expenses</td><td class="val">${rupee(other)}</td></tr>
+      <tr class="subtotal"><td>Total Expenses</td><td class="val">${rupee(totalExp)}</td></tr>
+      <tr class="${net>=0?'net-profit':'net-loss'}"><td>Net ${net>=0?'Profit':'Loss'}</td><td class="val">${(net>=0?'+':'-')}${rupee(Math.abs(net))}</td></tr>
+    </table>
+  `;
+
+  // Loss Days
+  const lossDays = entries.map(e=>({e, c:computeEntry(e)})).filter(x=>x.c.profit < 0);
+  const ldSec = document.getElementById('lossDaysSection');
+  if(lossDays.length){
+    ldSec.style.display = 'block';
+    document.getElementById('lossDaysList').innerHTML = lossDays.slice(-5).map(x=>`
+      <div class="hist-row" onclick="openEntrySheet('${x.e.id}')">
+        <div class="hist-date">${fmtDateShort(x.e.date)}</div>
+        <div class="hist-mid"><div class="hist-earn">Loss: ${rupee(x.c.profit)}</div><div class="hist-meta">Exp: ${rupee(x.c.totalExpense)}</div></div>
+      </div>
+    `).join('');
+  } else ldSec.style.display = 'none';
+
+  // History List
+  const allRev = [...entries].reverse();
+  const histList = document.getElementById('ledgerHistoryList');
+  if(!allRev.length) histList.innerHTML = `<div class="stat-empty">No trips in this range.</div>`;
+  else {
+    histList.innerHTML = allRev.slice(0, 10).map(e=>{
+      const c = computeEntry(e);
+      return `<div class="hist-row" onclick="openEntrySheet('${e.id}')">
+        <div class="hist-date">${fmtDateShort(e.date)}</div>
+        <div class="hist-mid"><div class="hist-earn">${rupee(c.earnings)}</div><div class="hist-meta">${c.distance}km · ${e.vehicleId==='v1'?'Primary':(state.vehicles.find(v=>v.id===e.vehicleId)||{}).name||'Veh'}</div></div>
+        <div class="hist-profit ${c.profit>=0?'pos':'neg'}">${c.profit>=0?'+':'-'}${rupee(Math.abs(c.profit))}</div>
+      </div>`;
+    }).join('');
+  }
+}
+
+/* ================= RENDER: FUEL & MAINT ================= */
+function renderFuelView(){
+  const range = ranges.fuel;
+  let entries = getActiveEntries();
+  if(range !== 'all'){
+    const st = toISO(new Date(Date.now() - (Number(range)-1)*86400000));
+    entries = entries.filter(e=>e.date>=st);
+  }
+
+  let fuel=0, dist=0; entries.forEach(e=>{ const c=computeEntry(e); fuel+=c.fuelCost; dist+=c.distance; });
+  document.getElementById('petrolStatRow').innerHTML = entries.length ? `
+    <div class="card stat-card"><div class="stat-title">Fuel Spent</div><div class="stat-value" style="color:var(--amber)">${rupee(fuel)}</div></div>
+    <div class="card stat-card"><div class="stat-title">Distance</div><div class="stat-value">${dist} km</div></div>
+    <div class="card stat-card"><div class="stat-title">Cost / km</div><div class="stat-value" style="color:var(--red)">${rupee(dist>0?fuel/dist:0,{dec:true})}</div></div>
+  ` : `<div class="stat-empty" style="grid-column:1/-1;">No data.</div>`;
+
+  if(entries.length){
+    drawGroupedBarChart(document.getElementById('petrolComboCanvas'), entries.map(e=>e.date), [
+      { color: COLORS.green, values: entries.map(e=>computeEntry(e).earnings) },
+      { color: COLORS.amber, values: entries.map(e=>computeEntry(e).fuelCost) }
+    ]);
+  } else document.getElementById('petrolComboHolder').innerHTML = `<div class="chart-empty">No data.</div>`;
+
+  // Maintenance Banner
+  const mH = document.getElementById('maintenanceBannerHolder');
+  mH.innerHTML = '';
+  state.vehicles.forEach(v => {
+    if(filterVehicleId !== 'all' && filterVehicleId !== v.id) return;
+    const vEnt = state.entries.filter(e=>e.vehicleId===v.id).sort((a,b)=>a.date.localeCompare(b.date));
+    let distSince = 0;
+    for(let i=vEnt.length-1; i>=0; i--){
+      const e = vEnt[i];
+      if((e.expenses||[]).some(x=>x.cat.toLowerCase().includes('maintenance'))) break;
+      distSince += Number(e.distance)||0;
+    }
+    if(v.serviceInterval && distSince >= v.serviceInterval * 0.9){
+      mH.innerHTML += `<div class="card" style="border-color:var(--amber); background:rgba(255,176,32,0.05); margin-bottom:12px;">
+        <div style="color:var(--amber); font-family:var(--font-display); font-weight:700;">⚠️ Service Due: ${esc(v.name)}</div>
+        <div class="helper-text" style="color:var(--text); margin-top:4px;">Driven ${distSince}km since last maintenance log. Interval is ${v.serviceInterval}km.</div>
+      </div>`;
+    }
+  });
+}
+
+/* ================= RENDER: INSIGHTS ================= */
+function renderInsightsView(){
+  const range = ranges.insights;
+  let entries = getActiveEntries();
+  if(range !== 'all'){
+    const st = toISO(new Date(Date.now() - (Number(range)-1)*86400000));
+    entries = entries.filter(e=>e.date>=st);
+  }
+
+  let earn=0, exp=0, dist=0, tips=0;
+  const pMap={}, cMap={};
+  entries.forEach(e=>{
+    const c=computeEntry(e); earn+=c.earnings; exp+=c.totalExpense; dist+=c.distance; tips+=c.tips;
+    cMap['Fuel'] = (cMap['Fuel']||0)+c.fuelCost;
+    (e.expenses||[]).forEach(x=> cMap[x.cat] = (cMap[x.cat]||0)+x.amount);
+    (e.platformEarnings||[]).forEach(p=> pMap[p.platform] = (pMap[p.platform]||0)+(p.amount+p.tip));
+  });
+
+  document.getElementById('perKmStats').innerHTML = entries.length ? `
+    <div class="card stat-card"><div class="stat-title">Earn/km</div><div class="stat-value" style="color:var(--green)">${rupee(dist>0?earn/dist:0,{dec:true})}</div></div>
+    <div class="card stat-card"><div class="stat-title">Cost/km</div><div class="stat-value" style="color:var(--red)">${rupee(dist>0?exp/dist:0,{dec:true})}</div></div>
+    <div class="card stat-card"><div class="stat-title">Profit/km</div><div class="stat-value" style="color:var(--amber)">${rupee(dist>0?(earn-exp)/dist:0,{dec:true})}</div></div>
+  ` : `<div class="stat-empty" style="grid-column:1/-1">No data.</div>`;
+
+  document.getElementById('insightTotalTips').textContent = rupee(tips);
+  document.getElementById('insightTipPct').textContent = earn>0 ? Math.round((tips/earn)*100)+'%' : '0%';
+
+  const pData = Object.keys(pMap).map(k=>({k, v:pMap[k]})).filter(x=>x.v>0).sort((a,b)=>b.v-a.v);
+  renderDonut(document.getElementById('platformDonutHolder'), pData, 'No platform earnings.');
+  
+  const cData = Object.keys(cMap).map(k=>({k, v:cMap[k]})).filter(x=>x.v>0).sort((a,b)=>b.v-a.v);
+  renderDonut(document.getElementById('categoryDonutHolder'), cData, 'No expenses.');
+
+  // Weekday
+  const wMap = [0,0,0,0,0,0,0], wCnt = [0,0,0,0,0,0,0];
+  entries.forEach(e=>{ const d = parseLocalDate(e.date).getDay(); wMap[d]+=computeEntry(e).profit; wCnt[d]++; });
+  const wData = [1,2,3,4,5,6,0].map((d,i)=>({ label:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][i], val:wCnt[d]?wMap[d]/wCnt[d]:0 }));
+  if(entries.length) drawCategoricalBar(document.getElementById('weekdayCanvas'), wData);
+  else document.getElementById('weekdayChartHolder').innerHTML = `<div class="chart-empty">No data.</div>`;
+}
+
+function renderDonut(holder, data, empty){
+  if(!data.length){ holder.innerHTML = `<div class="chart-empty">${empty}</div>`; return; }
+  const id = 'd'+Math.random().toString(36).slice(2,8);
+  const tot = data.reduce((s,x)=>s+x.v,0);
+  holder.innerHTML = `<div class="donut-layout"><canvas class="donut" id="${id}"></canvas><div class="donut-legend">
+    ${data.slice(0,5).map(d=>`<div class="donut-row"><i style="background:${colorFor(d.k)}"></i><span class="dname">${esc(d.k)}</span><span class="damt">${((d.v/tot)*100).toFixed(0)}%</span></div>`).join('')}
+  </div></div>`;
+  const canvas = document.getElementById(id);
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio||1;
+  const s = 130; canvas.width=s*dpr; canvas.height=s*dpr; ctx.scale(dpr,dpr);
+  const cx=s/2, cy=s/2, r=s/2-4, inn=r*0.6;
+  let ang = -Math.PI/2;
+  data.forEach(d=>{
+    const sl = (d.v/tot)*Math.PI*2;
+    ctx.beginPath(); ctx.strokeStyle=colorFor(d.k); ctx.lineWidth=r-inn;
+    ctx.arc(cx,cy,(r+inn)/2, ang, ang+sl); ctx.stroke();
+    ang+=sl;
+  });
+  ctx.fillStyle='#E8EDF2'; ctx.font='700 13px JetBrains Mono'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(rupeeCompact(tot), cx, cy-4);
+}
+
+/* ================= RENDER: PROFILE ================= */
+function renderProfileView(){
+  document.getElementById('profileNameInput').value = state.profile.name || 'Driver';
+  document.getElementById('profileBigAvatar').textContent = (state.profile.name||'D').charAt(0).toUpperCase();
+
+  document.getElementById('vehiclesList').innerHTML = state.vehicles.map(v=>`
+    <div class="hist-row" style="margin-bottom:8px;" onclick="openVehicleSheet('${v.id}')">
+      <div class="hist-mid"><div class="hist-earn">${esc(v.name)}</div><div class="hist-meta">${v.mileage} km/l · ₹${v.fuelPrice}/L</div></div>
+      <div style="color:var(--amber);font-size:16px;">✎</div>
+    </div>
+  `).join('');
+
+  const rl = document.getElementById('recurringList');
+  if(!state.recurring.length) rl.innerHTML = `<div class="stat-empty">No recurring expenses.</div>`;
+  else rl.innerHTML = state.recurring.map(r=>`
+    <div class="hist-row" style="margin-bottom:8px;" onclick="openRecurringSheet('${r.id}')">
+      <div class="hist-mid"><div class="hist-earn">${esc(r.label)}</div><div class="hist-meta">${esc(r.freq)} · Next: ${fmtDateShort(r.nextDate)}</div></div>
+      <div class="hist-profit neg">-${rupee(r.amount)}</div>
+    </div>
+  `).join('');
+}
+document.getElementById('profileNameInput').addEventListener('input', e => {
+  state.profile.name = e.target.value.trim();
+  saveState(); updateHeader();
+});
+
+function updateHeader(){
+  document.getElementById('userNameLabel').textContent = state.profile.name || 'SHIFTMETER';
+  document.getElementById('avatarInit').textContent = (state.profile.name||'S').charAt(0).toUpperCase();
+  document.getElementById('todayLabel').textContent = new Date().toLocaleDateString('en-IN', {weekday:'short', day:'numeric', month:'short'});
+  
+  const sel = document.getElementById('globalVehicleFilter');
+  const oldVal = sel.value;
+  sel.innerHTML = `<option value="all">All Vehicles</option>` + state.vehicles.map(v=>`<option value="${v.id}">${esc(v.name)}</option>`).join('');
+  sel.value = state.vehicles.find(v=>v.id===oldVal) ? oldVal : 'all';
+}
+document.getElementById('globalVehicleFilter').addEventListener('change', e=>{
+  filterVehicleId = e.target.value; renderView(currentView);
+});
+
+/* ================= CHARTS (CANVAS) ================= */
+function setupCanvas(canvas){
+  const r = canvas.getBoundingClientRect(); const dpr = window.devicePixelRatio||1;
+  const w = Math.max(1, r.width), h = Math.max(1, r.height);
+  canvas.width = w*dpr; canvas.height = h*dpr;
+  const ctx = canvas.getContext('2d'); ctx.scale(dpr,dpr); return {ctx, w, h};
+}
+function drawSparkline(canvas, values, color){
+  const {ctx, w, h} = setupCanvas(canvas);
+  if(values.length < 2) return;
+  const min = Math.min(...values), max = Math.max(...values, 1), range = (max-min)||1, pad = 2;
+  ctx.beginPath(); ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.lineJoin = 'round';
+  values.forEach((v,i) => {
+    const x = (i/(values.length-1))*w, y = h - pad - ((v-min)/range)*(h-pad*2);
+    i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+  });
+  ctx.stroke();
+}
+function drawGroupedBarChart(canvas, dates, series){
+  const {ctx, w, h} = setupCanvas(canvas); if(!dates.length) return;
+  const padL=35, padR=5, padT=10, padB=20, plotW=w-padL-padR, plotH=h-padT-padB;
+  const maxV = Math.max(...series.flatMap(s=>s.values), 1);
+  const n = dates.length, slot = plotW/n, gW = slot*0.7, bW = gW/series.length;
+
+  ctx.fillStyle=COLORS.muted; ctx.font='10px JetBrains Mono'; ctx.textAlign='right'; ctx.textBaseline='middle';
+  [0, 0.5, 1].forEach(f=>{
+    const y = padT+plotH - f*plotH;
+    ctx.strokeStyle = COLORS.hairline; ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(w-padR,y); ctx.stroke();
+    ctx.fillText(rupeeCompact(f*maxV), padL-4, y);
+  });
+
+  series.forEach((s,si) => {
+    s.values.forEach((v,i) => {
+      const x = padL + slot*i + (slot-gW)/2 + si*bW;
+      const bh = (v/maxV)*plotH;
+      ctx.fillStyle = s.color; ctx.fillRect(x, padT+plotH-bh, Math.max(1, bW-1), bh);
+    });
+  });
+}
+function drawCategoricalBar(canvas, items){
+  const {ctx, w, h} = setupCanvas(canvas); if(!items.length) return;
+  const padL=35, padR=5, padT=10, padB=20, plotW=w-padL-padR, plotH=h-padT-padB;
+  const maxV = Math.max(...items.map(it=>Math.abs(it.val)), 1);
+  const zeroY = padT+plotH/2;
+  const n = items.length, slot = plotW/n, bW = Math.min(20, slot*0.6);
+
+  ctx.strokeStyle = COLORS.hairline; ctx.beginPath(); ctx.moveTo(padL,zeroY); ctx.lineTo(w-padR,zeroY); ctx.stroke();
+  ctx.fillStyle=COLORS.muted; ctx.font='10px JetBrains Mono'; ctx.textAlign='right'; ctx.textBaseline='middle';
+  ctx.fillText(rupeeCompact(maxV), padL-4, padT+5); ctx.fillText(rupeeCompact(-maxV), padL-4, padT+plotH-5);
+
+  items.forEach((it,i) => {
+    const cx = padL + slot*i + slot/2;
+    const bh = (Math.abs(it.val)/maxV)*(plotH/2);
+    ctx.fillStyle = it.val>=0 ? COLORS.green : COLORS.red;
+    ctx.fillRect(cx - bW/2, it.val>=0 ? zeroY-bh : zeroY, bW, bh);
+    ctx.fillStyle=COLORS.muted; ctx.textAlign='center'; ctx.fillText(it.label, cx, h-5);
+  });
+}
+function drawGaugeArc(canvas, margin){
+  const {ctx,w,h} = setupCanvas(canvas);
+  const cx=w/2, cy=h-14, r=Math.max(0.1, Math.min(w/2-14, h-24)), lw=13;
+  if(r <= 1) return; // Prevent IndexSizeError on unrendered canvases
+  const mt = t => Math.PI - ((clamp(t,-100,100)+100)/200)*Math.PI;
+
+  [{f:-100,t:0,c:COLORS.red},{f:0,t:30,c:COLORS.amber},{f:30,t:100,c:COLORS.green}].forEach(b=>{
+    ctx.beginPath(); ctx.lineWidth=lw; ctx.strokeStyle=b.c; ctx.globalAlpha=0.85;
+    ctx.arc(cx,cy,r, mt(b.f), mt(b.t), false); ctx.stroke();
+  });
+  ctx.globalAlpha=1;
+
+  const a = mt(margin);
+  ctx.beginPath(); ctx.strokeStyle='#FFF'; ctx.lineWidth=3; ctx.lineCap='round';
+  ctx.moveTo(cx,cy); ctx.lineTo(cx + (r-10)*Math.cos(a), cy - (r-10)*Math.sin(a)); ctx.stroke();
+  ctx.beginPath(); ctx.fillStyle='#FFF'; ctx.arc(cx,cy,5,0,Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.fillStyle=COLORS.bg; ctx.arc(cx,cy,2,0,Math.PI*2); ctx.fill();
+}
+
+/* ================= TABS & NAV ================= */
+document.querySelectorAll('.nav-item').forEach(el=> el.addEventListener('click', ()=>{
+  currentView = el.dataset.view; renderView(currentView);
+}));
+document.querySelectorAll('.tabs[data-page]').forEach(grp=>{
+  grp.querySelectorAll('.tab').forEach(t=>{
+    t.addEventListener('click', ()=>{
+      grp.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); t.classList.add('active');
+      ranges[grp.dataset.page] = t.dataset.range; renderView(currentView);
+    });
+  });
+});
+function renderView(view){
+  document.querySelectorAll('.view').forEach(v=> v.classList.toggle('active', v.dataset.view===view));
+  document.querySelectorAll('.nav-item').forEach(n=> n.classList.toggle('active', n.dataset.view===view));
+  updateHeader();
+  if(view==='home') renderHomeView();
+  if(view==='ledger') renderLedgerView();
+  if(view==='fuel') renderFuelView();
+  if(view==='insights') renderInsightsView();
+  if(view==='profile') renderProfileView();
+  window.scrollTo(0,0);
+}
+
+/* ================= ENTRY SHEET ================= */
+const entryOverlay = document.getElementById('entryOverlay');
+function openEntrySheet(id){
+  editingId.entry = id;
+  const pRows = document.getElementById('platformRows'); pRows.innerHTML='';
+  const eRows = document.getElementById('expenseRows'); eRows.innerHTML='';
+  
+  const vSel = document.getElementById('fVehicle');
+  vSel.innerHTML = state.vehicles.map(v=>`<option value="${v.id}">${esc(v.name)}</option>`).join('');
+
+  if(id){
+    const ent = state.entries.find(e=>e.id===id);
+    document.getElementById('entrySheetTitle').textContent = 'Edit Trip';
+    document.getElementById('deleteEntryBtn').style.display = 'block';
+    document.getElementById('fDate').value = ent.date;
+    vSel.value = ent.vehicleId;
+    document.getElementById('fDistance').value = ent.distance||'';
+    document.getElementById('fMileage').value = ent.mileage||'';
+    document.getElementById('fNote').value = ent.note||'';
+    (ent.platformEarnings||[]).forEach(p=> addPlatformRow(p.platform, p.amount, p.tip));
+    (ent.expenses||[]).forEach(x=> addExpenseRow(x.cat, x.amount));
+  } else {
+    document.getElementById('entrySheetTitle').textContent = 'Log Trip';
+    document.getElementById('deleteEntryBtn').style.display = 'none';
+    document.getElementById('entryForm').reset();
+    document.getElementById('fDate').value = todayStr();
+    vSel.value = state.vehicles[0].id;
+    document.getElementById('fMileage').value = state.vehicles[0].mileage;
+    addPlatformRow(state.settings.platforms[0], '', '');
+  }
+  updateLiveCalc(); entryOverlay.classList.add('open');
+}
+document.getElementById('fabAdd').onclick = ()=> openEntrySheet(null);
+document.getElementById('entryClose').onclick = ()=> entryOverlay.classList.remove('open');
+document.getElementById('cancelEntryBtn').onclick = ()=> entryOverlay.classList.remove('open');
+
+function getOpts(list, sel){ return list.map(x=>`<option value="${esc(x)}" ${x===sel?'selected':''}>${esc(x)}</option>`).join('')+`<option value="__new__">+ New</option>`; }
+function addPlatformRow(plat, amt, tip){
+  const div = document.createElement('div'); div.className='platform-row-form';
+  div.innerHTML = `<select>${getOpts(state.settings.platforms, plat)}</select><input type="number" step="1" placeholder="Fares (₹)" value="${amt||''}"><input type="number" step="1" placeholder="Tip (₹)" value="${tip||''}"><button type="button" class="rm-exp">✕</button>`;
+  div.querySelector('select').onchange = e=>{
+    if(e.target.value==='__new__'){
+      const n=prompt('Platform name:'); if(n && !state.settings.platforms.includes(n)) { state.settings.platforms.push(n); saveState(); }
+      e.target.innerHTML = getOpts(state.settings.platforms, n||state.settings.platforms[0]);
+    }
+  };
+  div.querySelectorAll('input').forEach(i=> i.oninput = updateLiveCalc);
+  div.querySelector('.rm-exp').onclick = ()=>{ div.remove(); updateLiveCalc(); };
+  document.getElementById('platformRows').appendChild(div);
+}
+document.getElementById('addPlatformBtn').onclick = ()=> addPlatformRow(state.settings.platforms[0], '','');
+
+function addExpenseRow(cat, amt){
+  const div = document.createElement('div'); div.className='expense-row';
+  div.innerHTML = `<select>${getOpts(state.settings.categories, cat)}</select><input type="number" step="1" placeholder="₹" value="${amt||''}"><button type="button" class="rm-exp">✕</button>`;
+  div.querySelector('select').onchange = e=>{
+    if(e.target.value==='__new__'){
+      const n=prompt('Category:'); if(n && !state.settings.categories.includes(n)) { state.settings.categories.push(n); saveState(); }
+      e.target.innerHTML = getOpts(state.settings.categories, n||state.settings.categories[0]);
+    }
+  };
+  div.querySelector('.rm-exp').onclick = ()=>{ div.remove(); };
+  document.getElementById('expenseRows').appendChild(div);
+}
+document.getElementById('addExpenseBtn').onclick = ()=> addExpenseRow(state.settings.categories[0], '');
+
+function updateLiveCalc(){
+  let earn = 0;
+  document.querySelectorAll('#platformRows .platform-row-form').forEach(r=>{
+    const inps = r.querySelectorAll('input'); earn += (Number(inps[0].value)||0) + (Number(inps[1].value)||0);
+  });
+  document.getElementById('platformTotalPreview').textContent = rupee(earn);
+
+  const vid = document.getElementById('fVehicle').value;
+  const v = state.vehicles.find(x=>x.id===vid) || state.vehicles[0];
+  document.getElementById('petrolPriceLabel').textContent = v.fuelPrice;
+  const dist = Number(document.getElementById('fDistance').value)||0, mil = Number(document.getElementById('fMileage').value)||0;
+  document.getElementById('fuelPreview').textContent = rupee(mil>0 ? (dist/mil)*v.fuelPrice : 0);
+}
+document.getElementById('fVehicle').onchange = updateLiveCalc;
+document.getElementById('fDistance').oninput = updateLiveCalc;
+document.getElementById('fMileage').oninput = updateLiveCalc;
+
+document.getElementById('entryForm').onsubmit = e => {
+  e.preventDefault();
+  const date = document.getElementById('fDate').value;
+  const vehicleId = document.getElementById('fVehicle').value;
+  const v = state.vehicles.find(x=>x.id===vehicleId);
+  const platformEarnings = [...document.querySelectorAll('#platformRows .platform-row-form')].map(r=>{
+    const inps = r.querySelectorAll('input');
+    return { platform: r.querySelector('select').value, amount: Number(inps[0].value)||0, tip: Number(inps[1].value)||0 };
+  }).filter(p=> p.amount>0 || p.tip>0);
+  const expenses = [...document.querySelectorAll('#expenseRows .expense-row')].map(r=>({
+    cat: r.querySelector('select').value, amount: Number(r.querySelector('input').value)||0
+  })).filter(x=>x.amount>0);
+
+  const payload = {
+    id: editingId.entry || uid(), date, vehicleId, platformEarnings,
+    distance: Number(document.getElementById('fDistance').value)||0,
+    mileage: Number(document.getElementById('fMileage').value)||0,
+    fuelPrice: v.fuelPrice, expenses, note: document.getElementById('fNote').value
+  };
+
+  if(editingId.entry){
+    const idx = state.entries.findIndex(x=>x.id===editingId.entry);
+    if(idx>-1) state.entries[idx] = payload;
+  } else {
+    const dIdx = state.entries.findIndex(x=>x.date===date && x.vehicleId===vehicleId);
+    if(dIdx>-1) state.entries[dIdx] = payload; else state.entries.push(payload);
+  }
+  saveState(); entryOverlay.classList.remove('open'); renderView(currentView);
+};
+document.getElementById('deleteEntryBtn').onclick = ()=>{
+  if(confirm('Delete trip?')){ state.entries = state.entries.filter(x=>x.id!==editingId.entry); saveState(); entryOverlay.classList.remove('open'); renderView(currentView); }
+};
+
+/* ================= GOALS SHEET ================= */
+const goalOverlay = document.getElementById('goalOverlay');
+function openGoalSheet(id){
+  editingId.goal = id;
+  const sW = document.getElementById('goalSuggestWrap'), gT = document.getElementById('gTarget'), gN = document.getElementById('gNameField');
+  if(id){
+    const g = state.goals.find(x=>x.id===id);
+    document.getElementById('gType').value = g.type; gT.value = g.target; document.getElementById('gName').value = g.name||'';
+    document.getElementById('deleteGoalBtn').style.display='block'; sW.style.display='none';
+  } else {
+    document.getElementById('gType').value = 'daily_earn'; gT.value = ''; document.getElementById('gName').value = '';
+    document.getElementById('deleteGoalBtn').style.display='none'; updateGoalSuggest();
+  }
+  document.getElementById('gType').onchange = ()=>{
+    gN.style.display = document.getElementById('gType').value==='savings' ? 'block' : 'none';
+    if(!id) updateGoalSuggest();
+  };
+  document.getElementById('gType').dispatchEvent(new Event('change'));
+  goalOverlay.classList.add('open');
+}
+function updateGoalSuggest(){
+  const t = document.getElementById('gType').value;
+  const entries30 = state.entries.slice(-30);
+  const earn30 = entries30.reduce((s,e)=>s+computeEntry(e).earnings,0);
+  let sug = 0;
+  if(t==='daily_earn') sug = entries30.length>7 ? (earn30/30)*1.1 : 1000;
+  if(t==='weekly_earn') sug = entries30.length>7 ? (earn30/30)*7*1.1 : 7000;
+  if(t==='monthly_earn') sug = entries30.length>7 ? (earn30/30)*30*1.1 : 30000;
+  const sw = document.getElementById('goalSuggestWrap');
+  if(sug>0){
+    sw.style.display='block';
+    document.getElementById('gSuggestVal').textContent = Math.round(sug/100)*100;
+    sw.onclick = ()=> document.getElementById('gTarget').value = Math.round(sug/100)*100;
+  } else sw.style.display='none';
+}
+document.getElementById('manageGoalsLink').onclick = ()=> openGoalSheet(null);
+document.getElementById('goalClose').onclick = ()=> goalOverlay.classList.remove('open');
+document.getElementById('saveGoalBtn').onclick = ()=>{
+  const payload = { id: editingId.goal||uid(), type: document.getElementById('gType').value, target: Number(document.getElementById('gTarget').value)||0, name: document.getElementById('gName').value };
+  if(payload.target<=0) return alert('Enter a valid target');
+  if(editingId.goal) state.goals = state.goals.map(x=> x.id===editingId.goal ? payload : x);
+  else state.goals.push(payload);
+  saveState(); goalOverlay.classList.remove('open'); renderView(currentView);
+};
+document.getElementById('deleteGoalBtn').onclick = ()=>{ state.goals = state.goals.filter(x=>x.id!==editingId.goal); saveState(); goalOverlay.classList.remove('open'); renderView(currentView); };
+
+/* ================= VEHICLE SHEET ================= */
+const vehOverlay = document.getElementById('vehicleOverlay');
+function openVehicleSheet(id){
+  editingId.vehicle = id;
+  if(id){
+    const v = state.vehicles.find(x=>x.id===id);
+    document.getElementById('vName').value = v.name; document.getElementById('vMileage').value = v.mileage;
+    document.getElementById('vFuelPrice').value = v.fuelPrice; document.getElementById('vInterval').value = v.serviceInterval||'';
+    document.getElementById('deleteVehicleBtn').style.display = state.vehicles.length>1 ? 'block' : 'none';
+  } else {
+    document.getElementById('vName').value=''; document.getElementById('vMileage').value=''; document.getElementById('vFuelPrice').value=''; document.getElementById('vInterval').value='';
+    document.getElementById('deleteVehicleBtn').style.display = 'none';
+  }
+  vehOverlay.classList.add('open');
+}
+document.getElementById('addVehicleBtn').onclick = ()=> openVehicleSheet(null);
+document.getElementById('vehicleClose').onclick = ()=> vehOverlay.classList.remove('open');
+document.getElementById('saveVehicleBtn').onclick = ()=>{
+  const p = { id:editingId.vehicle||uid(), name:document.getElementById('vName').value||'Vehicle', mileage:Number(document.getElementById('vMileage').value)||0, fuelPrice:Number(document.getElementById('vFuelPrice').value)||0, serviceInterval:Number(document.getElementById('vInterval').value)||0 };
+  if(editingId.vehicle) state.vehicles = state.vehicles.map(x=>x.id===editingId.vehicle ? p : x); else state.vehicles.push(p);
+  saveState(); vehOverlay.classList.remove('open'); renderView(currentView);
+};
+document.getElementById('deleteVehicleBtn').onclick = ()=>{ if(confirm('Delete vehicle? Trips will stay linked.')){ state.vehicles = state.vehicles.filter(x=>x.id!==editingId.vehicle); saveState(); vehOverlay.classList.remove('open'); renderView(currentView); } };
+
+/* ================= RECURRING SHEET ================= */
+const recOverlay = document.getElementById('recurringOverlay');
+function openRecurringSheet(id){
+  editingId.recurring = id;
+  if(id){
+    const r = state.recurring.find(x=>x.id===id);
+    document.getElementById('rLabel').value = r.label; document.getElementById('rAmount').value = r.amount;
+    document.getElementById('rCat').value = r.category; document.getElementById('rFreq').value = r.freq;
+    document.getElementById('rNextDate').value = r.nextDate;
+    document.getElementById('deleteRecurringBtn').style.display = 'block';
+  } else {
+    document.getElementById('rLabel').value=''; document.getElementById('rAmount').value=''; document.getElementById('rCat').value='Fees';
+    document.getElementById('rFreq').value='weekly'; document.getElementById('rNextDate').value=todayStr();
+    document.getElementById('deleteRecurringBtn').style.display = 'none';
+  }
+  recOverlay.classList.add('open');
+}
+document.getElementById('addRecurringBtn').onclick = ()=> openRecurringSheet(null);
+document.getElementById('recurringClose').onclick = ()=> recOverlay.classList.remove('open');
+document.getElementById('saveRecurringBtn').onclick = ()=>{
+  const p = { id:editingId.recurring||uid(), label:document.getElementById('rLabel').value||'Fee', amount:Number(document.getElementById('rAmount').value)||0, category:document.getElementById('rCat').value||'Fees', freq:document.getElementById('rFreq').value, nextDate:document.getElementById('rNextDate').value||todayStr() };
+  if(editingId.recurring) state.recurring = state.recurring.map(x=>x.id===editingId.recurring ? p : x); else state.recurring.push(p);
+  saveState(); processRecurring(); recOverlay.classList.remove('open'); renderView(currentView);
+};
+document.getElementById('deleteRecurringBtn').onclick = ()=>{ state.recurring = state.recurring.filter(x=>x.id!==editingId.recurring); saveState(); recOverlay.classList.remove('open'); renderView(currentView); };
+
+/* ================= EXPORT & IMPORT ================= */
+document.getElementById('exportJsonBtn').onclick = ()=>{
+  state.profile.lastBackup = Date.now(); saveState();
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(state,null,2)], {type:'application/json'}));
+  a.download = `shiftmeter-backup-${todayStr()}.json`; a.click(); document.getElementById('reminderBanner').style.display='none';
+};
+document.getElementById('importJsonBtn').onclick = ()=>{ document.getElementById('importBox').style.display='block'; document.getElementById('loadImportBtn').style.display='block'; };
+document.getElementById('loadImportBtn').onclick = ()=>{
+  try{
+    const d = JSON.parse(document.getElementById('importBox').value);
+    if(d.entries) { Object.assign(state, d); saveState(); alert('Import successful!'); location.reload(); }
+  } catch(e){ alert('Invalid JSON format.'); }
+};
+document.getElementById('clearDataBtn').onclick = ()=>{
+  if(confirm('Erase all local data permanently?')){ localStorage.clear(); location.reload(); }
+};
+document.getElementById('exportCsvBtn').onclick = ()=>{
+  let csv = 'Date,Vehicle,Platform,Fares,Tips,Distance,FuelCost,OtherExpenses,NetProfit,Note\n';
+  state.entries.forEach(e=>{
+    const v = state.vehicles.find(x=>x.id===e.vehicleId)||{};
+    const c = computeEntry(e);
+    const plats = (e.platformEarnings||[]).map(p=>p.platform).join('|');
+    csv += `${e.date},${v.name||''},${plats},${c.fares},${c.tips},${c.distance},${c.fuelCost},${c.otherTotal},${c.profit},"${(e.note||'').replace(/"/g,'""')}"\n`;
+  });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'}));
+  a.download = `shiftmeter-export-${todayStr()}.csv`; a.click();
+};
+
+/* ================= PDF PRINT ================= */
+document.getElementById('printPnlBtn').onclick = ()=>{
+  const pA = document.getElementById('printArea');
+  pA.innerHTML = `
+    <h2 style="font-family:var(--font-display); margin-bottom:5px;">SHIFTMETER Statement</h2>
+    <p style="margin-top:0; color:#555;">Generated: ${new Date().toLocaleString('en-IN')}</p>
+    <div class="print-card">
+      <h3 style="margin-top:0;">Profit & Loss Breakdown</h3>
+      ${document.getElementById('pnlTableHolder').innerHTML.replace(/class="/g, 'class="print-table ')}
+    </div>
+    <div class="print-card">
+      <h3 style="margin-top:0;">Active Goals</h3>
+      ${state.goals.map(g=>`<p>${g.name||g.type}: Target ${rupee(g.target)}</p>`).join('')||'<p>None</p>'}
+    </div>
+  `;
+  window.print();
+};
+
+/* ================= REMINDERS ================= */
+function checkReminders(){
+  const rb = document.getElementById('reminderBanner');
+  const daysSinceBackup = (Date.now() - (state.profile.lastBackup||0)) / 86400000;
+  if(daysSinceBackup > 14 && state.entries.length > 5){
+    rb.textContent = "⚠️ It's been over 14 days since your last backup. Tap to export your data.";
+    rb.style.display = 'block'; rb.onclick = ()=> { setView('profile'); }; return;
+  }
+  const lastDate = state.entries.length ? state.entries[state.entries.length-1].date : null;
+  const hr = new Date().getHours();
+  if(lastDate !== todayStr() && hr >= 20){
+    rb.textContent = "🌙 Shift over? Tap here to log today's trip.";
+    rb.style.display = 'block'; rb.onclick = ()=> openEntrySheet(null);
+  }
+}
+
+/* ================= PWA INSTALL ================= */
+let defPrompt = null;
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); defPrompt = e; });
+const instOverlay = document.getElementById('installOverlay');
+document.getElementById('installBtn').onclick = ()=>{
+  const ib = document.getElementById('installBody'); const ab = document.getElementById('installActionBtn'); ab.style.display='none'; ab.onclick=null;
+  if(window.matchMedia('(display-mode: standalone)').matches){ ib.innerHTML=`<div class="helper-text">You're already using the installed app. 🎉</div>`; }
+  else if(defPrompt){ ib.innerHTML=`<div class="helper-text">Install SHIFTMETER for quick, full-screen access.</div>`; ab.style.display='block'; ab.onclick=async()=>{ instOverlay.classList.remove('open'); defPrompt.prompt(); await defPrompt.userChoice; defPrompt=null; }; }
+  else if(/iphone|ipad|ipod/i.test(navigator.userAgent)){ ib.innerHTML=`<div class="helper-text">To add to Home Screen:<br>1. Tap the <b>Share</b> icon.<br>2. Tap <b>Add to Home Screen</b>.</div>`; }
+  else { ib.innerHTML=`<div class="helper-text">Open your browser menu (⋮) and choose <b>Install app</b>.</div>`; }
+  instOverlay.classList.add('open');
+};
+document.getElementById('installClose').onclick = ()=> instOverlay.classList.remove('open');
+document.getElementById('installDismissBtn').onclick = ()=> instOverlay.classList.remove('open');
+
+/* ================= INIT & DYNAMIC PWA BLOB ================= */
+function setupDynamicPWA(){
+  try {
+    // Generate Icon DataURI
+    const cvs = document.createElement('canvas'); cvs.width=192; cvs.height=192; const ctx = cvs.getContext('2d');
+    const gr = ctx.createLinearGradient(0,0,192,192); gr.addColorStop(0,'#FFC861'); gr.addColorStop(1,'#FFB020'); ctx.fillStyle=gr;
+    ctx.beginPath(); ctx.roundRect(0,0,192,192,40); ctx.fill(); ctx.fillStyle='#191300'; ctx.font='bold 90px Arial'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('S', 96, 105);
+    const iconUrl = cvs.toDataURL();
+    
+    // Manifest
+    const manifest = { name: 'SHIFTMETER', short_name: 'Shiftmeter', start_url: '.', display: 'standalone', background_color: '#0B0E11', theme_color: '#0B0E11', icons: [{ src: iconUrl, sizes: '192x192', type: 'image/png' }] };
+    const mLink = document.createElement('link'); mLink.rel = 'manifest'; mLink.href = URL.createObjectURL(new Blob([JSON.stringify(manifest)], {type:'application/manifest+json'})); document.head.appendChild(mLink);
+    const aLink = document.createElement('link'); aLink.rel = 'apple-touch-icon'; aLink.href = iconUrl; document.head.appendChild(aLink);
+    
+    // Single-file Service Worker injection for offline support.
+    // Note: Due to browser security, blob Service Workers inherit origin scope but some strict setups might ignore them. It provides best-effort PWA offline support in a single HTML file.
+    if('serviceWorker' in navigator){
+      const swCode = `
+        const CACHE_NAME = 'shiftmeter-v3';
+        self.addEventListener('install', e => { self.skipWaiting(); e.waitUntil(caches.open(CACHE_NAME).then(c => c.add('.'))); });
+        self.addEventListener('fetch', e => { e.respondWith(caches.match(e.request).then(res => res || fetch(e.request))); });
+      `;
+      const swBlob = new Blob([swCode], {type:'application/javascript'});
+      navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(()=>{});
+    }
+  } catch(e) {}
+}
+
+loadState();
+processRecurring();
+setupDynamicPWA();
+updateHeader();
+renderView('home');
+checkReminders();
+</script>
+</body>
+</html>
