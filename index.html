@@ -58,12 +58,16 @@ body{
 
 .reminder-banner{ background:rgba(255,176,32,0.15); border-bottom:1px solid rgba(255,176,32,0.3); color:var(--amber); padding:10px 16px; font-size:12px; font-family:var(--font-mono); text-align:center; display:none; cursor:pointer; }
 
-/* Missing days banner */
 .missing-days-banner { background: rgba(247,107,107,0.1); border: 1px solid rgba(247,107,107,0.3); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 16px; display: flex; flex-direction: column; gap: 10px; }
 .missing-title { display:flex; align-items:center; gap:8px; font-size:12px; font-family:var(--font-display); color:var(--red); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; }
 .missing-pills { display: flex; flex-wrap: wrap; gap: 8px; }
 .missing-pill { background: var(--panel); border: 1px solid var(--hairline); color: var(--text); padding: 6px 12px; border-radius: 20px; font-size: 11px; font-family: var(--font-mono); cursor: pointer; transition: all 0.2s; display:flex; align-items:center; gap:4px; }
 .missing-pill:active { background: #232b35; transform:scale(0.95); }
+
+.anomaly-banner { background: rgba(247,107,107,0.1); border: 1px solid rgba(247,107,107,0.3); border-radius: var(--radius-sm); padding: 12px; margin: 16px 0 0; display: flex; align-items: flex-start; gap: 10px; }
+.anomaly-icon { font-size: 16px; }
+.anomaly-text { font-size: 11.5px; color: var(--text); line-height: 1.4; }
+.anomaly-text strong { color: var(--red); display: block; margin-bottom: 2px; font-family: var(--font-display); letter-spacing: 0.5px; }
 
 .section{ margin-top:22px; }
 .section-head{ display:flex; align-items:baseline; justify-content:space-between; margin-bottom:10px; }
@@ -77,6 +81,13 @@ body{
 .hero-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:2px; }
 .hero-label{ font-family:var(--font-display); font-size:12px; letter-spacing:1.4px; color:var(--muted); text-transform:uppercase; }
 .hero-range{ font-size:11px; color:var(--muted); font-family:var(--font-mono); }
+
+.hero-goal-widget { display: none; align-items: center; gap: 8px; background: rgba(255,255,255,0.05); padding: 4px 8px 4px 4px; border-radius: 20px; cursor: pointer; border: 1px solid rgba(255,255,255,0.05); transition: background 0.2s; }
+.hero-goal-widget:active { background: rgba(255,255,255,0.1); }
+.hero-goal-widget canvas { width: 24px; height: 24px; display: block; }
+.hero-goal-widget-text { font-size: 11.5px; font-weight: 600; font-family: var(--font-mono); line-height: 1.1; color: var(--text); }
+.hero-goal-widget-text span { color: var(--muted); font-size: 9px; font-weight: normal; }
+
 .gauge-wrap{ position:relative; width:100%; height:150px; margin-top:4px; }
 canvas.gauge{ width:100%; height:150px; display:block; }
 .gauge-readout{ position:absolute; left:0; right:0; bottom:6px; text-align:center; }
@@ -103,7 +114,6 @@ canvas.gauge{ width:100%; height:150px; display:block; }
 .goal-footer{ display:flex; justify-content:space-between; margin-top:6px; font-size:10.5px; color:var(--muted); font-family:var(--font-mono); align-items:center;}
 .streak-badge{ background:rgba(255,176,32,0.15); color:var(--amber); padding:2px 6px; border-radius:6px; font-weight:bold; }
 
-/* Visual Streak Calendar */
 .streak-cal-wrap { display: flex; gap: 4px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; align-items: center; }
 .streak-cal-wrap::-webkit-scrollbar { display: none; }
 .streak-day { display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 24px; cursor: pointer; }
@@ -113,7 +123,13 @@ canvas.gauge{ width:100%; height:150px; display:block; }
 .streak-dot.empty { border-style: dashed; }
 .streak-lbl { font-size: 9px; color: var(--muted); font-family: var(--font-mono); text-transform: uppercase; }
 
-/* Personal Records */
+.best-worst-row { display: flex; gap: 10px; margin-top: 12px; }
+.bw-card { flex: 1; background: var(--panel); border: 1px solid var(--hairline); border-radius: 8px; padding: 10px; display: flex; align-items: center; gap: 6px; font-size: 11px; }
+.bw-card i { font-style: normal; font-size: 14px; }
+.bw-val { font-family: var(--font-mono); font-weight: 600; margin-left: auto; }
+.bw-val.pos { color: var(--green); }
+.bw-val.neg { color: var(--red); }
+
 .pr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .pr-card { background: var(--panel-2); border: 1px solid var(--hairline); border-radius: var(--radius-sm); padding: 12px; display: flex; flex-direction: column; gap: 4px; }
 .pr-icon { font-size: 18px; margin-bottom: 4px; }
@@ -130,6 +146,9 @@ canvas.spark{ width:100%; height:26px; display:block; margin-top:6px; cursor:poi
 .platform-today-chips{ display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
 .mini-chip{ background:var(--panel-2); border:1px solid var(--hairline); border-radius:8px; padding:5px 9px; font-size:11px; font-family:var(--font-mono); display:flex; align-items:center; gap:5px; }
 .mini-chip i{ width:6px; height:6px; border-radius:2px; }
+
+.velocity-row { background: var(--panel-2); border: 1px dashed var(--hairline); border-radius: 8px; padding: 10px 12px; margin-top: 10px; font-size: 12px; display: flex; align-items: center; justify-content: space-between; font-family: var(--font-mono); color: var(--muted); }
+.velocity-row strong { color: var(--amber); font-size: 13px; }
 
 .trend-badge{ display:inline-block; padding:2px 6px; border-radius:4px; font-size:10px; font-family:var(--font-mono); font-weight:600; margin-left:6px; vertical-align:middle; }
 .trend-badge.pos{ color:var(--green); background:rgba(52,211,153,0.15); }
@@ -270,12 +289,17 @@ canvas.donut{ width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
 <div class="wrap">
   <div class="view active" data-view="home">
     <div id="missingDaysBannerHolder"></div>
+    <div id="anomalyBannerHolder"></div>
     
     <div class="section" style="margin-top:0;">
       <div class="card hero">
         <div class="hero-top">
           <div class="hero-label">Net Profit Margin</div>
-          <div class="hero-range" id="entryCount">0 trips</div>
+          <div class="hero-goal-widget" id="heroGoalWidget" onclick="openGoalSheet(null)">
+             <canvas id="heroGoalCanvas"></canvas>
+             <div class="hero-goal-widget-text" id="heroGoalText"></div>
+          </div>
+          <div class="hero-range" id="entryCount" style="display:none;">0 trips</div>
         </div>
         <!-- Chart 1: Gauge -->
         <div class="gauge-wrap">
@@ -309,6 +333,7 @@ canvas.donut{ width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
         <div class="streak-cal-wrap" id="streakCalWrap">
           <!-- Calendar gets generated here -->
         </div>
+        <div id="bestWorstHolder"></div>
       </div>
     </div>
 
@@ -332,10 +357,10 @@ canvas.donut{ width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
       </div>
     </div>
 
-    <!-- Chart 3: Sparklines inside stats -->
     <div class="section">
       <div class="section-head"><div class="section-title" id="quickStatsLabel">Today</div></div>
       <div class="stat-grid" id="statGrid"></div>
+      <div id="velocityHolder"></div>
       <div class="platform-today-chips" id="platformTodayChips"></div>
     </div>
 
@@ -379,7 +404,12 @@ canvas.donut{ width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
     <div class="section">
       <div class="section-head"><div class="section-title">Daily Net Profit</div></div>
       <div class="card">
-        <!-- Chart 1: Bar -->
+        <!-- Added detailed legend for the Combo Bar/Line chart -->
+        <div class="chart-legend">
+          <span><i style="background:var(--green)"></i>Daily Profit</span>
+          <span><i style="background:var(--teal)"></i>7D Rolling Avg</span>
+        </div>
+        <!-- Chart 1: Bar & Line Combo -->
         <canvas class="barchart" id="dailyProfitBarCanvas"></canvas>
       </div>
     </div>
@@ -420,6 +450,15 @@ canvas.donut{ width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
       </div>
     </div>
 
+    <!-- NEW SECTION: Expense to Revenue Ratio -->
+    <div class="section">
+      <div class="section-head"><div class="section-title">Expense to Revenue Ratio</div></div>
+      <div class="card">
+        <div class="chart-legend"><span><i style="background:var(--amber)"></i>Exp/Rev % (Lower is better)</span></div>
+        <canvas class="multiline" id="expRevRatioCanvas"></canvas>
+      </div>
+    </div>
+
     <div class="section" id="lossDaysSection" style="display:none;">
       <div class="section-head"><div class="section-title">Loss Days Warning</div></div>
       <div class="history-list" id="lossDaysList"></div>
@@ -427,8 +466,11 @@ canvas.donut{ width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
 
     <div class="section">
       <div class="section-head"><div class="section-title">Trip History</div></div>
+      <!-- NEW SEARCH BAR for trip history -->
+      <div class="field" style="margin-top:0; margin-bottom:12px;">
+        <input type="text" id="ledgerSearchInput" placeholder="Search platform, note, or vehicle..." style="padding:10px 12px; font-size:13px; background:var(--panel-2); border-radius:10px;">
+      </div>
       <div class="history-list" id="ledgerHistoryList"></div>
-      <div class="show-more" id="showMoreBtn" style="display:none; text-align:center; padding:10px; color:var(--amber); font-family:var(--font-mono); cursor:pointer;">Show more</div>
     </div>
   </div>
 
@@ -765,7 +807,7 @@ canvas.donut{ width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
   </div>
 </div>
 
-<!-- CUSTOM DIALOG BOX (REPLACES ALERTS/CONFIRMS) -->
+<!-- CUSTOM DIALOG BOX -->
 <div class="overlay" id="customDialogOverlay">
   <div class="dialog-box">
     <div class="dialog-title" id="dialogTitle">Confirm</div>
@@ -780,8 +822,8 @@ canvas.donut{ width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
 <script>
 'use strict';
 
-const STORAGE_KEY = 'shiftmeter.v7';
-const OLD_KEY = 'shiftmeter.v6';
+const STORAGE_KEY = 'shiftmeter.v8';
+const OLD_KEY = 'shiftmeter.v7';
 const COLORS = { amber:'#FFB020', green:'#34D399', red:'#F76B6B', teal:'#38BDF8', violet:'#C084FC', blue:'#60A5FA', lime:'#A3E635', muted:'#7C8894', hairline:'#242C35', bg:'#0B0E11' };
 const PALETTE = [COLORS.teal, COLORS.violet, COLORS.blue, '#F472B6', COLORS.lime, '#FB923C', '#818CF8', COLORS.red, COLORS.green, '#2DD4BF'];
 const DEFAULT_PLATFORMS = ['Zepto','Blinkit','Swiggy','Zomato'];
@@ -1076,6 +1118,21 @@ function setupCanvas(canvas){
   const ch = r.height>1 ? r.height : (parseInt(getComputedStyle(canvas).height)||130);
   canvas.width = cw*dpr; canvas.height = ch*dpr;
   const ctx = canvas.getContext('2d'); ctx.scale(dpr,dpr); return {ctx, w:cw, h:ch};
+}
+
+function drawRing(canvas, pct, color) {
+  const {ctx, w, h} = setupCanvas(canvas);
+  const cx = w/2, cy = h/2;
+  const r = Math.min(w,h)/2 - 3;
+  ctx.clearRect(0,0,w,h);
+  
+  ctx.beginPath(); ctx.strokeStyle = 'rgba(255,255,255,0.08)'; ctx.lineWidth = 3;
+  ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.stroke();
+  
+  if (pct > 0) {
+      ctx.beginPath(); ctx.strokeStyle = color; ctx.lineWidth = 3; ctx.lineCap = 'round';
+      ctx.arc(cx, cy, r, -Math.PI/2, -Math.PI/2 + (Math.PI*2)*pct); ctx.stroke();
+  }
 }
 
 function drawGaugeArc(canvas, margin){
@@ -1556,12 +1613,35 @@ function renderHomeView(){
   const net = tEarn - tExp;
   const margin = tEarn>0 ? (net/tEarn)*100 : 0;
 
-  // Render Missing Days Banner
+  // Anomaly Detection Flag
+  const anomalyHolder = document.getElementById('anomalyBannerHolder');
+  anomalyHolder.innerHTML = '';
+  if (entries.length > 5) {
+      const allAgg = aggregateByDate(entries);
+      const recent = allAgg[allAgg.length - 1]; 
+      
+      let sumFuelPerKm = 0, countFuel = 0;
+      let sumProf = 0;
+      for(let i=0; i<allAgg.length-1; i++) {
+          if(allAgg[i].dist > 0) { sumFuelPerKm += allAgg[i].fuel / allAgg[i].dist; countFuel++; }
+          sumProf += allAgg[i].profit;
+      }
+      const avgFuelPerKm = countFuel ? sumFuelPerKm / countFuel : 0;
+      const recentFuelPerKm = recent.dist > 0 ? recent.fuel / recent.dist : 0;
+      const avgProfit = allAgg.length>1 ? sumProf / (allAgg.length-1) : 0;
+      
+      if (avgFuelPerKm > 0 && recentFuelPerKm > avgFuelPerKm * 1.3) {
+         anomalyHolder.innerHTML = `<div class="anomaly-banner"><div class="anomaly-icon">🚨</div><div class="anomaly-text"><strong>High Fuel Cost Detected</strong> The most recent trip logged ${rupee(recentFuelPerKm, {dec:true})}/km, which is ${Math.round((recentFuelPerKm/avgFuelPerKm - 1)*100)}% higher than your historical average.</div></div>`;
+      } else if (avgProfit > 0 && recent.profit < avgProfit * 0.5 && recent.profit > 0) {
+         anomalyHolder.innerHTML = `<div class="anomaly-banner"><div class="anomaly-icon">⚠️</div><div class="anomaly-text"><strong>Low Profit Day</strong> Your most recent logged profit (${rupee(recent.profit)}) was significantly lower than your daily average (${rupee(avgProfit)}).</div></div>`;
+      }
+  }
+
+  // Missing Days Banner
   const missingHolder = document.getElementById('missingDaysBannerHolder');
   if (entries.length > 0) {
       let missingDates = [];
       const todayDate = new Date();
-      // Scan last 10 days
       for (let i = 1; i <= 10; i++) {
           let checkD = new Date(todayDate);
           checkD.setDate(todayDate.getDate() - i);
@@ -1570,9 +1650,8 @@ function renderHomeView(){
               missingDates.push(iso);
           }
       }
-      // Only show if there's a recent trip within those 10 days but also gaps
       const firstEver = entries[0].date;
-      missingDates = missingDates.filter(d => d >= firstEver); // don't count days before app usage began
+      missingDates = missingDates.filter(d => d >= firstEver); 
 
       if (missingDates.length > 0) {
           missingHolder.innerHTML = `
@@ -1591,7 +1670,37 @@ function renderHomeView(){
       missingHolder.innerHTML = '';
   }
 
-  // Render Recent Streak Calendar
+  // Hero Goal Ring
+  const heroGoalW = document.getElementById('heroGoalWidget');
+  if (state.goals.length > 0) {
+     const g = state.goals[0]; 
+     let current = 0;
+     const today = todayStr();
+     const dToday = new Date();
+     
+     if (g.type === 'daily_earn') {
+         current = entries.filter(e=>e.date===today).reduce((s,e)=>s+computeEntry(e).earnings,0);
+     } else if (g.type === 'weekly_earn') {
+         const d = new Date(); const day = d.getDay()||7; d.setDate(d.getDate() - day + 1);
+         current = entries.filter(e=>e.date>=toISO(d)).reduce((s,e)=>s+computeEntry(e).earnings,0);
+     } else if (g.type === 'monthly_earn') {
+         const startOfMonth = today.slice(0,7)+'-01';
+         current = entries.filter(e=>e.date>=startOfMonth).reduce((s,e)=>s+computeEntry(e).earnings,0);
+     } else if (g.type === 'savings') {
+         current = net; 
+     } else if (g.type === 'custom_purchase') {
+         current = Math.max(0, Math.min(net, g.target));
+     }
+
+     const pct = clamp(current / g.target, 0, 1);
+     heroGoalW.style.display = 'flex';
+     drawRing(document.getElementById('heroGoalCanvas'), pct, pct>=1 ? COLORS.green : COLORS.amber);
+     document.getElementById('heroGoalText').innerHTML = `${Math.round(pct*100)}%<br><span>to target</span>`;
+  } else {
+     heroGoalW.style.display = 'none';
+  }
+
+  // Recent Streak Calendar & Best/Worst Callout
   const streakWrap = document.getElementById('streakCalWrap');
   const DAYS_STREAK = 14;
   let streakHtml = '';
@@ -1612,6 +1721,25 @@ function renderHomeView(){
   }
   streakWrap.innerHTML = streakHtml;
   setTimeout(() => streakWrap.scrollLeft = streakWrap.scrollWidth, 50);
+
+  const bestWorstHolder = document.getElementById('bestWorstHolder');
+  const weekEntries = entries.filter(e => e.date >= toISO(new Date(Date.now() - 7*86400000)));
+  const weekAgg = aggregateByDate(weekEntries);
+  if (weekAgg.length >= 2) {
+      let best = weekAgg[0], worst = weekAgg[0];
+      weekAgg.forEach(a => {
+          if (a.profit > best.profit) best = a;
+          if (a.profit < worst.profit) worst = a;
+      });
+      bestWorstHolder.innerHTML = `
+          <div class="best-worst-row">
+              <div class="bw-card"><i style="color:var(--green)">🔥</i><span>${fmtDateShort(best.date)}</span><span class="bw-val pos">${rupee(best.profit)}</span></div>
+              <div class="bw-card"><i style="color:var(--red)">📉</i><span>${fmtDateShort(worst.date)}</span><span class="bw-val ${worst.profit>=0?'pos':'neg'}">${rupee(worst.profit)}</span></div>
+          </div>
+      `;
+  } else {
+      bestWorstHolder.innerHTML = '';
+  }
 
   // Chart 1: Gauge
   const gm = document.getElementById('gaugeMargin'), gs = document.getElementById('gaugeSub');
@@ -1795,12 +1923,42 @@ window.completePurchaseGoal = async function(id) {
 
 function renderTodayStats(entries){
   const grid = document.getElementById('statGrid'), chips = document.getElementById('platformTodayChips'), lbl = document.getElementById('quickStatsLabel');
-  if(!entries.length){ grid.innerHTML = `<div class="stat-empty">No trips logged.</div>`; chips.innerHTML=''; return; }
+  const velHolder = document.getElementById('velocityHolder');
+  
+  if(!entries.length){ 
+    grid.innerHTML = `<div class="stat-empty">No trips logged.</div>`; 
+    chips.innerHTML=''; velHolder.innerHTML=''; return; 
+  }
   
   const last = entries[entries.length-1];
   lbl.textContent = last.date === todayStr() ? 'Today' : `Most recent (${fmtDateShort(last.date)})`;
   const c = computeEntry(last);
   const rec7 = entries.slice(-7);
+
+  // Velocity Calculation
+  let allEarn = 0, allHrs = 0;
+  entries.forEach(e => { const c = computeEntry(e); allEarn += c.earnings; allHrs += c.durationHours; });
+  const avgVel = allHrs > 0 ? allEarn / allHrs : 0;
+
+  const todayEntries = entries.filter(e => e.date === last.date);
+  let tEarn = 0, tHrs = 0;
+  todayEntries.forEach(e => { const c = computeEntry(e); tEarn += c.earnings; tHrs += c.durationHours; });
+  const tVel = tHrs > 0 ? tEarn / tHrs : 0;
+
+  let velHtml = '';
+  if (tHrs > 0) {
+      if (avgVel > 0) {
+          const pct = ((tVel - avgVel) / avgVel) * 100;
+          const trClass = pct >= 0 ? 'pos' : 'neg';
+          const trTxt = (pct >= 0 ? '▲ ' : '▼ ') + Math.abs(pct).toFixed(0) + '%';
+          velHtml = `<div class="velocity-row"><span>Earnings Velocity</span> <div><strong>${rupee(tVel)}/hr</strong> <span class="trend-badge ${trClass}">${trTxt} vs avg</span></div></div>`;
+      } else {
+          velHtml = `<div class="velocity-row"><span>Earnings Velocity</span> <strong>${rupee(tVel)}/hr</strong></div>`;
+      }
+  } else {
+      velHtml = `<div class="velocity-row" style="justify-content:center;">Log start/end times to see velocity</div>`;
+  }
+  velHolder.innerHTML = velHtml;
 
   grid.innerHTML = `
     <div class="card stat-card"><div class="stat-title">Earnings</div><div class="stat-value" style="color:var(--green)">${rupee(c.earnings)}</div><canvas class="spark" id="spEarn"></canvas></div>
@@ -1834,7 +1992,16 @@ function renderLedgerView(){
   }
   
   const aggData = aggregateByDate(entries);
+  
+  // Track best and worst dates for highlights
+  let bestDate = null, worstDate = null;
   if(aggData.length) {
+      let maxP = -Infinity, minP = Infinity;
+      aggData.forEach(a => {
+          if(a.profit > maxP) { maxP = a.profit; bestDate = a.date; }
+          if(a.profit < minP) { minP = a.profit; worstDate = a.date; }
+      });
+
       const comboData = aggData.map((a, i) => {
           let sum = 0;
           let count = 0;
@@ -1851,6 +2018,16 @@ function renderLedgerView(){
       drawMultiLineChart(document.getElementById('cumulativeProfitCanvas'), aggData.map(a=>a.date), [
           { label: 'Cumulative Profit', color: COLORS.green, values: cumVals }
       ]);
+      
+      // Expense-to-Revenue Ratio Chart
+      const expRevVals = aggData.map(a => a.earnings > 0 ? Math.round((a.expenses / a.earnings) * 100) : 0);
+      drawMultiLineChart(document.getElementById('expRevRatioCanvas'), aggData.map(a=>a.date), [
+          { label: 'Exp/Rev %', color: COLORS.amber, isPct: true, values: expRevVals }
+      ]);
+  } else {
+      drawProfitCombo(document.getElementById('dailyProfitBarCanvas'), []);
+      drawMultiLineChart(document.getElementById('cumulativeProfitCanvas'), [], []);
+      drawMultiLineChart(document.getElementById('expRevRatioCanvas'), [], []);
   }
 
   let fares=0, tips=0, fuel=0, other=0;
@@ -1907,19 +2084,48 @@ function renderLedgerView(){
     `).join('');
   } else ldSec.style.display = 'none';
 
-  const allRev = [...entries].reverse();
-  const histList = document.getElementById('ledgerHistoryList');
-  if(!allRev.length) histList.innerHTML = `<div class="stat-empty">No trips in this range.</div>`;
-  else {
-    histList.innerHTML = allRev.slice(0, 10).map(e=>{
-      const c = computeEntry(e);
-      return `<div class="hist-row" onclick="openEntrySheet('${e.id}')">
-        <div class="hist-date">${fmtDateShort(e.date)}</div>
-        <div class="hist-mid"><div class="hist-earn">${rupee(c.earnings)}</div><div class="hist-meta">${c.distance}km · ${e.vehicleId==='v1'?'Primary':(state.vehicles.find(v=>v.id===e.vehicleId)||{}).name||'Veh'}</div></div>
-        <div class="hist-profit ${c.profit>=0?'pos':'neg'}">${c.profit>=0?'+':'-'}${rupee(Math.abs(c.profit))}</div>
-      </div>`;
-    }).join('');
+  const listEl = document.getElementById('ledgerHistoryList');
+  const searchInput = document.getElementById('ledgerSearchInput');
+  
+  // Clone and replace input to quickly clear old event listeners
+  const newSearchInput = searchInput.cloneNode(true);
+  searchInput.parentNode.replaceChild(newSearchInput, searchInput);
+
+  function updateHistoryList() {
+    const q = newSearchInput.value.toLowerCase();
+    let filtered = entries;
+    if(q) {
+        filtered = entries.filter(e => {
+            const vName = (state.vehicles.find(v=>v.id===e.vehicleId)||{}).name || '';
+            const plats = (e.platformEarnings||[]).map(p=>p.platform).join(' ');
+            const note = e.note || '';
+            return vName.toLowerCase().includes(q) || plats.toLowerCase().includes(q) || note.toLowerCase().includes(q);
+        });
+    }
+    const rev = [...filtered].reverse();
+    if(!rev.length) {
+        listEl.innerHTML = `<div class="stat-empty">No trips match your criteria.</div>`;
+    } else {
+        listEl.innerHTML = rev.slice(0, 100).map(e => {
+            const c = computeEntry(e);
+            let badge = '';
+            if(e.date === bestDate && c.profit > 0) badge = '<span class="trend-badge pos" style="margin-left:6px;">🏆 Best Day</span>';
+            else if(e.date === worstDate && c.profit < 0) badge = '<span class="trend-badge neg" style="margin-left:6px;">📉 Worst Day</span>';
+            
+            return `<div class="hist-row" onclick="openEntrySheet('${e.id}')">
+              <div class="hist-date">${fmtDateShort(e.date)}</div>
+              <div class="hist-mid">
+                <div class="hist-earn" style="display:flex; align-items:center;">${rupee(c.earnings)}${badge}</div>
+                <div class="hist-meta">${c.distance}km · ${e.vehicleId==='v1'?'Primary':(state.vehicles.find(v=>v.id===e.vehicleId)||{}).name||'Veh'} ${e.note?'· '+esc(e.note):''}</div>
+              </div>
+              <div class="hist-profit ${c.profit>=0?'pos':'neg'}">${c.profit>=0?'+':'-'}${rupee(Math.abs(c.profit))}</div>
+            </div>`;
+        }).join('');
+    }
   }
+
+  newSearchInput.addEventListener('input', updateHistoryList);
+  updateHistoryList();
 }
 
 function renderFuelView(){
@@ -2114,7 +2320,6 @@ function renderInsightsView(){
   const pData = Object.keys(pMap).map(k=>({k, v:pMap[k]})).filter(x=>x.v>0).sort((a,b)=>b.v-a.v);
   renderDonutHelper(document.getElementById('platformDonutHolder'), pData, 'No platform earnings.');
   
-  // Expense Trends (Stacked Area)
   const aggData = aggregateByDate(entries);
   if(aggData.length) {
     const allCategories = new Set(['Fuel']);
@@ -2661,7 +2866,7 @@ function setupDynamicPWA(){
     
     if('serviceWorker' in navigator){
       const swCode = `
-        const CACHE_NAME = 'shiftmeter-v7';
+        const CACHE_NAME = 'shiftmeter-v8';
         self.addEventListener('install', e => { self.skipWaiting(); e.waitUntil(caches.open(CACHE_NAME).then(c => c.add('.'))); });
         self.addEventListener('fetch', e => { e.respondWith(caches.match(e.request).then(res => res || fetch(e.request))); });
       `;
