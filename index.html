@@ -1015,6 +1015,11 @@ canvas.donut{ width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
     <div class="field"><label>Target Amount (₹)</label><input type="number" id="gTarget" step="10" placeholder="e.g. 1000"></div>
     <div id="goalSuggestWrap" class="helper-text" style="color:var(--amber); cursor:pointer; display:none;">💡 Suggestion: ₹<span id="gSuggestVal"></span> based on past 30 days. Tap to use.</div>
     <div class="field" id="gNameField" style="display:none;"><label>Goal Name</label><input type="text" id="gName" placeholder="e.g. Bike EMI, New Phone"></div>
+    <div class="field" id="gTargetDateField" style="display:none;">
+      <label>Target Date (optional)</label>
+      <input type="date" id="gTargetDate">
+      <div class="helper-text" style="margin-top:6px;">Set a deadline (e.g. "buy it by Diwali") and your goal card will show exactly how much you need to save per day to make it, and whether you're on pace.</div>
+    </div>
     <div class="sheet-actions"><button type="button" class="btn btn-danger" id="deleteGoalBtn" style="display:none;">🗑</button><button type="button" class="btn btn-primary" id="saveGoalBtn">Save Goal</button></div>
   </div>
 </div>
@@ -2550,6 +2555,10 @@ function renderGoalsWidget(entries, netLifetime){
             subtitle = `Need ${rupee(expected - current)} more to catch up`;
         }
     }
+    if ((g.type === 'savings' || g.type === 'custom_purchase') && g.targetDate) {
+        const dl = glGoalDeadlineInfo(g.targetDate, Math.max(0, g.target-current));
+        if(dl){ paceHtml = `<span class="trend-badge ${dl.badge}">${dl.badgeText}</span>`; subtitle = dl.text; }
+    }
 
     const pct = clamp((current/g.target)*100, 0, 100);
     const color = pct>=100 ? 'var(--green)' : 'var(--amber)';
@@ -3878,18 +3887,20 @@ document.getElementById('deleteEntryBtn').onclick = async ()=>{
 const goalOverlay = document.getElementById('goalOverlay');
 function openGoalSheet(id){
   editingId.goal = id;
-  const sW = document.getElementById('goalSuggestWrap'), gT = document.getElementById('gTarget'), gN = document.getElementById('gNameField');
+  const sW = document.getElementById('goalSuggestWrap'), gT = document.getElementById('gTarget'), gN = document.getElementById('gNameField'), gTD = document.getElementById('gTargetDateField'), gTDI = document.getElementById('gTargetDate');
   if(id){
     const g = state.goals.find(x=>x.id===id);
-    document.getElementById('gType').value = g.type; gT.value = g.target; document.getElementById('gName').value = g.name||'';
+    document.getElementById('gType').value = g.type; gT.value = g.target; document.getElementById('gName').value = g.name||''; gTDI.value = g.targetDate||'';
     document.getElementById('deleteGoalBtn').style.display='block'; sW.style.display='none';
   } else {
-    document.getElementById('gType').value = 'daily_earn'; gT.value = ''; document.getElementById('gName').value = '';
+    document.getElementById('gType').value = 'daily_earn'; gT.value = ''; document.getElementById('gName').value = ''; gTDI.value = '';
     document.getElementById('deleteGoalBtn').style.display='none'; updateGoalSuggest();
   }
   document.getElementById('gType').onchange = ()=>{
     const v = document.getElementById('gType').value;
-    gN.style.display = (v === 'savings' || v === 'custom_purchase') ? 'block' : 'none';
+    const showExtra = (v === 'savings' || v === 'custom_purchase');
+    gN.style.display = showExtra ? 'block' : 'none';
+    gTD.style.display = showExtra ? 'block' : 'none';
     if(!id) updateGoalSuggest();
   };
   document.getElementById('gType').dispatchEvent(new Event('change'));
@@ -3922,7 +3933,9 @@ function updateGoalSuggest(){
 document.getElementById('manageGoalsLink').onclick = ()=> openGoalSheet(null);
 document.getElementById('goalClose').onclick = ()=> goalOverlay.classList.remove('open');
 document.getElementById('saveGoalBtn').onclick = async ()=>{
-  const payload = { id: editingId.goal||uid(), type: document.getElementById('gType').value, target: Number(document.getElementById('gTarget').value)||0, name: document.getElementById('gName').value };
+  const gTypeVal = document.getElementById('gType').value;
+  const targetDateVal = document.getElementById('gTargetDate').value;
+  const payload = { id: editingId.goal||uid(), type: gTypeVal, target: Number(document.getElementById('gTarget').value)||0, name: document.getElementById('gName').value, targetDate: (gTypeVal==='savings'||gTypeVal==='custom_purchase') ? (targetDateVal||null) : null };
   if(payload.target<=0) { await showAlert('Error', 'Enter a valid target amount above 0.'); return; }
   if(editingId.goal) state.goals = state.goals.map(x=> x.id===editingId.goal ? payload : x);
   else state.goals.push(payload);
@@ -4882,6 +4895,30 @@ function glProjectedDate(remaining, pace){
   return { text:`Around ${d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})} (~${days} day${days===1?'':'s'} at current pace)`, ok:true };
 }
 
+function glGoalDeadlineInfo(targetDate, remaining){
+  if(!targetDate) return null;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const target = parseLocalDate(targetDate);
+  const daysLeft = Math.ceil((target-today)/86400000);
+
+  if(remaining<=0){
+    return { badge:'pos', badgeText:'Goal Met! 🎉', text:`Reached before the ${fmtDateShort(targetDate)} target.` };
+  }
+  if(daysLeft<=0){
+    return { badge:'neg', badgeText:'Deadline Passed', text:`Target date ${fmtDateShort(targetDate)} has passed — still need ${rupee(remaining)}.` };
+  }
+
+  const requiredDaily = remaining/daysLeft;
+  const actualPace = glDailyProfitPace();
+  const onTrack = actualPace >= requiredDaily;
+
+  if(onTrack){
+    return { badge:'pos', badgeText:'On Track', text:`Save ~${rupee(requiredDaily,{dec:true})}/day to hit it by ${fmtDateShort(targetDate)} (${daysLeft} day${daysLeft===1?'':'s'} left).` };
+  }
+  const shortfall = requiredDaily - actualPace;
+  return { badge:'neg', badgeText:'Behind Pace', text:`Need ~${rupee(requiredDaily,{dec:true})}/day — you're averaging ~${rupee(actualPace,{dec:true})}/day. Find ${rupee(shortfall,{dec:true})}/day more to hit ${fmtDateShort(targetDate)} (${daysLeft} day${daysLeft===1?'':'s'} left).` };
+}
+
 function renderGoalsDebtView(){
   const loans = glLoans();
 
@@ -4937,12 +4974,15 @@ function renderGoalsDebtView(){
       else { current = Math.max(0, Math.min(unallocatedProfit, g.target)); unallocatedProfit -= current; }
       const remaining = Math.max(0, g.target - current);
       const pct = clamp((current/g.target)*100, 0, 100);
-      const proj = glProjectedDate(remaining, pace);
+      const dl = glGoalDeadlineInfo(g.targetDate, remaining);
+      const footerText = dl ? dl.text : glProjectedDate(remaining, pace).text;
+      const footerColor = dl ? (dl.badge==='pos' ? 'var(--green)' : 'var(--red)') : (glProjectedDate(remaining, pace).ok ? 'var(--muted)' : 'var(--red)');
+      const dateBadge = g.targetDate ? `<span class="goal-meta" style="margin-left:8px;">🎯 ${fmtDateShort(g.targetDate)}</span>` : '';
       return `
         <div class="goal-item" onclick="openGoalSheet('${g.id}')">
-          <div class="goal-head"><span class="goal-name">${esc(g.name || (g.type==='savings'?'Break-even':'Purchase Goal'))}</span><span class="goal-meta">${rupee(current)} / ${rupeeCompact(g.target)}</span></div>
+          <div class="goal-head"><span class="goal-name">${esc(g.name || (g.type==='savings'?'Break-even':'Purchase Goal'))}${dateBadge}</span><span class="goal-meta">${rupee(current)} / ${rupeeCompact(g.target)}</span></div>
           <div class="goal-track"><div class="goal-fill" style="width:${pct}%; background:${pct>=100?'var(--green)':'var(--amber)'};"></div></div>
-          <div class="goal-footer" style="align-items:center;"><span style="color:${proj.ok?'var(--muted)':'var(--red)'};">${esc(proj.text)}</span></div>
+          <div class="goal-footer" style="align-items:center;"><span style="color:${footerColor};">${esc(footerText)}</span></div>
         </div>
       `;
     }).join('');
