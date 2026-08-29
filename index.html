@@ -168,6 +168,14 @@ canvas.spark{ width:100%; height:26px; display:block; margin-top:6px; cursor:poi
 .analysis-highlight .info{ flex:1; }
 .analysis-highlight .info-label{ font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; font-family:var(--font-display); }
 .analysis-highlight .info-val{ font-size:15px; font-weight:600; color:var(--text); font-family:var(--font-mono); margin-top:3px; }
+.smart-insight-card{ display:flex; gap:12px; align-items:flex-start; padding:14px; border-radius:var(--radius-sm); background:var(--panel-2); border:1px solid var(--hairline); border-left:3px solid var(--muted); margin-bottom:10px; }
+.smart-insight-card:last-child{ margin-bottom:0; }
+.smart-insight-card .icon{ font-size:18px; line-height:1.3; flex-shrink:0; }
+.smart-insight-card .text{ font-size:12.5px; line-height:1.5; color:var(--text); }
+.smart-insight-card.tone-pos{ border-left-color:var(--green); }
+.smart-insight-card.tone-neg{ border-left-color:var(--red); }
+.smart-insight-card.tone-record{ border-left-color:var(--amber); background:rgba(255,176,32,0.07); }
+.smart-insight-card.tone-neutral{ border-left-color:var(--teal); }
 
 .tabs{ display:flex; gap:8px; }
 .tab{ flex:1; text-align:center; padding:8px 0; border-radius:10px; background:var(--panel-2); border:1px solid var(--hairline); font-family:var(--font-mono); font-size:12px; color:var(--muted); cursor:pointer; transition:all 0.2s; }
@@ -631,6 +639,11 @@ canvas.donut{ width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
       </div>
     </div>
     
+    <div class="section" id="smartInsightsSection" style="display:none;">
+      <div class="section-head"><div class="section-title">Smart Insights</div></div>
+      <div id="smartInsightsHolder"></div>
+    </div>
+
     <div class="section" id="analysisHighlights"></div>
     
     <div class="section" id="breakEvenSection" style="display:none;"></div>
@@ -2876,8 +2889,187 @@ function renderFuelView(){
   ].filter(x=>x.v>0), 'No expenses recorded.');
 }
 
+/* ===================== SMART INSIGHTS ===================== */
+function cmpLongestStreakInfo(agg){
+  let longestStreak=0, currStreak=0, lastDate=null, maxEnd=null, curStart=null, maxStart=null;
+  agg.forEach(a=>{
+    if(lastDate){
+      const diffDays = Math.round((parseLocalDate(a.date)-parseLocalDate(lastDate))/86400000);
+      if(diffDays===1){ currStreak++; } else { currStreak=1; curStart=a.date; }
+    } else { currStreak=1; curStart=a.date; }
+    if(currStreak>longestStreak){ longestStreak=currStreak; maxEnd=a.date; maxStart=curStart; }
+    lastDate=a.date;
+  });
+  return { longestStreak, maxEnd, maxStart };
+}
+
+function generateTrendInsights(range){
+  const insights = [];
+  if(range==='all') return insights;
+  const days = Number(range);
+  const curEnd = new Date();
+  const curStart = new Date(curEnd); curStart.setDate(curStart.getDate()-days+1);
+  const prevEnd = new Date(curStart); prevEnd.setDate(prevEnd.getDate()-1);
+  const prevStart = new Date(prevEnd); prevStart.setDate(prevStart.getDate()-days+1);
+  const cur = cmpComputeMetrics(toISO(curStart), toISO(curEnd));
+  const prev = cmpComputeMetrics(toISO(prevStart), toISO(prevEnd));
+  if(!cur.hasData || !prev.hasData) return insights;
+
+  // Net profit trend, with dominant driver (extra trips vs earnings/trip change)
+  const netDeltaPct = prev.netProfit !== 0 ? ((cur.netProfit-prev.netProfit)/Math.abs(prev.netProfit))*100 : (cur.netProfit>0?100:0);
+  if(Math.abs(netDeltaPct) >= 5){
+    const tripDelta = cur.tripCount - prev.tripCount;
+    const volumeEffect = tripDelta * (prev.earnPerTrip||0);
+    const valueEffect = cur.tripCount * ((cur.earnPerTrip||0)-(prev.earnPerTrip||0));
+    let driver = '';
+    if(Math.abs(volumeEffect) >= Math.abs(valueEffect) && tripDelta !== 0){
+      driver = `, driven mainly by ${Math.abs(tripDelta)} ${tripDelta>0?'extra':'fewer'} trip${Math.abs(tripDelta)===1?'':'s'}`;
+    } else if(Math.abs(valueEffect) > 1){
+      driver = `, driven mainly by ${valueEffect>=0?'higher':'lower'} earnings per trip (${rupee(prev.earnPerTrip,{dec:true})} → ${rupee(cur.earnPerTrip,{dec:true})})`;
+    }
+    insights.push({
+      icon: netDeltaPct>=0 ? '📈':'📉',
+      tone: netDeltaPct>=0 ? 'pos':'neg',
+      text: `Net profit is ${netDeltaPct>=0?'up':'down'} ${Math.abs(netDeltaPct).toFixed(0)}% vs the previous ${days} days${driver}.`
+    });
+  }
+
+  // Margin trend, with dominant cost driver
+  const marginDeltaPts = cur.margin - prev.margin;
+  if(Math.abs(marginDeltaPts) >= 3){
+    const otherCostPerKm = m => m.distance>0 ? (m.costPerKm - m.fuelCostPerKm) : 0;
+    const fuelDelta = cur.fuelCostPerKm - prev.fuelCostPerKm;
+    const otherDelta = otherCostPerKm(cur) - otherCostPerKm(prev);
+    let detail = '';
+    if(Math.abs(fuelDelta) >= Math.abs(otherDelta) && Math.abs(fuelDelta) > 0.01){
+      detail = ` — fuel cost/km ${fuelDelta>=0?'rose':'fell'} from ${rupee(prev.fuelCostPerKm,{dec:true})} to ${rupee(cur.fuelCostPerKm,{dec:true})}`;
+    } else if(Math.abs(otherDelta) > 0.01){
+      detail = ` — other cost/km ${otherDelta>=0?'rose':'fell'} from ${rupee(otherCostPerKm(prev),{dec:true})} to ${rupee(otherCostPerKm(cur),{dec:true})}`;
+    }
+    insights.push({
+      icon: marginDeltaPts>=0?'✅':'⚠️',
+      tone: marginDeltaPts>=0?'pos':'neg',
+      text: `Margin ${marginDeltaPts>=0?'rose':'dropped'} ${Math.abs(marginDeltaPts).toFixed(1)}pts vs the previous ${days} days${detail}.`
+    });
+  }
+
+  return insights;
+}
+
+function generateRecordInsights(range){
+  const insights = [];
+  const allEntries = getActiveEntries();
+  if(!allEntries.length) return insights;
+
+  let rangeStartISO;
+  if(range !== 'all'){
+    const d = new Date(); d.setDate(d.getDate()-Number(range)+1);
+    rangeStartISO = toISO(d);
+  } else {
+    const d = new Date(); d.setDate(d.getDate()-29);
+    rangeStartISO = toISO(d);
+  }
+  const priorEntries = allEntries.filter(e=>e.date < rangeStartISO);
+  const recentEntries = allEntries.filter(e=>e.date >= rangeStartISO);
+  if(priorEntries.length < 3 || !recentEntries.length) return insights;
+
+  const priorAgg = aggregateByDate(priorEntries);
+  const recentAgg = aggregateByDate(recentEntries);
+  const priorBestGross = Math.max(0, ...priorAgg.map(a=>a.earnings));
+  const priorBestProfit = Math.max(0, ...priorAgg.map(a=>a.profit));
+  const priorBestDist = Math.max(0, ...priorAgg.map(a=>a.dist));
+
+  const recentBestGross = recentAgg.reduce((best,a)=> !best || a.earnings>best.earnings ? a : best, null);
+  const recentBestProfit = recentAgg.reduce((best,a)=> !best || a.profit>best.profit ? a : best, null);
+  const recentBestDist = recentAgg.reduce((best,a)=> !best || a.dist>best.dist ? a : best, null);
+
+  if(recentBestGross && priorBestGross>0 && recentBestGross.earnings > priorBestGross){
+    insights.push({ icon:'🎉', tone:'record', text:`New record: Best single-day gross earnings — ${rupee(recentBestGross.earnings)} on ${fmtDateShort(recentBestGross.date)}, beating your previous best of ${rupee(priorBestGross)}.` });
+  }
+  if(recentBestProfit && priorBestProfit>0 && recentBestProfit.profit > priorBestProfit){
+    insights.push({ icon:'🏆', tone:'record', text:`New record: Best single-day net profit — ${rupee(recentBestProfit.profit)} on ${fmtDateShort(recentBestProfit.date)}, beating your previous best of ${rupee(priorBestProfit)}.` });
+  }
+  if(recentBestDist && priorBestDist>0 && recentBestDist.dist > priorBestDist){
+    insights.push({ icon:'🛵', tone:'record', text:`New record: Most distance in a day — ${recentBestDist.dist.toFixed(1)} km on ${fmtDateShort(recentBestDist.date)}, beating your previous best of ${priorBestDist.toFixed(1)} km.` });
+  }
+
+  const priorStreak = cmpLongestStreakInfo(priorAgg).longestStreak;
+  const allStreak = cmpLongestStreakInfo(aggregateByDate(allEntries));
+  if(allStreak.longestStreak > priorStreak && allStreak.longestStreak >= 2 && allStreak.maxEnd >= rangeStartISO){
+    insights.push({ icon:'🔥', tone:'record', text:`New record: Longest logging streak — ${allStreak.longestStreak} days in a row (through ${fmtDateShort(allStreak.maxEnd)}), beating your previous streak of ${priorStreak} day${priorStreak===1?'':'s'}.` });
+  }
+
+  return insights;
+}
+
+function generateSeasonalityInsight(){
+  const allEntries = getActiveEntries();
+  if(allEntries.length < 30) return null;
+  const agg = aggregateByDate(allEntries);
+  if(agg.length < 30) return null;
+  const spanDays = (parseLocalDate(agg[agg.length-1].date) - parseLocalDate(agg[0].date)) / 86400000;
+  if(spanDays < 75) return null;
+
+  const todayObj = new Date();
+  const curMonthIdx = todayObj.getMonth();
+  const curYearMonthPrefix = toISO(todayObj).slice(0,7);
+
+  const byMonth = {};
+  let overallSum = 0, overallCount = 0;
+  agg.forEach(a=>{
+    if(a.date.slice(0,7) === curYearMonthPrefix) return;
+    const m = parseLocalDate(a.date).getMonth();
+    if(!byMonth[m]) byMonth[m] = { sum:0, count:0 };
+    byMonth[m].sum += a.earnings; byMonth[m].count++;
+    overallSum += a.earnings; overallCount++;
+  });
+  if(overallCount < 20) return null;
+
+  const overallAvgDaily = overallSum / overallCount;
+  const curMonthHist = byMonth[curMonthIdx];
+  if(!curMonthHist || curMonthHist.count < 5) return null;
+
+  const monthAvgDaily = curMonthHist.sum / curMonthHist.count;
+  const seasonalDeltaPct = ((monthAvgDaily - overallAvgDaily) / overallAvgDaily) * 100;
+  if(Math.abs(seasonalDeltaPct) < 5) return null;
+
+  const thisMonthEntries = allEntries.filter(e=>e.date.startsWith(curYearMonthPrefix));
+  if(!thisMonthEntries.length) return null;
+  const thisMonthAgg = aggregateByDate(thisMonthEntries);
+  const thisMonthAvgDaily = thisMonthAgg.reduce((s,a)=>s+a.earnings,0) / thisMonthAgg.length;
+
+  const trackingPct = ((thisMonthAvgDaily - monthAvgDaily) / monthAvgDaily) * 100;
+  const trackingDir = trackingPct >= 0 ? 'above' : 'below';
+  const monthName = todayObj.toLocaleDateString('en-IN', { month:'long' });
+
+  return {
+    icon: seasonalDeltaPct<0 ? '🍂' : '☀️',
+    tone: 'neutral',
+    text: `Your earnings typically ${seasonalDeltaPct<0?'dip':'rise'} ${Math.abs(seasonalDeltaPct).toFixed(0)}% in ${monthName} — this year is tracking ${trackingDir} that pattern (${trackingPct>=0?'+':''}${trackingPct.toFixed(0)}% vs the usual ${monthName}).`
+  };
+}
+
+function renderSmartInsights(range){
+  const insights = [...generateTrendInsights(range), ...generateRecordInsights(range)];
+  const seasonal = generateSeasonalityInsight();
+  if(seasonal) insights.push(seasonal);
+
+  const section = document.getElementById('smartInsightsSection');
+  const holder = document.getElementById('smartInsightsHolder');
+  if(!insights.length){ section.style.display = 'none'; holder.innerHTML = ''; return; }
+  section.style.display = 'block';
+  holder.innerHTML = insights.map(ins => `
+    <div class="smart-insight-card tone-${ins.tone}">
+      <div class="icon">${ins.icon}</div>
+      <div class="text">${ins.text}</div>
+    </div>
+  `).join('');
+}
+/* =================== END SMART INSIGHTS =================== */
+
 function renderInsightsView(){
   const range = ranges.insights;
+  renderSmartInsights(range);
   let entries = getActiveEntries();
   if(range !== 'all'){
     const st = toISO(new Date(Date.now() - (Number(range)-1)*86400000));
