@@ -316,6 +316,34 @@ canvas.donut{ width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
 .vc-cost-table td{ padding:7px 0; border-bottom:1px dashed var(--hairline); }
 .vc-cost-table tr:last-child td{ border-bottom:none; }
 .vc-cost-table .val{ text-align:right; font-weight:600; }
+
+/* COMPARE PAGE */
+.cmp-chips{ display:flex; gap:8px; flex-wrap:wrap; }
+.cmp-chip{ padding:8px 12px; border-radius:14px; background:var(--panel-2); border:1px solid var(--hairline); font-size:11px; font-family:var(--font-mono); color:var(--muted); cursor:pointer; user-select:none; }
+.cmp-chip.active{ background:rgba(56,189,248,0.14); border-color:rgba(56,189,248,0.55); color:var(--teal); }
+.cmp-chip.disabled{ opacity:0.4; pointer-events:none; }
+.cmp-period-strip{ display:flex; gap:8px; flex-wrap:wrap; }
+.cmp-period-badge{ flex:1; min-width:120px; padding:10px 12px; border-radius:var(--radius-sm); background:var(--panel-2); border:1px solid var(--hairline); }
+.cmp-period-badge .dot{ width:8px; height:8px; border-radius:50%; display:inline-block; margin-right:6px; }
+.cmp-period-badge .lbl{ font-family:var(--font-display); font-weight:600; font-size:12px; }
+.cmp-period-badge .rng{ font-family:var(--font-mono); font-size:10px; color:var(--muted); margin-top:4px; }
+.cmp-table-wrap{ overflow-x:auto; }
+.cmp-table{ width:100%; font-family:var(--font-mono); font-size:11.5px; border-collapse:collapse; min-width:340px; }
+.cmp-table th{ text-align:right; padding:9px 8px; font-size:9.5px; text-transform:uppercase; letter-spacing:0.4px; color:var(--muted); border-bottom:1px solid var(--hairline); white-space:nowrap; }
+.cmp-table th:first-child, .cmp-table td:first-child{ text-align:left; color:var(--text); font-size:11px; font-family:var(--font-body); }
+.cmp-table td{ padding:9px 8px; border-bottom:1px dashed var(--hairline); text-align:right; white-space:nowrap; vertical-align:top; }
+.cmp-table tr:last-child td{ border-bottom:none; }
+.cmp-highlight-row{ display:flex; gap:8px; overflow-x:auto; padding-bottom:2px; }
+.cmp-highlight-card{ flex:0 0 auto; min-width:150px; padding:12px 14px; border-radius:var(--radius-sm); background:var(--panel-2); border:1px solid var(--hairline); }
+.cmp-highlight-card .lbl{ font-size:9.5px; color:var(--muted); text-transform:uppercase; letter-spacing:0.4px; font-family:var(--font-display); }
+.cmp-highlight-card .val{ font-family:var(--font-mono); font-weight:600; font-size:13px; margin-top:6px; }
+.cmp-mix-row{ margin-bottom:12px; }
+.cmp-mix-row:last-child{ margin-bottom:0; }
+.cmp-mix-head{ display:flex; justify-content:space-between; font-size:11.5px; margin-bottom:6px; }
+.cmp-mix-bars{ display:flex; flex-direction:column; gap:4px; }
+.cmp-mix-bar-track{ height:8px; border-radius:4px; background:var(--hairline); overflow:hidden; }
+.cmp-mix-bar-fill{ height:100%; border-radius:4px; }
+.custom-range-picker.cmp-double{ margin-top:0; }
 </style>
 </head>
 <body>
@@ -695,6 +723,62 @@ canvas.donut{ width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
     </div>
   </div>
 
+  <div class="view" data-view="compare">
+    <div class="section">
+      <div class="tabs" id="cmpModeTabs">
+        <div class="tab active" data-mode="week">Week</div>
+        <div class="tab" data-mode="month">Month</div>
+        <div class="tab" data-mode="rolling">Rolling</div>
+        <div class="tab" data-mode="custom">Custom</div>
+      </div>
+    </div>
+
+    <div class="section" id="cmpWeekControls">
+      <div class="section-head"><div class="section-title">Pick 2–4 weeks to compare</div></div>
+      <div class="cmp-chips" id="cmpWeekChips">
+        <div class="cmp-chip active" data-key="thisWeek">This Week</div>
+        <div class="cmp-chip active" data-key="lastWeek">Last Week</div>
+        <div class="cmp-chip" data-key="sameWeekLastMonth">Same Week Last Month</div>
+        <div class="cmp-chip" data-key="sameWeekLastYear">Same Week Last Year</div>
+      </div>
+    </div>
+
+    <div class="section" id="cmpMonthControls" style="display:none;">
+      <div class="section-head"><div class="section-title">Pick months to compare</div></div>
+      <div class="cmp-chips" id="cmpMonthChips">
+        <div class="cmp-chip active" data-key="thisMonth">This Month</div>
+        <div class="cmp-chip active" data-key="lastMonth">Last Month</div>
+        <div class="cmp-chip" data-key="sameMonthLastYear">Same Month Last Year</div>
+      </div>
+    </div>
+
+    <div class="section" id="cmpRollingControls" style="display:none;">
+      <div class="section-head"><div class="section-title">Rolling window</div></div>
+      <div class="tabs" id="cmpRollTabs">
+        <div class="tab active" data-roll="7">7 Day</div>
+        <div class="tab" data-roll="30">30 Day</div>
+      </div>
+      <div class="helper-text" style="margin-top:8px; color:var(--muted); font-size:11px;">Compares the current window to the window immediately before it. Updates automatically every day.</div>
+    </div>
+
+    <div class="section" id="cmpCustomControls" style="display:none;">
+      <div class="section-head"><div class="section-title">Period A</div></div>
+      <div class="custom-range-picker cmp-double active">
+        <div class="field" style="margin-top:0;"><label>Start</label><input type="date" id="cmpCustomAStart"></div>
+        <div class="field" style="margin-top:0;"><label>End</label><input type="date" id="cmpCustomAEnd"></div>
+      </div>
+      <div class="section-head" style="margin-top:16px;"><div class="section-title">Period B</div></div>
+      <div class="custom-range-picker cmp-double active">
+        <div class="field" style="margin-top:0;"><label>Start</label><input type="date" id="cmpCustomBStart"></div>
+        <div class="field" style="margin-top:0;"><label>End</label><input type="date" id="cmpCustomBEnd"></div>
+      </div>
+      <button type="button" class="btn btn-primary" id="cmpCustomApply" style="width:100%; margin-top:14px;">Compare</button>
+    </div>
+
+    <div class="section" id="cmpPeriodStrip"></div>
+    <div class="section" id="cmpBody"></div>
+  </div>
+
   <div class="view" data-view="profile">
     <div class="section">
       <div class="card" style="display:flex; align-items:center; gap:16px;">
@@ -853,6 +937,7 @@ canvas.donut{ width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
     <div class="nav-item" data-view="ledger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="9" y1="16" x2="15" y2="16"/></svg>Ledger</div>
     <div class="nav-item" data-view="fuel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 22V6a2 2 0 012-2h6a2 2 0 012 2v16"/><path d="M3 22h10"/><path d="M13 9h2a2 2 0 012 2v2.5a1.5 1.5 0 003 0V9c0-1-1-3-3-4"/><path d="M5 6h6"/></svg>Fuel</div>
     <div class="nav-item" data-view="insights"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>Insights</div>
+    <div class="nav-item" data-view="compare"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="7"/><rect x="14" y="6" width="3" height="12"/></svg>Compare</div>
     <div class="nav-item" data-view="goals"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>Goals</div>
     <div class="nav-item" data-view="care"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>Care</div>
     <div class="nav-item" data-view="profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profile</div>
@@ -1159,6 +1244,13 @@ let ranges = { home:'30', ledger:'30', fuel:'30', insights:'30', vcstats:'30' };
 let editingId = { entry:null, goal:null, vehicle:null, recurring:null, service:null, part:null, problem:null, doc:null, sched:null };
 let careVehicleId = null;
 let problemFilter = { category:'all', severity:'all', status:'open' };
+let cmpState = {
+  mode:'week',
+  weekSel:['thisWeek','lastWeek'],
+  monthSel:['thisMonth','lastMonth'],
+  rollDays:7,
+  customA:{start:'', end:''}, customB:{start:'', end:''}
+};
 
 function uid(){ return 'e' + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
 function defaultState(){
@@ -1943,6 +2035,214 @@ function drawStackedAreaChart(canvas, dates, series) {
         ctx.fillText(fmtDateShort(d), x, h-5);
       }
     });
+  });
+}
+
+function drawCmpComparisonBars(canvas, items){
+  // items: [{label, val, color}] — single bar per period, baseline at 0
+  const {ctx, w, h} = setupCanvas(canvas); if(!items.length) return;
+  const padL=40, padR=8, padT=10, padB=20, plotW=w-padL-padR, plotH=h-padT-padB;
+  const maxV = Math.max(...items.map(it=>Math.abs(it.val)), 1);
+  const n = items.length, slot = plotW/n, bW = Math.min(46, slot*0.55);
+  canvas.id = canvas.id || 'cc'+Math.random().toString(36).slice(2,8);
+
+  canvas._chartType = 'bar';
+  canvas._hitRegions = items.map((it,i)=>({
+    xLeft: padL + slot*i, xRight: padL + slot*(i+1),
+    html: `<div class="ct-date">${esc(it.label)}</div><div class="ct-row"><i style="background:${it.color}"></i><span>Value</span><span style="margin-left:12px; font-weight:700;">${it.fmt ? it.fmt(it.val) : rupee(it.val)}</span></div>`
+  }));
+  bindTooltip(canvas);
+
+  runChartAnim(canvas.id, (ease) => {
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle=COLORS.muted; ctx.font='10px JetBrains Mono'; ctx.textAlign='right'; ctx.textBaseline='middle';
+    [0,0.5,1].forEach(f=>{
+      const y = padT+plotH - f*plotH;
+      ctx.strokeStyle = COLORS.hairline; ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(w-padR,y); ctx.stroke();
+      ctx.fillText(items[0].fmt ? items[0].fmt(f*maxV, true) : rupeeCompact(f*maxV), padL-4, y);
+    });
+    items.forEach((it,i)=>{
+      const x = padL + slot*i + (slot-bW)/2;
+      const bh = (Math.abs(it.val)/maxV)*plotH*ease;
+      ctx.fillStyle = it.color;
+      ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x, padT+plotH-bh, bW, bh, 4) : ctx.rect(x, padT+plotH-bh, bW, bh); ctx.fill();
+    });
+    ctx.fillStyle=COLORS.muted; ctx.textAlign='center'; ctx.font='9.5px JetBrains Mono';
+    items.forEach((it,i)=>{
+      const cx = padL + slot*i + slot/2;
+      const words = String(it.label).split(' ');
+      if(words.length>1 && it.label.length>10){
+        ctx.fillText(words.slice(0,Math.ceil(words.length/2)).join(' '), cx, h-14);
+        ctx.fillText(words.slice(Math.ceil(words.length/2)).join(' '), cx, h-5);
+      } else {
+        ctx.fillText(it.label, cx, h-5);
+      }
+    });
+  });
+}
+
+function drawCmpOverlayLines(canvas, maxLen, series){
+  // series: [{label, color, values}], x-axis is day index (1..maxLen)
+  const {ctx, w, h} = setupCanvas(canvas); if(!maxLen) return;
+  const padL=40, padR=10, padT=10, padB=20, plotW=w-padL-padR, plotH=h-padT-padB;
+  const allVals = series.flatMap(s=>s.values);
+  const maxV = Math.max(...allVals, 1);
+  const minV = Math.min(...allVals, 0);
+  const range = (maxV - minV) || 1;
+  canvas.id = canvas.id || 'ol'+Math.random().toString(36).slice(2,8);
+
+  canvas._chartType = 'multiline';
+  canvas._hitRegions = [];
+  for(let i=0;i<maxLen;i++){
+    let html = `<div class="ct-date">Day ${i+1}</div>`;
+    series.forEach(s=>{
+      if(s.values[i]===undefined) return;
+      html += `<div class="ct-row"><i style="background:${s.color}"></i><span>${esc(s.label)}</span><span style="margin-left:12px; font-weight:700;">${rupee(s.values[i])}</span></div>`;
+    });
+    const prevX = i===0 ? padL : padL + ((i-0.5)/(maxLen-1||1))*plotW;
+    const nextX = i===maxLen-1 ? w-padR : padL + ((i+0.5)/(maxLen-1||1))*plotW;
+    canvas._hitRegions.push({ xLeft:prevX, xRight:nextX, html });
+  }
+  bindTooltip(canvas);
+
+  runChartAnim(canvas.id, (ease)=>{
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle=COLORS.muted; ctx.font='10px JetBrains Mono'; ctx.textAlign='right'; ctx.textBaseline='middle';
+    [0,0.5,1].forEach(f=>{
+      const val = minV + f*range;
+      const y = padT+plotH - ((val-minV)/range)*plotH;
+      ctx.strokeStyle = COLORS.hairline; ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(w-padR,y); ctx.stroke();
+      ctx.fillText(rupeeCompact(val), padL-4, y);
+    });
+    if(minV<0){
+      const zy = padT+plotH - ((0-minV)/range)*plotH;
+      ctx.strokeStyle='rgba(255,255,255,0.12)'; ctx.beginPath(); ctx.moveTo(padL,zy); ctx.lineTo(w-padR,zy); ctx.stroke();
+    }
+    series.forEach(s=>{
+      const pts = Math.max(1, Math.ceil(ease*s.values.length));
+      ctx.beginPath(); ctx.strokeStyle=s.color; ctx.lineWidth=2; ctx.lineJoin='round';
+      for(let i=0;i<pts;i++){
+        const x = padL + (maxLen>1 ? (i/(maxLen-1))*plotW : plotW/2);
+        const y = padT+plotH - ((s.values[i]-minV)/range)*plotH;
+        i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+      }
+      ctx.stroke();
+    });
+    ctx.fillStyle=COLORS.muted; ctx.textAlign='center';
+    const step = Math.max(1, Math.ceil(maxLen/6));
+    for(let i=0;i<maxLen;i++){
+      if(i%step===0 || i===maxLen-1){
+        const x = padL + (maxLen>1 ? (i/(maxLen-1))*plotW : plotW/2);
+        ctx.fillText('D'+(i+1), x, h-5);
+      }
+    }
+  });
+}
+
+function drawCmpWaterfall(canvas, steps){
+  // steps: [{label, value, isTotal}] — first and last are totals (start/end), middle are deltas
+  const {ctx, w, h} = setupCanvas(canvas); if(!steps.length) return;
+  const padL=40, padR=8, padT=14, padB=32, plotW=w-padL-padR, plotH=h-padT-padB;
+  let running = 0;
+  const bars = steps.map((s,i)=>{
+    if(s.isTotal){ const b = {from:0, to:s.value, ...s}; running = s.value; return b; }
+    const from = running; running += s.value; return { from, to:running, ...s };
+  });
+  const allVals = bars.flatMap(b=>[b.from,b.to]);
+  const maxV = Math.max(...allVals, 1), minV = Math.min(...allVals, 0);
+  const range = (maxV-minV)||1;
+  const n = bars.length, slot = plotW/n, bW = slot*0.55;
+  canvas.id = canvas.id || 'wf'+Math.random().toString(36).slice(2,8);
+
+  canvas._chartType = 'bar';
+  canvas._hitRegions = bars.map((b,i)=>{
+    const color = b.isTotal ? COLORS.blue : (b.value>=0 ? COLORS.green : COLORS.red);
+    return { xLeft: padL+slot*i, xRight: padL+slot*(i+1),
+      html: `<div class="ct-date">${esc(b.label)}</div><div class="ct-row"><i style="background:${color}"></i><span>${b.isTotal?'Total':'Change'}</span><span style="margin-left:12px; font-weight:700;">${b.isTotal?rupee(b.value):(b.value>=0?'+':'')+rupee(b.value)}</span></div>`
+    };
+  });
+  bindTooltip(canvas);
+
+  runChartAnim(canvas.id, (ease)=>{
+    ctx.clearRect(0,0,w,h);
+    const y0 = padT+plotH - ((0-minV)/range)*plotH;
+    ctx.fillStyle=COLORS.muted; ctx.font='10px JetBrains Mono'; ctx.textAlign='right'; ctx.textBaseline='middle';
+    [0,0.5,1].forEach(f=>{
+      const val = minV + f*range; const y = padT+plotH - ((val-minV)/range)*plotH;
+      ctx.strokeStyle=COLORS.hairline; ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(w-padR,y); ctx.stroke();
+      ctx.fillText(rupeeCompact(val), padL-4, y);
+    });
+    bars.forEach((b,i)=>{
+      const x = padL + slot*i + (slot-bW)/2;
+      const yFrom = padT+plotH - ((b.from-minV)/range)*plotH;
+      const yTo = padT+plotH - ((b.to-minV)/range)*plotH;
+      const top = Math.min(yFrom,yTo), bh = Math.max(1,Math.abs(yFrom-yTo))*ease;
+      const color = b.isTotal ? COLORS.blue : (b.value>=0 ? COLORS.green : COLORS.red);
+      ctx.fillStyle = color;
+      const drawTop = yFrom>yTo ? (yFrom - bh) : top;
+      ctx.fillRect(x, drawTop, bW, bh);
+      // connector line
+      if(i<bars.length-1){
+        ctx.strokeStyle='rgba(255,255,255,0.15)'; ctx.setLineDash([3,3]);
+        ctx.beginPath(); ctx.moveTo(x+bW, yTo); ctx.lineTo(x+slot+ (slot-bW)/2, yTo); ctx.stroke();
+        ctx.setLineDash([]);
+      }
+      ctx.fillStyle=COLORS.muted; ctx.font='9.5px JetBrains Mono'; ctx.textAlign='center';
+      const words = String(b.label).split(' ');
+      if(b.label.length>10 && words.length>1){
+        ctx.fillText(words.slice(0,Math.ceil(words.length/2)).join(' '), x+bW/2, h-22);
+        ctx.fillText(words.slice(Math.ceil(words.length/2)).join(' '), x+bW/2, h-12);
+      } else {
+        ctx.fillText(b.label, x+bW/2, h-12);
+      }
+    });
+  });
+}
+
+function drawCmpRadar(canvas, axes, series){
+  // axes: [labels], series: [{label,color,values(0..1)}]
+  const {ctx, w, h} = setupCanvas(canvas); if(!axes.length) return;
+  const cx = w/2, cy = h/2 - 6, r = Math.max(20, Math.min(w,h)/2 - 34);
+  const n = axes.length;
+  ctx.clearRect(0,0,w,h);
+
+  ctx.strokeStyle = COLORS.hairline; ctx.lineWidth = 1;
+  [0.25,0.5,0.75,1].forEach(f=>{
+    ctx.beginPath();
+    for(let i=0;i<=n;i++){
+      const ang = -Math.PI/2 + (i%n)*(2*Math.PI/n);
+      const x = cx + Math.cos(ang)*r*f, y = cy + Math.sin(ang)*r*f;
+      i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+  });
+  for(let i=0;i<n;i++){
+    const ang = -Math.PI/2 + i*(2*Math.PI/n);
+    ctx.strokeStyle = COLORS.hairline; ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+Math.cos(ang)*r, cy+Math.sin(ang)*r); ctx.stroke();
+    ctx.fillStyle = COLORS.muted; ctx.font = '9.5px JetBrains Mono';
+    const lx = cx + Math.cos(ang)*(r+14), ly = cy + Math.sin(ang)*(r+14);
+    ctx.textAlign = Math.cos(ang) > 0.3 ? 'left' : Math.cos(ang) < -0.3 ? 'right' : 'center';
+    ctx.textBaseline = Math.sin(ang) > 0.3 ? 'top' : Math.sin(ang) < -0.3 ? 'bottom' : 'middle';
+    ctx.fillText(axes[i], lx, ly);
+  }
+  series.forEach(s=>{
+    ctx.beginPath();
+    for(let i=0;i<=n;i++){
+      const idx = i%n;
+      const ang = -Math.PI/2 + idx*(2*Math.PI/n);
+      const v = clamp(s.values[idx]||0,0,1);
+      const x = cx + Math.cos(ang)*r*v, y = cy + Math.sin(ang)*r*v;
+      i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    }
+    ctx.closePath();
+    ctx.fillStyle = s.color+'30'; ctx.fill();
+    ctx.strokeStyle = s.color; ctx.lineWidth = 2; ctx.stroke();
+    for(let i=0;i<n;i++){
+      const ang = -Math.PI/2 + i*(2*Math.PI/n);
+      const v = clamp(s.values[i]||0,0,1);
+      const x = cx + Math.cos(ang)*r*v, y = cy + Math.sin(ang)*r*v;
+      ctx.fillStyle = s.color; ctx.beginPath(); ctx.arc(x,y,2.5,0,Math.PI*2); ctx.fill();
+    }
   });
 }
 
@@ -2879,11 +3179,368 @@ function renderView(view){
   if(view==='ledger') renderLedgerView();
   if(view==='fuel') renderFuelView();
   if(view==='insights') renderInsightsView();
+  if(view==='compare') renderCompareView();
   if(view==='profile') renderProfileView();
   if(view==='care') renderCareView();
   if(view==='goals') renderGoalsDebtView();
   window.scrollTo(0,0);
 }
+
+/* ===================== COMPARE PAGE ===================== */
+const CMP_WEEK_LABELS = { thisWeek:'This Week', lastWeek:'Last Week', sameWeekLastMonth:'Same Week Last Month', sameWeekLastYear:'Same Week Last Year' };
+const CMP_MONTH_LABELS = { thisMonth:'This Month', lastMonth:'Last Month', sameMonthLastYear:'Same Month Last Year' };
+const CMP_METRICS = [
+  { key:'gross', label:'Gross Earnings', higherBetter:true, fmt:v=>rupee(v) },
+  { key:'netProfit', label:'Net Profit', higherBetter:true, fmt:v=>rupee(v) },
+  { key:'margin', label:'Margin %', higherBetter:true, fmt:v=>v.toFixed(1)+'%' },
+  { key:'distance', label:'Distance', higherBetter:true, fmt:v=>v.toFixed(1)+' km' },
+  { key:'costPerKm', label:'Cost/km', higherBetter:false, fmt:v=>rupee(v,{dec:true}) },
+  { key:'fuelCostPerKm', label:'Fuel Cost/km', higherBetter:false, fmt:v=>rupee(v,{dec:true}) },
+  { key:'earnPerHour', label:'Earnings/hr', higherBetter:true, fmt:v=>rupee(v,{dec:true}) },
+  { key:'earnPerTrip', label:'Earnings/trip', higherBetter:true, fmt:v=>rupee(v,{dec:true}) },
+  { key:'tripCount', label:'Trip Count', higherBetter:true, fmt:v=>Math.round(v).toLocaleString('en-IN') },
+  { key:'avgTripValue', label:'Avg Trip Value', higherBetter:true, fmt:v=>rupee(v,{dec:true}) },
+];
+const CMP_WEEKDAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+function cmpMondayOf(d){ const x=new Date(d); const day=(x.getDay()+6)%7; x.setDate(x.getDate()-day); x.setHours(0,0,0,0); return x; }
+
+function cmpWeekRange(key){
+  const today = new Date();
+  const thisMonday = cmpMondayOf(today);
+  const elapsed = Math.min(7, Math.floor((today-thisMonday)/86400000)+1);
+  let ref = new Date(today);
+  if(key==='lastWeek') ref.setDate(ref.getDate()-7);
+  if(key==='sameWeekLastMonth') ref.setMonth(ref.getMonth()-1);
+  if(key==='sameWeekLastYear') ref.setFullYear(ref.getFullYear()-1);
+  const monday = cmpMondayOf(ref);
+  const end = new Date(monday); end.setDate(end.getDate()+elapsed-1);
+  return { start: toISO(monday), end: toISO(end) };
+}
+
+function cmpMonthRange(key){
+  const today = new Date();
+  let ref = new Date(today);
+  if(key==='lastMonth') ref.setMonth(ref.getMonth()-1);
+  if(key==='sameMonthLastYear') ref.setFullYear(ref.getFullYear()-1);
+  const monthStart = new Date(ref.getFullYear(), ref.getMonth(), 1);
+  const daysInThatMonth = new Date(ref.getFullYear(), ref.getMonth()+1, 0).getDate();
+  const elapsed = Math.min(today.getDate(), daysInThatMonth);
+  const end = new Date(monthStart); end.setDate(end.getDate()+elapsed-1);
+  return { start: toISO(monthStart), end: toISO(end) };
+}
+
+function cmpRollingRange(days, which){
+  const today = new Date();
+  if(which==='current'){
+    const start = new Date(today); start.setDate(start.getDate()-days+1);
+    return { start: toISO(start), end: toISO(today) };
+  } else {
+    const curStart = new Date(today); curStart.setDate(curStart.getDate()-days+1);
+    const end = new Date(curStart); end.setDate(end.getDate()-1);
+    const start = new Date(end); start.setDate(start.getDate()-days+1);
+    return { start: toISO(start), end: toISO(end) };
+  }
+}
+
+function cmpResolvePeriods(){
+  if(cmpState.mode==='week'){
+    return cmpState.weekSel.map(k=>{ const r=cmpWeekRange(k); return { key:k, label:CMP_WEEK_LABELS[k], start:r.start, end:r.end }; });
+  }
+  if(cmpState.mode==='month'){
+    return cmpState.monthSel.map(k=>{ const r=cmpMonthRange(k); return { key:k, label:CMP_MONTH_LABELS[k], start:r.start, end:r.end }; });
+  }
+  if(cmpState.mode==='rolling'){
+    const days = cmpState.rollDays;
+    const prev = cmpRollingRange(days,'previous'), cur = cmpRollingRange(days,'current');
+    return [
+      { key:'prev', label:`Previous ${days}D`, start:prev.start, end:prev.end },
+      { key:'cur', label:`Current ${days}D`, start:cur.start, end:cur.end }
+    ];
+  }
+  if(cmpState.mode==='custom'){
+    return [
+      { key:'A', label:'Period A', start:cmpState.customA.start, end:cmpState.customA.end },
+      { key:'B', label:'Period B', start:cmpState.customB.start, end:cmpState.customB.end }
+    ];
+  }
+  return [];
+}
+
+function cmpComputeMetrics(startISO, endISO){
+  const entries = getActiveEntries().filter(e=> e.date>=startISO && e.date<=endISO);
+  let gross=0, fuelCost=0, otherExp=0, dist=0, hrs=0;
+  const byDate = {}, platMap = {}, weekdayMap = {};
+  entries.forEach(e=>{
+    const c = computeEntry(e);
+    gross += c.earnings; fuelCost += c.fuelCost; otherExp += c.otherTotal; dist += c.distance; hrs += c.durationHours;
+    if(!byDate[e.date]) byDate[e.date] = { gross:0, exp:0 };
+    byDate[e.date].gross += c.earnings;
+    byDate[e.date].exp += c.totalExpense;
+    (e.platformEarnings||[]).forEach(p=>{ platMap[p.platform] = (platMap[p.platform]||0) + (Number(p.amount)||0) + (Number(p.tip)||0); });
+    const wd = parseLocalDate(e.date).getDay();
+    if(!weekdayMap[wd]) weekdayMap[wd] = { sum:0, count:0 };
+    weekdayMap[wd].sum += c.profit; weekdayMap[wd].count++;
+  });
+  const totalExpense = fuelCost + otherExp;
+  const netProfit = gross - totalExpense;
+  const margin = gross>0 ? (netProfit/gross*100) : 0;
+  const costPerKm = dist>0 ? totalExpense/dist : 0;
+  const fuelCostPerKm = dist>0 ? fuelCost/dist : 0;
+  const tripCount = entries.length;
+  const earnPerHour = hrs>0 ? gross/hrs : 0;
+  const earnPerTrip = tripCount>0 ? gross/tripCount : 0;
+
+  let bestDay=null, worstDay=null;
+  Object.keys(byDate).forEach(d=>{
+    const p = byDate[d].gross - byDate[d].exp;
+    if(!bestDay || p>bestDay.profit) bestDay = { date:d, profit:p };
+    if(!worstDay || p<worstDay.profit) worstDay = { date:d, profit:p };
+  });
+
+  let bestWeekday=null, bestWeekdayAvg=-Infinity;
+  Object.keys(weekdayMap).forEach(k=>{
+    const avg = weekdayMap[k].sum / weekdayMap[k].count;
+    if(avg>bestWeekdayAvg){ bestWeekdayAvg = avg; bestWeekday = CMP_WEEKDAY_NAMES[k]; }
+  });
+
+  const platTotal = Object.values(platMap).reduce((s,v)=>s+v,0);
+  const platformMix = {};
+  Object.keys(platMap).forEach(k=> platformMix[k] = platTotal>0 ? (platMap[k]/platTotal*100) : 0);
+
+  const dailySeries = [];
+  let cur = parseLocalDate(startISO);
+  const endD = parseLocalDate(endISO);
+  let guard = 0;
+  while(cur<=endD && guard<400){
+    const iso = toISO(cur);
+    const d = byDate[iso];
+    dailySeries.push(d ? (d.gross-d.exp) : 0);
+    cur.setDate(cur.getDate()+1); guard++;
+  }
+
+  return { gross, netProfit, margin, distance:dist, costPerKm, fuelCostPerKm, fuelCost, otherExp, earnPerHour, earnPerTrip, tripCount, avgTripValue:earnPerTrip, bestDay, worstDay, bestWeekday, platformMix, dailySeries, hasData: tripCount>0 };
+}
+
+function cmpUpdateControlsVisibility(){
+  document.getElementById('cmpWeekControls').style.display = cmpState.mode==='week' ? 'block' : 'none';
+  document.getElementById('cmpMonthControls').style.display = cmpState.mode==='month' ? 'block' : 'none';
+  document.getElementById('cmpRollingControls').style.display = cmpState.mode==='rolling' ? 'block' : 'none';
+  document.getElementById('cmpCustomControls').style.display = cmpState.mode==='custom' ? 'block' : 'none';
+}
+
+function renderCompareView(){
+  cmpUpdateControlsVisibility();
+  const periods = cmpResolvePeriods().filter(p=>p.start && p.end && p.start<=p.end);
+  const stripEl = document.getElementById('cmpPeriodStrip');
+  const bodyEl = document.getElementById('cmpBody');
+
+  if(periods.length < 2){
+    stripEl.innerHTML = '';
+    bodyEl.innerHTML = `<div class="card" style="text-align:center; color:var(--muted); padding:24px 16px;">${cmpState.mode==='custom' ? 'Pick both date ranges and tap Compare.' : 'Select at least 2 periods to compare.'}</div>`;
+    return;
+  }
+
+  const data = periods.map((p,i)=>({ ...p, color: PALETTE[i%PALETTE.length], m: cmpComputeMetrics(p.start, p.end) }));
+
+  stripEl.innerHTML = `<div class="cmp-period-strip">${data.map(d=>`
+    <div class="cmp-period-badge">
+      <div class="lbl"><span class="dot" style="background:${d.color}"></span>${esc(d.label)}</div>
+      <div class="rng">${fmtDateShort(d.start)} – ${fmtDateShort(d.end)}</div>
+    </div>`).join('')}</div>`;
+
+  if(!data.some(d=>d.m.hasData)){
+    bodyEl.innerHTML = `<div class="card" style="text-align:center; color:var(--muted); padding:24px 16px;">No trips logged in these date ranges yet.</div>`;
+    return;
+  }
+
+  bodyEl.innerHTML = `
+    <div class="section" style="padding:0; margin-bottom:18px;">
+      <div class="section-head"><div class="section-title">Metrics Comparison</div></div>
+      <div class="card cmp-table-wrap" style="padding:4px 8px;"><table class="cmp-table" id="cmpMetricsTable"></table></div>
+    </div>
+    <div class="section" style="padding:0; margin-bottom:18px;">
+      <div class="section-head"><div class="section-title">Highlights</div></div>
+      <div class="cmp-highlight-row" id="cmpHighlights"></div>
+    </div>
+    <div class="section" style="padding:0; margin-bottom:18px;" id="cmpMixSection">
+      <div class="section-head"><div class="section-title">Platform Mix Shift</div></div>
+      <div class="card" id="cmpMixHolder"></div>
+    </div>
+    <div class="section" style="padding:0; margin-bottom:18px;">
+      <div class="section-head"><div class="section-title">Net Profit — Side by Side</div></div>
+      <div class="card"><canvas class="barchart" id="cmpBarsProfit"></canvas></div>
+    </div>
+    <div class="section" style="padding:0; margin-bottom:18px;">
+      <div class="section-head"><div class="section-title">Gross Earnings — Side by Side</div></div>
+      <div class="card"><canvas class="barchart" id="cmpBarsGross"></canvas></div>
+    </div>
+    <div class="section" style="padding:0; margin-bottom:18px;">
+      <div class="section-head"><div class="section-title">Distance Driven — Side by Side</div></div>
+      <div class="card"><canvas class="barchart" id="cmpBarsDist"></canvas></div>
+    </div>
+    <div class="section" style="padding:0; margin-bottom:18px;">
+      <div class="section-head"><div class="section-title">Trend Shape Overlay (Net Profit / Day)</div></div>
+      <div class="card">
+        <div class="chart-legend">${data.map(d=>`<span><i style="background:${d.color}"></i>${esc(d.label)}</span>`).join('')}</div>
+        <canvas class="multiline" id="cmpOverlayCanvas"></canvas>
+      </div>
+    </div>
+    <div class="section" style="padding:0; margin-bottom:18px;">
+      <div class="section-head"><div class="section-title">What Changed — Net Profit Bridge</div></div>
+      <div class="card"><canvas class="barchart" id="cmpWaterfallCanvas"></canvas></div>
+      <div class="helper-text" style="color:var(--muted); font-size:11px; margin-top:6px;">Bridges ${esc(data[0].label)} to ${esc(data[data.length-1].label)}.</div>
+    </div>
+    <div class="section" style="padding:0;">
+      <div class="section-head"><div class="section-title">Normalized Comparison</div></div>
+      <div class="card" style="display:flex; justify-content:center;">
+        <canvas id="cmpRadarCanvas" style="width:100%; max-width:320px; height:260px; display:block;"></canvas>
+      </div>
+      <div class="chart-legend" style="margin-top:8px; justify-content:center;">${data.map(d=>`<span><i style="background:${d.color}"></i>${esc(d.label)}</span>`).join('')}</div>
+    </div>
+  `;
+
+  cmpRenderMetricsTable(data);
+  cmpRenderHighlights(data);
+  cmpRenderPlatformMix(data);
+  drawCmpComparisonBars(document.getElementById('cmpBarsProfit'), data.map(d=>({ label:d.label, val:d.m.netProfit, color:d.color, fmt:rupeeCompact })));
+  drawCmpComparisonBars(document.getElementById('cmpBarsGross'), data.map(d=>({ label:d.label, val:d.m.gross, color:d.color, fmt:rupeeCompact })));
+  drawCmpComparisonBars(document.getElementById('cmpBarsDist'), data.map(d=>({ label:d.label, val:d.m.distance, color:d.color, fmt:(v)=>v.toFixed(0)+' km' })));
+
+  const maxLen = Math.max(...data.map(d=>d.m.dailySeries.length));
+  drawCmpOverlayLines(document.getElementById('cmpOverlayCanvas'), maxLen, data.map(d=>({ label:d.label, color:d.color, values:d.m.dailySeries })));
+
+  const first = data[0], last = data[data.length-1];
+  const volumeEffect = (last.m.tripCount - first.m.tripCount) * (first.m.earnPerTrip||0);
+  const valueEffect = last.m.tripCount * ((last.m.earnPerTrip||0) - (first.m.earnPerTrip||0));
+  const wfSteps = [
+    { label: first.label, value: first.m.netProfit, isTotal:true },
+    { label:'More/Fewer Trips', value: volumeEffect },
+    { label:'Earnings/Trip Change', value: valueEffect },
+    { label:'Fuel Cost Change', value: -(last.m.fuelCost - first.m.fuelCost) },
+    { label:'Other Expense Change', value: -(last.m.otherExp - first.m.otherExp) },
+    { label: last.label, value: last.m.netProfit, isTotal:true }
+  ];
+  drawCmpWaterfall(document.getElementById('cmpWaterfallCanvas'), wfSteps);
+
+  const radarAxes = ['Gross', 'Net Profit', 'Margin %', 'Distance', 'Hours-Efficiency'];
+  const maxGross = Math.max(...data.map(d=>d.m.gross), 1);
+  const maxNet = Math.max(...data.map(d=>Math.abs(d.m.netProfit)), 1);
+  const maxMargin = Math.max(...data.map(d=>Math.abs(d.m.margin)), 1);
+  const maxDist = Math.max(...data.map(d=>d.m.distance), 1);
+  const maxEph = Math.max(...data.map(d=>d.m.earnPerHour), 1);
+  const radarSeries = data.map(d=>({
+    label: d.label, color: d.color,
+    values: [
+      d.m.gross/maxGross,
+      clamp((d.m.netProfit/maxNet + 1)/2, 0, 1),
+      clamp((d.m.margin/maxMargin + 1)/2, 0, 1),
+      d.m.distance/maxDist,
+      d.m.earnPerHour/maxEph
+    ]
+  }));
+  drawCmpRadar(document.getElementById('cmpRadarCanvas'), radarAxes, radarSeries);
+}
+
+function cmpRenderMetricsTable(data){
+  const head = `<thead><tr><th></th>${data.map(d=>`<th style="color:${d.color}">${esc(d.label)}</th>`).join('')}</tr></thead>`;
+  const rows = CMP_METRICS.map(metric=>{
+    const cells = data.map((d,i)=>{
+      const val = d.m[metric.key];
+      let deltaHtml = '';
+      if(i>0){
+        const prevVal = data[i-1].m[metric.key];
+        const tr = getTrendStr(val, prevVal);
+        const improved = metric.higherBetter ? val>=prevVal : val<=prevVal;
+        const cls = tr.class==='neu' ? 'neu' : (improved ? 'pos' : 'neg');
+        deltaHtml = `<div style="margin-top:2px;"><span class="trend-badge ${cls}" style="font-size:9px; padding:1px 5px;">${tr.text}</span></div>`;
+      }
+      return `<td>${metric.fmt(val)}${deltaHtml}</td>`;
+    }).join('');
+    return `<tr><td>${metric.label}</td>${cells}</tr>`;
+  }).join('');
+  document.getElementById('cmpMetricsTable').innerHTML = head + `<tbody>${rows}</tbody>`;
+}
+
+function cmpRenderHighlights(data){
+  const cards = data.map(d=>`
+    <div class="cmp-highlight-card">
+      <div class="lbl" style="color:${d.color}">${esc(d.label)}</div>
+      <div class="val" style="margin-top:8px;">🏆 Best Day: ${d.m.bestDay ? fmtDateShort(d.m.bestDay.date)+' ('+rupee(d.m.bestDay.profit)+')' : '—'}</div>
+      <div class="val">📉 Worst Day: ${d.m.worstDay ? fmtDateShort(d.m.worstDay.date)+' ('+rupee(d.m.worstDay.profit)+')' : '—'}</div>
+      <div class="val">⭐ Best Weekday: ${d.m.bestWeekday || '—'}</div>
+    </div>
+  `).join('');
+  document.getElementById('cmpHighlights').innerHTML = cards;
+}
+
+function cmpRenderPlatformMix(data){
+  const allPlats = Array.from(new Set(data.flatMap(d=>Object.keys(d.m.platformMix))));
+  const holder = document.getElementById('cmpMixHolder');
+  document.getElementById('cmpMixSection').style.display = allPlats.length ? 'block' : 'none';
+  if(!allPlats.length){ holder.innerHTML = ''; return; }
+  holder.innerHTML = allPlats.map(plat=>{
+    const bars = data.map(d=>{
+      const pct = d.m.platformMix[plat] || 0;
+      return `<div style="display:flex; align-items:center; gap:8px;">
+        <span style="font-size:9.5px; color:${d.color}; font-family:var(--font-mono); width:80px; flex-shrink:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${esc(d.label)}</span>
+        <div class="cmp-mix-bar-track" style="flex:1;"><div class="cmp-mix-bar-fill" style="width:${Math.min(100,pct)}%; background:${d.color};"></div></div>
+        <span style="font-size:10.5px; font-family:var(--font-mono); width:38px; text-align:right;">${pct.toFixed(0)}%</span>
+      </div>`;
+    }).join('');
+    let shiftHtml = '';
+    if(data.length>=2){
+      const shift = (data[data.length-1].m.platformMix[plat]||0) - (data[0].m.platformMix[plat]||0);
+      const cls = Math.abs(shift)<0.5 ? 'neu' : (shift>0 ? 'pos' : 'neg');
+      shiftHtml = `<span class="trend-badge ${cls}" style="font-size:9px;">${shift>=0?'+':''}${shift.toFixed(1)}pp</span>`;
+    }
+    return `<div class="cmp-mix-row">
+      <div class="cmp-mix-head"><span style="font-family:var(--font-display); font-weight:600;">${esc(plat)}</span>${shiftHtml}</div>
+      <div class="cmp-mix-bars">${bars}</div>
+    </div>`;
+  }).join('');
+}
+
+document.getElementById('cmpModeTabs').querySelectorAll('.tab').forEach(t=>{
+  t.addEventListener('click', ()=>{
+    document.getElementById('cmpModeTabs').querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    cmpState.mode = t.dataset.mode;
+    renderCompareView();
+  });
+});
+document.getElementById('cmpWeekChips').querySelectorAll('.cmp-chip').forEach(c=>{
+  c.addEventListener('click', ()=>{
+    const key = c.dataset.key;
+    const idx = cmpState.weekSel.indexOf(key);
+    if(idx>=0){ if(cmpState.weekSel.length>2){ cmpState.weekSel.splice(idx,1); c.classList.remove('active'); } }
+    else { if(cmpState.weekSel.length<4){ cmpState.weekSel.push(key); c.classList.add('active'); } }
+    renderCompareView();
+  });
+});
+document.getElementById('cmpMonthChips').querySelectorAll('.cmp-chip').forEach(c=>{
+  c.addEventListener('click', ()=>{
+    const key = c.dataset.key;
+    const idx = cmpState.monthSel.indexOf(key);
+    if(idx>=0){ if(cmpState.monthSel.length>2){ cmpState.monthSel.splice(idx,1); c.classList.remove('active'); } }
+    else { if(cmpState.monthSel.length<3){ cmpState.monthSel.push(key); c.classList.add('active'); } }
+    renderCompareView();
+  });
+});
+document.getElementById('cmpRollTabs').querySelectorAll('.tab').forEach(t=>{
+  t.addEventListener('click', ()=>{
+    document.getElementById('cmpRollTabs').querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    cmpState.rollDays = Number(t.dataset.roll);
+    renderCompareView();
+  });
+});
+document.getElementById('cmpCustomApply').addEventListener('click', ()=>{
+  cmpState.customA = { start: document.getElementById('cmpCustomAStart').value, end: document.getElementById('cmpCustomAEnd').value };
+  cmpState.customB = { start: document.getElementById('cmpCustomBStart').value, end: document.getElementById('cmpCustomBEnd').value };
+  renderCompareView();
+});
+/* =================== END COMPARE PAGE =================== */
 
 const entryOverlay = document.getElementById('entryOverlay');
 function openEntrySheet(id){
