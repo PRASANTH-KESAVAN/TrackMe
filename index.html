@@ -259,6 +259,54 @@ canvas.donut{ width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
 .btn-danger-full{ background:rgba(247,107,107,0.12); border:1px solid rgba(247,107,107,0.4); color:var(--red); width: 100%;}
 
 @media (prefers-reduced-motion: reduce){ .sheet, .overlay, .goal-fill, .dialog-box { transition:none !important; } }
+
+/* ---- Vehicle Care ---- */
+.vc-vehicle-tabs{ display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; padding-bottom:2px; }
+.vc-vehicle-tabs::-webkit-scrollbar{ display:none; }
+.vc-vtab{ flex:0 0 auto; padding:8px 14px; border-radius:10px; background:var(--panel-2); border:1px solid var(--hairline); font-family:var(--font-mono); font-size:12px; color:var(--muted); cursor:pointer; white-space:nowrap; }
+.vc-vtab.active{ background:rgba(255,176,32,0.12); border-color:rgba(255,176,32,0.5); color:var(--amber); }
+.vc-status-banner{ display:flex; align-items:center; gap:14px; padding:16px; border-radius:var(--radius-sm); }
+.vc-status-dot{ width:14px; height:14px; border-radius:50%; flex:0 0 14px; box-shadow:0 0 12px currentColor; }
+.vc-status-title{ font-family:var(--font-display); font-weight:700; font-size:15px; }
+.vc-status-sub{ font-size:11px; color:var(--muted); font-family:var(--font-mono); margin-top:2px; }
+.vc-mini-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px; }
+.vc-mini-stat{ background:var(--panel-2); border:1px solid var(--hairline); border-radius:10px; padding:10px 12px; }
+.vc-mini-stat .lbl{ font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; font-family:var(--font-display); }
+.vc-mini-stat .val{ font-family:var(--font-mono); font-weight:700; font-size:15px; margin-top:4px; }
+.vc-alert{ display:flex; align-items:flex-start; gap:10px; padding:12px 14px; border-radius:var(--radius-sm); margin-bottom:8px; border:1px solid; }
+.vc-alert:last-child{ margin-bottom:0; }
+.vc-alert.sev-green{ background:rgba(52,211,153,0.08); border-color:rgba(52,211,153,0.3); }
+.vc-alert.sev-amber{ background:rgba(255,176,32,0.08); border-color:rgba(255,176,32,0.3); }
+.vc-alert.sev-red{ background:rgba(247,107,107,0.08); border-color:rgba(247,107,107,0.3); }
+.vc-alert .vc-alert-text{ color:var(--text); font-size:11.5px; line-height:1.4; flex:1; }
+.vc-filter-row{ display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
+.vc-filter-chip{ padding:5px 10px; border-radius:14px; background:var(--panel-2); border:1px solid var(--hairline); font-size:10.5px; font-family:var(--font-mono); color:var(--muted); cursor:pointer; }
+.vc-filter-chip.active{ background:rgba(255,176,32,0.12); border-color:rgba(255,176,32,0.5); color:var(--amber); }
+.vc-empty-note{ text-align:center; padding:16px 10px; color:var(--muted); font-size:12px; border:1px dashed var(--hairline); border-radius:var(--radius-sm); }
+.vc-part-card{ background:var(--panel-2); border:1px solid var(--hairline); border-radius:var(--radius-sm); padding:12px 14px; margin-bottom:8px; cursor:pointer; }
+.vc-part-card:last-child{ margin-bottom:0; }
+.vc-part-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.vc-part-name{ font-family:var(--font-display); font-weight:600; font-size:13px; }
+.vc-part-status{ font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px; background:rgba(255,255,255,0.05); white-space:nowrap; }
+.vc-part-meta{ font-size:10.5px; color:var(--muted); font-family:var(--font-mono); margin-top:6px; display:flex; justify-content:space-between; }
+.vc-problem-card{ background:var(--panel-2); border:1px solid var(--hairline); border-left:3px solid var(--muted); border-radius:var(--radius-sm); padding:12px 14px; margin-bottom:8px; cursor:pointer; }
+.vc-problem-card:last-child{ margin-bottom:0; }
+.vc-problem-head{ display:flex; justify-content:space-between; gap:8px; align-items:flex-start; }
+.vc-problem-title{ font-family:var(--font-display); font-weight:600; font-size:13px; }
+.vc-problem-meta{ font-size:10.5px; color:var(--muted); font-family:var(--font-mono); margin-top:4px; }
+.vc-problem-status{ font-size:9.5px; font-weight:700; padding:2px 7px; border-radius:12px; white-space:nowrap; }
+.vc-doc-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px 14px; border-radius:var(--radius-sm); background:var(--panel-2); border:1px solid var(--hairline); margin-bottom:8px; cursor:pointer; }
+.vc-doc-row:last-child{ margin-bottom:0; }
+.vc-sched-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px 14px; border-radius:var(--radius-sm); background:var(--panel-2); border:1px solid var(--hairline); margin-bottom:8px; }
+.vc-sched-row:last-child{ margin-bottom:0; }
+.vc-sched-mid{ flex:1; min-width:0; }
+.vc-checklist-item{ display:flex; align-items:flex-start; gap:10px; padding:10px 0; border-bottom:1px dashed var(--hairline); font-size:12px; }
+.vc-checklist-item:last-child{ border-bottom:none; }
+.vc-checkbox{ width:18px; height:18px; flex:0 0 18px; accent-color:var(--amber); margin-top:2px; }
+.vc-cost-table{ width:100%; font-family:var(--font-mono); font-size:12px; border-collapse:collapse; }
+.vc-cost-table td{ padding:7px 0; border-bottom:1px dashed var(--hairline); }
+.vc-cost-table tr:last-child td{ border-bottom:none; }
+.vc-cost-table .val{ text-align:right; font-weight:600; }
 </style>
 </head>
 <body>
@@ -680,6 +728,92 @@ canvas.donut{ width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
     </div>
   </div>
 
+  <div class="view" data-view="care">
+    <div class="section" style="margin-top:0;">
+      <div class="vc-vehicle-tabs" id="vcVehicleTabs"></div>
+    </div>
+
+    <div class="section" id="vcDashboardHolder"></div>
+
+    <div class="section" id="vcAlertsHolder"></div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Next Service</div></div>
+      <div class="card" id="vcNextServiceHolder"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Overall vs Delivery Usage</div></div>
+      <div class="card" id="vcUsageHolder"></div>
+      <div class="card" style="margin-top:12px;">
+        <div class="chart-legend"><span><i style="background:var(--teal)"></i>Delivery KM</span><span><i style="background:var(--violet)"></i>Personal KM</span></div>
+        <div id="vcUsageChartHolder"><canvas class="barchart" id="vcUsageChart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head">
+        <div class="section-title">Quick Statistics</div>
+        <div class="tabs" data-page="vcstats" style="max-width:230px;">
+          <div class="tab" data-range="7">7D</div><div class="tab active" data-range="30">30D</div><div class="tab" data-range="month">Mo</div><div class="tab" data-range="year">Yr</div><div class="tab" data-range="all">All</div>
+        </div>
+      </div>
+      <div class="stat-grid" id="vcStatsGrid"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Vehicle Cost Analytics</div></div>
+      <div class="card" id="vcCostHolder"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Delivery Vehicle Profitability</div></div>
+      <div class="card" id="vcProfitHolder"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Service History</div><span class="section-link" id="vcAddServiceBtn">+ Add Service</span></div>
+      <div id="vcServiceHistoryList"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Maintenance Spending Trend</div></div>
+      <div class="card"><div id="vcCostTrendHolder"><canvas class="barchart" id="vcCostTrendChart"></canvas></div></div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Consumables & Parts</div><span class="section-link" id="vcAddPartBtn">+ Add Item</span></div>
+      <div id="vcPartsList"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Service Notes / Problems Log</div><span class="section-link" id="vcAddProblemBtn">+ Add Problem</span></div>
+      <div class="vc-filter-row" id="vcProblemFilters"></div>
+      <div id="vcProblemsList"></div>
+    </div>
+
+    <div class="section">
+      <button class="btn btn-ghost" style="width:100%;" id="vcMechanicChecklistBtn">🧾 View Open Issues for Mechanic</button>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Mileage Health</div></div>
+      <div class="card" id="vcMileageHolder"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Vehicle Documents</div><span class="section-link" id="vcAddDocBtn">+ Add Document</span></div>
+      <div id="vcDocsList"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Maintenance Schedule</div><span class="section-link" id="vcAddScheduleBtn">+ Add Reminder</span></div>
+      <div id="vcSchedulesList"></div>
+    </div>
+
+    <div class="section" style="height:10px;"></div>
+  </div>
+
 </div>
 
 <button class="fab" id="fabAdd" aria-label="Add trip">+</button>
@@ -690,6 +824,7 @@ canvas.donut{ width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
     <div class="nav-item" data-view="ledger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="9" y1="16" x2="15" y2="16"/></svg>Ledger</div>
     <div class="nav-item" data-view="fuel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 22V6a2 2 0 012-2h6a2 2 0 012 2v16"/><path d="M3 22h10"/><path d="M13 9h2a2 2 0 012 2v2.5a1.5 1.5 0 003 0V9c0-1-1-3-3-4"/><path d="M5 6h6"/></svg>Fuel</div>
     <div class="nav-item" data-view="insights"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>Insights</div>
+    <div class="nav-item" data-view="care"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>Care</div>
     <div class="nav-item" data-view="profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profile</div>
   </div>
 </div>
@@ -771,6 +906,17 @@ canvas.donut{ width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
       <div class="field"><label>Service Limit (Months)</label><input type="number" id="vIntervalMonths" placeholder="e.g. 3"></div>
     </div>
     <div class="helper-text">App will warn you when distance or time logged since your last "Maintenance" expense exceeds these intervals.</div>
+    <div class="divider"></div>
+    <div class="helper-text" style="margin-top:0;">Vehicle Care — Odometer & Service Baseline</div>
+    <div class="row2">
+      <div class="field"><label>Current Odometer (km)</label><input type="number" id="vOdometer" placeholder="Total km on bike"></div>
+      <div class="field"><label>Purchase Date (optional)</label><input type="date" id="vPurchaseDate"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Last Service Date</label><input type="date" id="vLastServiceDate"></div>
+      <div class="field"><label>Last Service Odometer</label><input type="number" id="vLastServiceKm" placeholder="km at last service"></div>
+    </div>
+    <div class="helper-text">Used to seed the Vehicle Care page if you haven't logged a Service History entry yet.</div>
     <div class="sheet-actions"><button type="button" class="btn btn-danger" id="deleteVehicleBtn" style="display:none;">🗑</button><button type="button" class="btn btn-primary" id="saveVehicleBtn">Save</button></div>
   </div>
 </div>
@@ -791,6 +937,132 @@ canvas.donut{ width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
     </div>
     <div class="helper-text">This will automatically log an expense on the scheduled date when you open the app.</div>
     <div class="sheet-actions"><button type="button" class="btn btn-danger" id="deleteRecurringBtn" style="display:none;">🗑</button><button type="button" class="btn btn-primary" id="saveRecurringBtn">Save</button></div>
+  </div>
+</div>
+
+<!-- SERVICE EDIT SHEET -->
+<div class="overlay" id="serviceOverlay">
+  <div class="sheet" id="serviceSheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title"><span>Service Record</span><span class="sheet-close" id="serviceClose">✕</span></div>
+    <div class="row2">
+      <div class="field"><label>Service Date</label><input type="date" id="svDate"></div>
+      <div class="field"><label>Odometer (km)</label><input type="number" id="svKm"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Service Type</label><select id="svType"><option>Regular</option><option>Major</option><option>Repair</option><option>Other</option></select></div>
+      <div class="field"><label>Service Centre / Mechanic</label><input type="text" id="svCenter"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Labour Cost (₹)</label><input type="number" id="svLabour" step="1"></div>
+      <div class="field"><label>Parts Cost (₹)</label><input type="number" id="svParts" step="1"></div>
+    </div>
+    <div class="field"><label>Total Service Cost (₹)</label><input type="number" id="svCost" step="1"></div>
+    <div class="field"><label>Work Performed</label><input type="text" id="svWork" placeholder="e.g. Oil change, brake adjustment"></div>
+    <div class="field"><label>Parts Replaced</label><input type="text" id="svPartsReplaced" placeholder="e.g. Oil filter, brake pads"></div>
+    <div class="field"><label>Notes</label><input type="text" id="svNotes"></div>
+    <div class="row2">
+      <div class="field"><label>Next Recommended Date</label><input type="date" id="svNextDate"></div>
+      <div class="field"><label>Next Recommended KM</label><input type="number" id="svNextKm"></div>
+    </div>
+    <div class="field" id="svProblemsField" style="display:none;">
+      <label>Fixed During This Service</label>
+      <div id="svProblemsList" style="display:flex; flex-direction:column; gap:6px;"></div>
+    </div>
+    <div class="sheet-actions"><button type="button" class="btn btn-danger" id="deleteServiceBtn" style="display:none;">🗑</button><button type="button" class="btn btn-primary" id="saveServiceBtn">Save Service</button></div>
+  </div>
+</div>
+
+<!-- PART / CONSUMABLE EDIT SHEET -->
+<div class="overlay" id="partOverlay">
+  <div class="sheet" id="partSheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title"><span>Consumable / Part</span><span class="sheet-close" id="partClose">✕</span></div>
+    <div class="field"><label>Item</label>
+      <select id="ptNameSelect">
+        <option value="Engine Oil">Engine Oil</option><option value="Oil Filter">Oil Filter</option><option value="Air Filter">Air Filter</option>
+        <option value="Spark Plug">Spark Plug</option><option value="Front Brake Pads">Front Brake Pads</option><option value="Rear Brake Pads">Rear Brake Pads</option>
+        <option value="Front Tyre">Front Tyre</option><option value="Rear Tyre">Rear Tyre</option><option value="Battery">Battery</option>
+        <option value="Chain">Chain</option><option value="Sprocket">Sprocket</option><option value="Chain and Sprocket Set">Chain and Sprocket Set</option>
+        <option value="__custom">+ Custom item</option>
+      </select>
+    </div>
+    <div class="field" id="ptCustomNameField" style="display:none;"><label>Custom Item Name</label><input type="text" id="ptCustomName"></div>
+    <div class="row2">
+      <div class="field"><label>Installed / Replaced Date</label><input type="date" id="ptDate"></div>
+      <div class="field"><label>KM at Installation</label><input type="number" id="ptKm"></div>
+    </div>
+    <div class="field"><label>Replacement Cost (₹)</label><input type="number" id="ptCost" step="1"></div>
+    <div class="row2">
+      <div class="field"><label>Expected Life (km)</label><input type="number" id="ptLifeKm" placeholder="e.g. 3000"></div>
+      <div class="field"><label>Expected Life (months)</label><input type="number" id="ptLifeMonths" placeholder="e.g. 6"></div>
+    </div>
+    <div class="sheet-actions"><button type="button" class="btn btn-danger" id="deletePartBtn" style="display:none;">🗑</button><button type="button" class="btn btn-primary" id="savePartBtn">Save</button></div>
+  </div>
+</div>
+
+<!-- PROBLEM / NOTE EDIT SHEET -->
+<div class="overlay" id="problemOverlay">
+  <div class="sheet" id="problemSheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title"><span>Problem Note</span><span class="sheet-close" id="problemClose">✕</span></div>
+    <div class="field"><label>Problem Title</label><input type="text" id="pbTitle" placeholder="e.g. Clunking noise from front"></div>
+    <div class="field"><label>Description</label><input type="text" id="pbDesc" placeholder="Details of the issue"></div>
+    <div class="row2">
+      <div class="field"><label>Date Noticed</label><input type="date" id="pbDate"></div>
+      <div class="field"><label>Odometer (km)</label><input type="number" id="pbKm"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Category</label><select id="pbCategory"><option>Engine</option><option>Brakes</option><option>Tyres</option><option>Suspension</option><option>Electrical</option><option>Chain</option><option>Noise</option><option>Vibration</option><option>Mileage</option><option>Other</option></select></div>
+      <div class="field"><label>Severity</label><select id="pbSeverity"><option value="🟢 Minor">🟢 Minor</option><option value="🟡 Medium">🟡 Medium</option><option value="🔴 Urgent">🔴 Urgent</option></select></div>
+    </div>
+    <div class="field"><label>Status</label><select id="pbStatus"><option>Open</option><option>Monitoring</option><option>Fixed</option></select></div>
+    <div class="field"><label>Additional Notes</label><input type="text" id="pbNotes"></div>
+    <div class="sheet-actions"><button type="button" class="btn btn-danger" id="deleteProblemBtn" style="display:none;">🗑</button><button type="button" class="btn btn-primary" id="saveProblemBtn">Save</button></div>
+  </div>
+</div>
+
+<!-- DOCUMENT EDIT SHEET -->
+<div class="overlay" id="docOverlay">
+  <div class="sheet" id="docSheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title"><span>Vehicle Document</span><span class="sheet-close" id="docClose">✕</span></div>
+    <div class="field"><label>Document Name</label><select id="dcNameSelect"><option>Insurance</option><option>PUC</option><option>RC</option><option>Road Tax</option><option>Vehicle Warranty</option><option>Service Warranty</option><option value="__custom">+ Custom</option></select></div>
+    <div class="field" id="dcCustomNameField" style="display:none;"><label>Custom Document Name</label><input type="text" id="dcCustomName"></div>
+    <div class="row2">
+      <div class="field"><label>Issue Date</label><input type="date" id="dcIssueDate"></div>
+      <div class="field"><label>Expiry Date</label><input type="date" id="dcExpiryDate"></div>
+    </div>
+    <div class="field"><label>Notes</label><input type="text" id="dcNotes"></div>
+    <div class="sheet-actions"><button type="button" class="btn btn-danger" id="deleteDocBtn" style="display:none;">🗑</button><button type="button" class="btn btn-primary" id="saveDocBtn">Save</button></div>
+  </div>
+</div>
+
+<!-- SCHEDULE / REMINDER EDIT SHEET -->
+<div class="overlay" id="schedOverlay">
+  <div class="sheet" id="schedSheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title"><span>Maintenance Reminder</span><span class="sheet-close" id="schedClose">✕</span></div>
+    <div class="field"><label>Reminder Name</label><input type="text" id="scName" placeholder="e.g. Engine oil change"></div>
+    <div class="row2">
+      <div class="field"><label>KM Interval</label><input type="number" id="scKmInterval" placeholder="e.g. 3000"></div>
+      <div class="field"><label>Month Interval</label><input type="number" id="scMoInterval" placeholder="e.g. 6"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Last Done Date</label><input type="date" id="scLastDate"></div>
+      <div class="field"><label>Last Done KM</label><input type="number" id="scLastKm"></div>
+    </div>
+    <div class="sheet-actions"><button type="button" class="btn btn-danger" id="deleteSchedBtn" style="display:none;">🗑</button><button type="button" class="btn btn-primary" id="saveSchedBtn">Save</button></div>
+  </div>
+</div>
+
+<!-- MECHANIC CHECKLIST SHEET -->
+<div class="overlay" id="mechOverlay">
+  <div class="sheet" id="mechSheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title"><span>Open Issues for Mechanic</span><span class="sheet-close" id="mechClose">✕</span></div>
+    <div id="mechChecklistBody"></div>
+    <div class="sheet-actions"><button type="button" class="btn btn-primary" id="mechDoneBtn" style="width:100%;">Done</button></div>
   </div>
 </div>
 
@@ -833,16 +1105,19 @@ const REDUCE_MOTION = window.matchMedia && window.matchMedia('(prefers-reduced-m
 let state = defaultState();
 let currentView = 'home';
 let filterVehicleId = 'all';
-let ranges = { home:'30', ledger:'30', fuel:'30', insights:'30' };
-let editingId = { entry:null, goal:null, vehicle:null, recurring:null };
+let ranges = { home:'30', ledger:'30', fuel:'30', insights:'30', vcstats:'30' };
+let editingId = { entry:null, goal:null, vehicle:null, recurring:null, service:null, part:null, problem:null, doc:null, sched:null };
+let careVehicleId = null;
+let problemFilter = { category:'all', severity:'all', status:'open' };
 
 function uid(){ return 'e' + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
 function defaultState(){
   return {
     profile: { name: 'Driver', phone: '', lastBackup: 0 },
-    vehicles: [{ id:'v1', name:'Primary Vehicle', mileage: 40, fuelPrice: 110, serviceInterval: 3000, serviceIntervalMonths: 3 }],
+    vehicles: [{ id:'v1', name:'Primary Vehicle', mileage: 40, fuelPrice: 110, serviceInterval: 3000, serviceIntervalMonths: 3, odometer:0, purchaseDate:'', lastServiceDate:'', lastServiceKm:0 }],
     settings: { platforms: [...DEFAULT_PLATFORMS], categories: [...DEFAULT_CATEGORIES], shiftEnd: '22:00' },
-    goals: [], recurring: [], entries: [], ledgerFees: []
+    goals: [], recurring: [], entries: [], ledgerFees: [],
+    services: [], vehicleParts: [], vehicleProblems: [], vehicleDocuments: [], maintSchedules: []
   };
 }
 
@@ -864,7 +1139,16 @@ function loadState(){
       if(!state.vehicles || !state.vehicles.length) state.vehicles = defaultState().vehicles;
       state.vehicles.forEach(v => {
           if(v.serviceIntervalMonths === undefined) v.serviceIntervalMonths = 3;
+          if(v.odometer === undefined) v.odometer = 0;
+          if(v.purchaseDate === undefined) v.purchaseDate = '';
+          if(v.lastServiceDate === undefined) v.lastServiceDate = '';
+          if(v.lastServiceKm === undefined) v.lastServiceKm = 0;
       });
+      if(!state.services) state.services = [];
+      if(!state.vehicleParts) state.vehicleParts = [];
+      if(!state.vehicleProblems) state.vehicleProblems = [];
+      if(!state.vehicleDocuments) state.vehicleDocuments = [];
+      if(!state.maintSchedules) state.maintSchedules = [];
     }
   } catch(e) { console.warn('Load failed', e); state = defaultState(); }
 }
@@ -2537,6 +2821,7 @@ function renderView(view){
   if(view==='fuel') renderFuelView();
   if(view==='insights') renderInsightsView();
   if(view==='profile') renderProfileView();
+  if(view==='care') renderCareView();
   window.scrollTo(0,0);
 }
 
@@ -2741,10 +3026,16 @@ function openVehicleSheet(id){
     document.getElementById('vFuelPrice').value = v.fuelPrice; 
     document.getElementById('vInterval').value = v.serviceInterval||'';
     document.getElementById('vIntervalMonths').value = v.serviceIntervalMonths||'';
+    document.getElementById('vOdometer').value = v.odometer||'';
+    document.getElementById('vPurchaseDate').value = v.purchaseDate||'';
+    document.getElementById('vLastServiceDate').value = v.lastServiceDate||'';
+    document.getElementById('vLastServiceKm').value = v.lastServiceKm||'';
     document.getElementById('deleteVehicleBtn').style.display = state.vehicles.length>1 ? 'block' : 'none';
   } else {
     document.getElementById('vName').value=''; document.getElementById('vMileage').value=''; document.getElementById('vFuelPrice').value=''; 
     document.getElementById('vInterval').value=''; document.getElementById('vIntervalMonths').value='';
+    document.getElementById('vOdometer').value=''; document.getElementById('vPurchaseDate').value='';
+    document.getElementById('vLastServiceDate').value=''; document.getElementById('vLastServiceKm').value='';
     document.getElementById('deleteVehicleBtn').style.display = 'none';
   }
   vehOverlay.classList.add('open');
@@ -2755,14 +3046,24 @@ document.getElementById('saveVehicleBtn').onclick = ()=>{
   const p = { 
       id:editingId.vehicle||uid(), name:document.getElementById('vName').value||'Vehicle', 
       mileage:Number(document.getElementById('vMileage').value)||0, fuelPrice:Number(document.getElementById('vFuelPrice').value)||0, 
-      serviceInterval:Number(document.getElementById('vInterval').value)||0, serviceIntervalMonths:Number(document.getElementById('vIntervalMonths').value)||0 
+      serviceInterval:Number(document.getElementById('vInterval').value)||0, serviceIntervalMonths:Number(document.getElementById('vIntervalMonths').value)||0,
+      odometer:Number(document.getElementById('vOdometer').value)||0, purchaseDate:document.getElementById('vPurchaseDate').value||'',
+      lastServiceDate:document.getElementById('vLastServiceDate').value||'', lastServiceKm:Number(document.getElementById('vLastServiceKm').value)||0
   };
   if(editingId.vehicle) state.vehicles = state.vehicles.map(x=>x.id===editingId.vehicle ? p : x); else state.vehicles.push(p);
   saveState(); vehOverlay.classList.remove('open'); renderView(currentView);
 };
 document.getElementById('deleteVehicleBtn').onclick = async ()=>{ 
   if(await showConfirm('Delete vehicle?', 'Trips linked to this vehicle will remain in history, but may lack a proper name label.')){ 
-    state.vehicles = state.vehicles.filter(x=>x.id!==editingId.vehicle); saveState(); vehOverlay.classList.remove('open'); renderView(currentView); 
+    const delId = editingId.vehicle;
+    state.vehicles = state.vehicles.filter(x=>x.id!==delId);
+    state.services = state.services.filter(x=>x.vehicleId!==delId);
+    state.vehicleParts = state.vehicleParts.filter(x=>x.vehicleId!==delId);
+    state.vehicleProblems = state.vehicleProblems.filter(x=>x.vehicleId!==delId);
+    state.vehicleDocuments = state.vehicleDocuments.filter(x=>x.vehicleId!==delId);
+    state.maintSchedules = state.maintSchedules.filter(x=>x.vehicleId!==delId);
+    if(careVehicleId===delId) careVehicleId = null;
+    saveState(); vehOverlay.classList.remove('open'); renderView(currentView); 
   } 
 };
 
@@ -2875,6 +3176,698 @@ function setupDynamicPWA(){
     }
   } catch(e) {}
 }
+
+
+/* =========================== VEHICLE CARE MODULE =========================== */
+const DEFAULT_PART_NAMES = ['Engine Oil','Oil Filter','Air Filter','Spark Plug','Front Brake Pads','Rear Brake Pads','Front Tyre','Rear Tyre','Battery','Chain','Sprocket','Chain and Sprocket Set'];
+const DEFAULT_DOC_NAMES = ['Insurance','PUC','RC','Road Tax','Vehicle Warranty','Service Warranty'];
+
+function vcVehicles(){ return state.vehicles; }
+function vcGetVehicle(id){ return state.vehicles.find(v=>v.id===id) || state.vehicles[0]; }
+function vcServices(vid){ return state.services.filter(s=>s.vehicleId===vid).sort((a,b)=>a.date.localeCompare(b.date)); }
+function vcParts(vid){ return state.vehicleParts.filter(p=>p.vehicleId===vid); }
+function vcProblems(vid){ return state.vehicleProblems.filter(p=>p.vehicleId===vid); }
+function vcDocs(vid){ return state.vehicleDocuments.filter(d=>d.vehicleId===vid); }
+function vcSchedules(vid){ return state.maintSchedules.filter(s=>s.vehicleId===vid); }
+function vcEntries(vid){ return state.entries.filter(e=>e.vehicleId===vid); }
+
+function daysBetween(dateStr){
+  if(!dateStr) return null;
+  return Math.ceil((parseLocalDate(dateStr) - parseLocalDate(todayStr())) / 86400000);
+}
+
+function vcLastService(v){
+  const svcs = vcServices(v.id);
+  if(svcs.length) return svcs[svcs.length-1];
+  if(v.lastServiceDate || v.lastServiceKm) return { date: v.lastServiceDate||null, km: v.lastServiceKm||0, nextDate:null, nextKm:null, manual:true };
+  return null;
+}
+
+function vcNextServiceInfo(v){
+  const last = vcLastService(v);
+  const kmInterval = v.serviceInterval || 3000;
+  const moInterval = v.serviceIntervalMonths || 3;
+  const lastKm = last ? (Number(last.km)||0) : 0;
+  const lastDate = last ? last.date : null;
+  let nextKm = (last && last.nextKm) ? Number(last.nextKm) : lastKm + kmInterval;
+  let nextDate;
+  if(last && last.nextDate) nextDate = last.nextDate;
+  else {
+    const baseStr = lastDate || todayStr();
+    const d = parseLocalDate(baseStr); d.setMonth(d.getMonth()+moInterval); nextDate = toISO(d);
+  }
+  const currentKm = Number(v.odometer)||0;
+  const kmRemaining = nextKm - currentKm;
+  const daysRemaining = daysBetween(nextDate);
+  const kmSince = currentKm - lastKm;
+  const kmProgress = kmInterval>0 ? clamp((kmSince/kmInterval)*100, 0, 100) : 0;
+  let status='good', statusLabel='🟢 Good', statusColor='var(--green)';
+  if(kmRemaining<=0 || (daysRemaining!==null && daysRemaining<=0)){ status='overdue'; statusLabel='🔴 Service Overdue'; statusColor='var(--red)'; }
+  else if(kmRemaining<=300 || (daysRemaining!==null && daysRemaining<=7)){ status='soon'; statusLabel='🟡 Service Due Soon'; statusColor='var(--amber)'; }
+  return { last, lastDate, lastKm, nextKm, nextDate, kmRemaining, daysRemaining, kmProgress, status, statusLabel, statusColor };
+}
+
+function vcUsageStats(v){
+  const entries = vcEntries(v.id);
+  const totalKm = Number(v.odometer)||0;
+  const deliveryAll = entries.reduce((s,e)=>s+(Number(e.distance)||0),0);
+  const sumSince = (d)=> entries.filter(e=>e.date>=d).reduce((s,e)=>s+(Number(e.distance)||0),0);
+  const wkStart = toISO(new Date(Date.now()-6*86400000));
+  const moStart = todayStr().slice(0,7)+'-01';
+  const yrStart = todayStr().slice(0,4)+'-01-01';
+  const deliveryWeek = sumSince(wkStart), deliveryMonth = sumSince(moStart), deliveryYear = sumSince(yrStart);
+  const personalKm = Math.max(0, totalKm - deliveryAll);
+  const deliveryPct = totalKm>0 ? clamp((deliveryAll/totalKm)*100,0,100) : 0;
+  return { totalKm, deliveryAll, deliveryWeek, deliveryMonth, deliveryYear, personalKm, deliveryPct };
+}
+
+function vcRangeStart(range){
+  if(range==='7') return toISO(new Date(Date.now()-6*86400000));
+  if(range==='30') return toISO(new Date(Date.now()-29*86400000));
+  if(range==='month') return todayStr().slice(0,7)+'-01';
+  if(range==='year') return todayStr().slice(0,4)+'-01-01';
+  return null;
+}
+
+function vcCostAnalytics(v, range){
+  const startDate = vcRangeStart(range);
+  const allSvcs = vcServices(v.id);
+  const svcs = allSvcs.filter(s=>!startDate || s.date>=startDate);
+  const totalServiceCost = svcs.reduce((s,x)=>s+(Number(x.cost)||0),0);
+  const totalLabour = svcs.reduce((s,x)=>s+(Number(x.labourCost)||0),0);
+  const totalParts = svcs.reduce((s,x)=>s+(Number(x.partsCost)||0),0);
+  const avgServiceCost = svcs.length ? totalServiceCost/svcs.length : 0;
+  let mostExpensive = null;
+  svcs.forEach(s=>{ if(!mostExpensive || (Number(s.cost)||0) > (Number(mostExpensive.cost)||0)) mostExpensive = s; });
+
+  const entries = vcEntries(v.id).filter(e=>!startDate || e.date>=startDate);
+  let fuelCost=0, dist=0, earnings=0;
+  entries.forEach(e=>{ const c=computeEntry(e); fuelCost+=c.fuelCost; dist+=c.distance; earnings+=c.earnings; });
+
+  const allEntries = vcEntries(v.id);
+  let allFuelCost=0, allDist=0;
+  allEntries.forEach(e=>{ const c=computeEntry(e); allFuelCost+=c.fuelCost; allDist+=c.distance; });
+  const totalMaintAllTime = allSvcs.reduce((s,x)=>s+(Number(x.cost)||0),0);
+  const totalKm = Number(v.odometer)||0;
+  const maintCostPerKm = totalKm>0 ? totalMaintAllTime/totalKm : 0;
+  const fuelCostPerKm = allDist>0 ? allFuelCost/allDist : 0;
+  const runningCostPerKm = maintCostPerKm + fuelCostPerKm;
+  const avgKmBetweenServices = allSvcs.length>1 ? (Number(allSvcs[allSvcs.length-1].km||0) - Number(allSvcs[0].km||0)) / (allSvcs.length-1) : 0;
+
+  const deliveryVehicleCost = fuelCost + totalServiceCost;
+  const deliveryCostPct = earnings>0 ? (deliveryVehicleCost/earnings)*100 : 0;
+  const netEarnings = earnings - deliveryVehicleCost;
+
+  return { totalServiceCost, totalLabour, totalParts, avgServiceCost, mostExpensive, fuelCost, dist, earnings,
+    totalMaintAllTime, maintCostPerKm, fuelCostPerKm, runningCostPerKm, avgKmBetweenServices,
+    deliveryVehicleCost, deliveryCostPct, netEarnings, servicesCount: svcs.length, totalExpenses: totalServiceCost + fuelCost };
+}
+
+function vcPartStatus(v, p){
+  const currentKm = Number(v.odometer)||0;
+  const kmUsed = currentKm - (Number(p.installKm)||0);
+  const kmRemaining = p.lifeKm ? Number(p.lifeKm) - kmUsed : null;
+  let monthsUsed = 0;
+  if(p.installDate) monthsUsed = (new Date(todayStr()) - parseLocalDate(p.installDate)) / (30*86400000);
+  const monthsRemaining = p.lifeMonths ? Number(p.lifeMonths) - monthsUsed : null;
+  const pctKm = p.lifeKm ? clamp((kmUsed/Number(p.lifeKm))*100, 0, 130) : 0;
+  const pctMo = p.lifeMonths ? clamp((monthsUsed/Number(p.lifeMonths))*100, 0, 130) : 0;
+  const pct = Math.max(pctKm, pctMo);
+  let status='good', label='🟢 Good', color='var(--green)';
+  if(pct>=100){ status='due'; label='🔴 Replacement Due'; color='var(--red)'; }
+  else if(pct>=80){ status='soon'; label='🟡 Replace Soon'; color='var(--amber)'; }
+  return { kmUsed, kmRemaining, monthsRemaining, pct, status, label, color };
+}
+
+function vcScheduleStatus(v, s){
+  const currentKm = Number(v.odometer)||0;
+  const kmSince = currentKm - (Number(s.lastDoneKm)||0);
+  let moSince = 0;
+  if(s.lastDoneDate) moSince = (new Date(todayStr()) - parseLocalDate(s.lastDoneDate)) / (30*86400000);
+  const pctKm = s.kmInterval ? clamp((kmSince/Number(s.kmInterval))*100, 0, 130) : 0;
+  const pctMo = s.monthInterval ? clamp((moSince/Number(s.monthInterval))*100, 0, 130) : 0;
+  const pct = Math.max(pctKm, pctMo);
+  let status='good', color='var(--green)';
+  if(pct>=100){ status='due'; color='var(--red)'; } else if(pct>=80){ status='soon'; color='var(--amber)'; }
+  return { kmSince, moSince, pct, status, color };
+}
+
+function vcMileageHealth(v){
+  const entries = vcEntries(v.id).slice().sort((a,b)=>a.date.localeCompare(b.date));
+  const mileages = entries.map(e=>computeEntry(e).mileage).filter(m=>m>0);
+  if(!mileages.length) return null;
+  const overallAvg = mileages.reduce((s,m)=>s+m,0)/mileages.length;
+  const best = Math.max(...mileages);
+  const worst = Math.min(...mileages);
+  const recent = mileages.slice(-10);
+  const recentAvg = recent.reduce((s,m)=>s+m,0)/recent.length;
+  const prevChunk = mileages.slice(-20,-10);
+  const prevAvg = prevChunk.length ? prevChunk.reduce((s,m)=>s+m,0)/prevChunk.length : recentAvg;
+  const change = prevAvg>0 ? ((recentAvg-prevAvg)/prevAvg)*100 : 0;
+  return { overallAvg, best, worst, recentAvg, change, warn: change < -10, current: v.mileage||0 };
+}
+
+function vcAlerts(v){
+  const alerts = [];
+  const ns = vcNextServiceInfo(v);
+  if(ns.status==='overdue'){
+    let bits=[];
+    if(ns.kmRemaining<=0) bits.push(`${Math.abs(Math.round(ns.kmRemaining))} km over`);
+    if(ns.daysRemaining!==null && ns.daysRemaining<=0) bits.push(`${Math.abs(ns.daysRemaining)} days overdue`);
+    alerts.push({sev:'red', text:`Service overdue — ${bits.join(', ')}.`});
+  } else if(ns.status==='soon'){
+    alerts.push({sev:'amber', text:`Service due soon — ${Math.max(0,Math.round(ns.kmRemaining))} km / ${ns.daysRemaining!==null?Math.max(0,ns.daysRemaining):'?'} days left.`});
+  }
+  vcParts(v.id).forEach(p=>{
+    const st = vcPartStatus(v,p);
+    if(st.status==='due') alerts.push({sev:'red', text:`${p.name} replacement due.`});
+    else if(st.status==='soon') alerts.push({sev:'amber', text:`${p.name} replacement approaching.`});
+  });
+  vcSchedules(v.id).forEach(s=>{
+    const st = vcScheduleStatus(v,s);
+    if(st.status==='due') alerts.push({sev:'red', text:`${s.name} is due.`});
+  });
+  vcProblems(v.id).forEach(p=>{
+    if(p.status!=='Fixed' && (p.severity||'').includes('Urgent')) alerts.push({sev:'red', text:`Urgent unresolved issue: ${p.title}`});
+  });
+  vcDocs(v.id).forEach(d=>{
+    const days = daysBetween(d.expiryDate);
+    if(days===null) return;
+    if(days<=0) alerts.push({sev:'red', text:`${d.name} has expired.`});
+    else if(days<=30) alerts.push({sev:'amber', text:`${d.name} expires in ${days} day${days===1?'':'s'}.`});
+  });
+  const order = {red:0, amber:1, green:2};
+  return alerts.sort((a,b)=>order[a.sev]-order[b.sev]);
+}
+
+/* -------- rendering -------- */
+function vcActiveVehicle(){
+  if(!careVehicleId || !state.vehicles.find(v=>v.id===careVehicleId)){
+    careVehicleId = (filterVehicleId!=='all' && state.vehicles.find(v=>v.id===filterVehicleId)) ? filterVehicleId : state.vehicles[0].id;
+  }
+  return vcGetVehicle(careVehicleId);
+}
+
+function renderCareView(){
+  const v = vcActiveVehicle();
+
+  document.getElementById('vcVehicleTabs').innerHTML = state.vehicles.map(x=>
+    `<div class="vc-vtab ${x.id===v.id?'active':''}" onclick="vcSelectVehicle('${x.id}')">${esc(x.name)}</div>`
+  ).join('');
+
+  const ns = vcNextServiceInfo(v);
+  document.getElementById('vcDashboardHolder').innerHTML = `
+    <div class="card vc-status-banner" style="background:linear-gradient(180deg, var(--panel) 0%, var(--panel-2) 100%);">
+      <div class="vc-status-dot" style="background:${ns.statusColor}; color:${ns.statusColor};"></div>
+      <div style="flex:1;">
+        <div class="vc-status-title">${ns.statusLabel}</div>
+        <div class="vc-status-sub">${esc(v.name)} · ${Math.round(Number(v.odometer)||0).toLocaleString('en-IN')} km on odometer</div>
+      </div>
+    </div>
+    <div class="vc-mini-grid">
+      <div class="vc-mini-stat"><div class="lbl">Total Services</div><div class="val">${vcServices(v.id).length}</div></div>
+      <div class="vc-mini-stat"><div class="lbl">Last Service</div><div class="val" style="font-size:12.5px;">${ns.lastDate?fmtDateShort(ns.lastDate):'—'}</div></div>
+    </div>
+  `;
+
+  const alerts = vcAlerts(v);
+  document.getElementById('vcAlertsHolder').innerHTML = alerts.length ? `
+    <div class="section-head"><div class="section-title">Smart Vehicle Alerts</div></div>
+    ${alerts.map(a=>`<div class="vc-alert sev-${a.sev}"><span>${a.sev==='red'?'🔴':a.sev==='amber'?'🟡':'🟢'}</span><div class="vc-alert-text">${esc(a.text)}</div></div>`).join('')}
+  ` : '';
+
+  document.getElementById('vcNextServiceHolder').innerHTML = `
+    <div style="display:flex; justify-content:space-between; font-family:var(--font-mono); font-size:12px; color:var(--muted); margin-bottom:6px;">
+      <span>${Math.max(0,Math.round(ns.kmRemaining))} km remaining</span><span>${ns.daysRemaining!==null?Math.max(0,ns.daysRemaining)+' days remaining':''}</span>
+    </div>
+    <div class="goal-track"><div class="goal-fill" style="width:${ns.kmProgress}%; background:${ns.statusColor}"></div></div>
+    <div class="vc-mini-grid" style="margin-top:14px;">
+      <div class="vc-mini-stat"><div class="lbl">Last Service Date</div><div class="val" style="font-size:13px;">${ns.lastDate?fmtDateShort(ns.lastDate):'—'}</div></div>
+      <div class="vc-mini-stat"><div class="lbl">Last Service KM</div><div class="val" style="font-size:13px;">${ns.lastKm?ns.lastKm.toLocaleString('en-IN'):'—'}</div></div>
+      <div class="vc-mini-stat"><div class="lbl">Next Due Date</div><div class="val" style="font-size:13px;">${fmtDateShort(ns.nextDate)}</div></div>
+      <div class="vc-mini-stat"><div class="lbl">Next Due KM</div><div class="val" style="font-size:13px;">${Math.round(ns.nextKm).toLocaleString('en-IN')}</div></div>
+    </div>
+  `;
+
+  const us = vcUsageStats(v);
+  document.getElementById('vcUsageHolder').innerHTML = `
+    <div class="vc-mini-grid">
+      <div class="vc-mini-stat"><div class="lbl">Total Bike KM</div><div class="val">${Math.round(us.totalKm).toLocaleString('en-IN')}</div></div>
+      <div class="vc-mini-stat"><div class="lbl">Delivery KM (All time)</div><div class="val" style="color:var(--teal)">${Math.round(us.deliveryAll).toLocaleString('en-IN')}</div></div>
+      <div class="vc-mini-stat"><div class="lbl">Personal KM</div><div class="val" style="color:var(--violet)">${Math.round(us.personalKm).toLocaleString('en-IN')}</div></div>
+      <div class="vc-mini-stat"><div class="lbl">Delivery Usage %</div><div class="val">${us.deliveryPct.toFixed(0)}%</div></div>
+      <div class="vc-mini-stat"><div class="lbl">Delivery KM (Week)</div><div class="val">${Math.round(us.deliveryWeek).toLocaleString('en-IN')}</div></div>
+      <div class="vc-mini-stat"><div class="lbl">Delivery KM (Month)</div><div class="val">${Math.round(us.deliveryMonth).toLocaleString('en-IN')}</div></div>
+      <div class="vc-mini-stat"><div class="lbl">Delivery KM (Year)</div><div class="val">${Math.round(us.deliveryYear).toLocaleString('en-IN')}</div></div>
+      <div class="vc-mini-stat"><div class="lbl">Vehicle</div><div class="val" style="font-size:12.5px;">${esc(v.name)}</div></div>
+    </div>
+  `;
+  if(us.totalKm>0){
+    drawGroupedBarChart(document.getElementById('vcUsageChart'), ['Usage'], [
+      { label:'Delivery KM', color: COLORS.teal, values:[us.deliveryAll] },
+      { label:'Personal KM', color: COLORS.violet, values:[us.personalKm] }
+    ]);
+  } else {
+    document.getElementById('vcUsageChartHolder').innerHTML = `<div class="chart-empty">Set your current odometer reading (in Profile → Vehicle) to see usage split.</div>`;
+  }
+
+  vcRenderQuickStats(v);
+
+  const range = ranges.vcstats;
+  const ca = vcCostAnalytics(v, range);
+  document.getElementById('vcCostHolder').innerHTML = `
+    <table class="vc-cost-table">
+      <tr><td>Total KM Driven</td><td class="val">${Math.round(us.totalKm).toLocaleString('en-IN')} km</td></tr>
+      <tr><td>Total Services Completed</td><td class="val">${vcServices(v.id).length}</td></tr>
+      <tr><td>Average KM Between Services</td><td class="val">${Math.round(ca.avgKmBetweenServices).toLocaleString('en-IN')} km</td></tr>
+      <tr><td>Total Maintenance Cost (all-time)</td><td class="val">${rupee(ca.totalMaintAllTime)}</td></tr>
+      <tr><td>Average Service Cost</td><td class="val">${rupee(ca.avgServiceCost)}</td></tr>
+      <tr><td>Maintenance Cost / KM</td><td class="val">${rupee(ca.maintCostPerKm,{dec:true})}</td></tr>
+      <tr><td>Fuel Cost / KM</td><td class="val">${rupee(ca.fuelCostPerKm,{dec:true})}</td></tr>
+      <tr class="subtotal"><td>Overall Running Cost / KM</td><td class="val">${rupee(ca.runningCostPerKm,{dec:true})}</td></tr>
+    </table>
+  `;
+
+  document.getElementById('vcProfitHolder').innerHTML = `
+    <div class="helper-text" style="margin-top:0;">For selected range (${range==='all'?'All Time':range==='7'?'7 Days':range==='30'?'30 Days':range==='month'?'This Month':'This Year'})</div>
+    <table class="vc-cost-table">
+      <tr><td>Fuel Cost</td><td class="val">${rupee(ca.fuelCost)}</td></tr>
+      <tr><td>Service / Repair Cost</td><td class="val">${rupee(ca.totalServiceCost)}</td></tr>
+      <tr class="subtotal"><td>Total Delivery Vehicle Cost</td><td class="val">${rupee(ca.deliveryVehicleCost)}</td></tr>
+      <tr><td>Total Delivery Earnings</td><td class="val" style="color:var(--green)">${rupee(ca.earnings)}</td></tr>
+      <tr class="${ca.netEarnings>=0?'net-profit':'net-loss'}"><td>Net Earnings After Vehicle Cost</td><td class="val">${rupee(ca.netEarnings)}</td></tr>
+      <tr><td>Vehicle Cost % of Earnings</td><td class="val" style="color:${ca.deliveryCostPct>25?'var(--red)':'var(--amber)'}">${ca.deliveryCostPct.toFixed(1)}%</td></tr>
+    </table>
+  `;
+
+  vcRenderServiceHistory(v);
+  vcRenderCostTrend(v);
+  vcRenderParts(v);
+  vcRenderProblemFilters(v);
+  vcRenderProblems(v);
+  vcRenderMileageHealth(v);
+  vcRenderDocs(v);
+  vcRenderSchedules(v);
+}
+
+function vcSelectVehicle(id){ careVehicleId = id; renderCareView(); }
+
+function vcRenderQuickStats(v){
+  const range = ranges.vcstats;
+  const ca = vcCostAnalytics(v, range);
+  const grid = document.getElementById('vcStatsGrid');
+  grid.innerHTML = `
+    <div class="card stat-card"><div class="stat-title">Total Expenses</div><div class="stat-value">${rupee(ca.totalExpenses)}</div></div>
+    <div class="card stat-card"><div class="stat-title">Service Cost</div><div class="stat-value">${rupee(ca.totalServiceCost)}</div></div>
+    <div class="card stat-card"><div class="stat-title">Fuel Cost</div><div class="stat-value" style="color:var(--amber)">${rupee(ca.fuelCost)}</div></div>
+    <div class="card stat-card"><div class="stat-title">Distance</div><div class="stat-value">${Math.round(ca.dist)} km</div></div>
+    <div class="card stat-card"><div class="stat-title">Services Done</div><div class="stat-value">${ca.servicesCount}</div></div>
+    <div class="card stat-card"><div class="stat-title">Cost % of Earnings</div><div class="stat-value" style="color:var(--red)">${ca.deliveryCostPct.toFixed(0)}%</div></div>
+  `;
+}
+
+function vcRenderServiceHistory(v){
+  const svcs = vcServices(v.id).slice().reverse();
+  const holder = document.getElementById('vcServiceHistoryList');
+  if(!svcs.length){ holder.innerHTML = `<div class="vc-empty-note">No services logged yet. Tap "+ Add Service" to start your history.</div>`; return; }
+  holder.innerHTML = svcs.map(s=>`
+    <div class="hist-row" onclick="openServiceSheet('${s.id}')">
+      <div class="hist-date">${fmtDateShort(s.date)}</div>
+      <div class="hist-mid">
+        <div class="hist-earn">${esc(s.type||'Service')} · ${Number(s.km||0).toLocaleString('en-IN')} km</div>
+        <div class="hist-meta">${esc(s.center||'')} ${s.workPerformed?'· '+esc(s.workPerformed):''}</div>
+      </div>
+      <div class="hist-profit">${rupee(s.cost||0)}</div>
+    </div>
+  `).join('');
+}
+
+function vcRenderCostTrend(v){
+  const svcs = vcServices(v.id);
+  const holder = document.getElementById('vcCostTrendHolder');
+  if(!svcs.length){ holder.innerHTML = `<div class="chart-empty">No service cost history yet.</div>`; return; }
+  if(!document.getElementById('vcCostTrendChart')) holder.innerHTML = `<canvas class="barchart" id="vcCostTrendChart"></canvas>`;
+  drawGroupedBarChart(document.getElementById('vcCostTrendChart'), svcs.map(s=>s.date), [
+    { label:'Service Cost', color: COLORS.blue, values: svcs.map(s=>Number(s.cost)||0) }
+  ]);
+}
+
+function vcRenderParts(v){
+  const parts = vcParts(v.id);
+  const holder = document.getElementById('vcPartsList');
+  if(!parts.length){ holder.innerHTML = `<div class="vc-empty-note">No consumables tracked yet. Add engine oil, tyres, brake pads etc. to get replacement alerts.</div>`; return; }
+  holder.innerHTML = parts.map(p=>{
+    const st = vcPartStatus(v,p);
+    return `<div class="vc-part-card" onclick="openPartSheet('${p.id}')">
+      <div class="vc-part-head"><span class="vc-part-name">${esc(p.name)}</span><span class="vc-part-status" style="color:${st.color}; border:1px solid ${st.color};">${st.label}</span></div>
+      <div class="goal-track"><div class="goal-fill" style="width:${Math.min(100,st.pct)}%; background:${st.color}"></div></div>
+      <div class="vc-part-meta"><span>${st.kmUsed>=0?Math.round(st.kmUsed).toLocaleString('en-IN')+' km used':''}</span><span>${p.cost?rupee(p.cost):''}</span></div>
+    </div>`;
+  }).join('');
+}
+
+function vcRenderProblemFilters(v){
+  const cats = ['all','Engine','Brakes','Tyres','Suspension','Electrical','Chain','Noise','Vibration','Mileage','Other'];
+  const statuses = ['open','Open','Monitoring','Fixed','all'];
+  document.getElementById('vcProblemFilters').innerHTML = `
+    <div class="vc-filter-chip ${problemFilter.status==='open'?'active':''}" onclick="vcSetProblemFilter('status','open')">Unresolved</div>
+    <div class="vc-filter-chip ${problemFilter.status==='Fixed'?'active':''}" onclick="vcSetProblemFilter('status','Fixed')">Fixed</div>
+    <div class="vc-filter-chip ${problemFilter.status==='all'?'active':''}" onclick="vcSetProblemFilter('status','all')">All</div>
+    ${['Engine','Brakes','Tyres','Electrical','Other'].map(c=>`<div class="vc-filter-chip ${problemFilter.category===c?'active':''}" onclick="vcSetProblemFilter('category','${problemFilter.category===c?'all':c}')">${c}</div>`).join('')}
+  `;
+}
+function vcSetProblemFilter(key, val){ problemFilter[key]=val; vcRenderProblems(vcActiveVehicle()); vcRenderProblemFilters(vcActiveVehicle()); }
+
+function vcRenderProblems(v){
+  let probs = vcProblems(v.id).slice().sort((a,b)=>(b.dateNoticed||'').localeCompare(a.dateNoticed||''));
+  if(problemFilter.status==='open') probs = probs.filter(p=>p.status!=='Fixed');
+  else if(problemFilter.status!=='all') probs = probs.filter(p=>p.status===problemFilter.status);
+  if(problemFilter.category!=='all') probs = probs.filter(p=>p.category===problemFilter.category);
+
+  const holder = document.getElementById('vcProblemsList');
+  if(!probs.length){ holder.innerHTML = `<div class="vc-empty-note">No problems match this filter. 🎉</div>`; return; }
+  const sevColor = s => (s||'').includes('Urgent') ? 'var(--red)' : (s||'').includes('Medium') ? 'var(--amber)' : 'var(--green)';
+  const statusColor = s => s==='Fixed' ? 'rgba(52,211,153,0.15)' : s==='Monitoring' ? 'rgba(255,176,32,0.15)' : 'rgba(247,107,107,0.15)';
+  const statusText = s => s==='Fixed' ? 'var(--green)' : s==='Monitoring' ? 'var(--amber)' : 'var(--red)';
+  holder.innerHTML = probs.map(p=>`
+    <div class="vc-problem-card" style="border-left-color:${sevColor(p.severity)};" onclick="openProblemSheet('${p.id}')">
+      <div class="vc-problem-head">
+        <div><div class="vc-problem-title">${esc(p.title)}</div><div class="vc-problem-meta">${esc(p.category||'')} · ${p.dateNoticed?fmtDateShort(p.dateNoticed):''} ${p.kmNoticed?'· '+Number(p.kmNoticed).toLocaleString('en-IN')+' km':''}</div></div>
+        <span class="vc-problem-status" style="background:${statusColor(p.status)}; color:${statusText(p.status)};">${esc(p.status||'Open')}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function vcRenderMileageHealth(v){
+  const mh = vcMileageHealth(v);
+  const holder = document.getElementById('vcMileageHolder');
+  if(!mh){ holder.innerHTML = `<div class="vc-empty-note">Log a few trips with distance & fuel to see mileage health.</div>`; return; }
+  holder.innerHTML = `
+    ${mh.warn ? `<div class="vc-alert sev-amber" style="margin-bottom:12px;"><span>🟡</span><div class="vc-alert-text">Mileage has dropped ${Math.abs(mh.change).toFixed(0)}% recently compared to your normal average — consider checking the engine, tyres or chain.</div></div>` : ''}
+    <div class="vc-mini-grid">
+      <div class="vc-mini-stat"><div class="lbl">Overall Avg Mileage</div><div class="val">${mh.overallAvg.toFixed(1)} km/l</div></div>
+      <div class="vc-mini-stat"><div class="lbl">Recent Avg Mileage</div><div class="val">${mh.recentAvg.toFixed(1)} km/l</div></div>
+      <div class="vc-mini-stat"><div class="lbl">Best Recorded</div><div class="val" style="color:var(--green)">${mh.best.toFixed(1)} km/l</div></div>
+      <div class="vc-mini-stat"><div class="lbl">Lowest Recorded</div><div class="val" style="color:var(--red)">${mh.worst.toFixed(1)} km/l</div></div>
+    </div>
+    <div class="velocity-row" style="margin-top:12px;"><span>Trend vs previous period</span><strong style="color:${mh.change<0?'var(--red)':'var(--green)'}">${mh.change>=0?'+':''}${mh.change.toFixed(1)}%</strong></div>
+  `;
+}
+
+function vcRenderDocs(v){
+  const docs = vcDocs(v.id).slice().sort((a,b)=>(a.expiryDate||'').localeCompare(b.expiryDate||''));
+  const holder = document.getElementById('vcDocsList');
+  if(!docs.length){ holder.innerHTML = `<div class="vc-empty-note">No documents tracked yet — add insurance, PUC, road tax reminders etc.</div>`; return; }
+  holder.innerHTML = docs.map(d=>{
+    const days = daysBetween(d.expiryDate);
+    let label = days===null ? '' : days<=0 ? 'Expired' : days<=30 ? `Expires in ${days}d` : `${days}d left`;
+    let color = days===null ? 'var(--muted)' : days<=0 ? 'var(--red)' : days<=30 ? 'var(--amber)' : 'var(--green)';
+    return `<div class="vc-doc-row" onclick="openDocSheet('${d.id}')">
+      <div class="hist-mid"><div class="hist-earn">${esc(d.name)}</div><div class="hist-meta">Expires ${d.expiryDate?fmtDateShort(d.expiryDate):'—'}</div></div>
+      <div style="color:${color}; font-family:var(--font-mono); font-size:11px; font-weight:600;">${label}</div>
+    </div>`;
+  }).join('');
+}
+
+function vcRenderSchedules(v){
+  const scheds = vcSchedules(v.id);
+  const holder = document.getElementById('vcSchedulesList');
+  if(!scheds.length){ holder.innerHTML = `<div class="vc-empty-note">No custom maintenance reminders yet.</div>`; return; }
+  holder.innerHTML = scheds.map(s=>{
+    const st = vcScheduleStatus(v,s);
+    return `<div class="vc-sched-row">
+      <div class="vc-sched-mid" onclick="openScheduleSheet('${s.id}')">
+        <div class="hist-earn">${esc(s.name)}</div>
+        <div class="hist-meta">${s.kmInterval?'Every '+Number(s.kmInterval).toLocaleString('en-IN')+' km':''}${s.kmInterval&&s.monthInterval?' / ':''}${s.monthInterval?'Every '+s.monthInterval+' mo':''}</div>
+      </div>
+      <button class="btn-sm" onclick="event.stopPropagation(); vcMarkScheduleDone('${s.id}')" style="color:${st.color};">Mark Done</button>
+    </div>`;
+  }).join('');
+}
+
+function vcMarkScheduleDone(id){
+  const s = state.maintSchedules.find(x=>x.id===id);
+  const v = vcGetVehicle(s.vehicleId);
+  s.lastDoneDate = todayStr(); s.lastDoneKm = Number(v.odometer)||0;
+  saveState(); renderCareView();
+}
+
+/* -------- Service sheet -------- */
+const serviceOverlay = document.getElementById('serviceOverlay');
+function openServiceSheet(id){
+  editingId.service = id;
+  const v = vcActiveVehicle();
+  const openProbs = vcProblems(v.id).filter(p=>p.status!=='Fixed');
+  const pField = document.getElementById('svProblemsField');
+  const pList = document.getElementById('svProblemsList');
+  if(openProbs.length){
+    pField.style.display='block';
+    pList.innerHTML = openProbs.map(p=>`<label style="display:flex; align-items:center; gap:8px; font-size:12px;"><input type="checkbox" class="vc-checkbox" value="${p.id}" ${(id && state.services.find(s=>s.id===id) && (state.services.find(s=>s.id===id).fixedProblemIds||[]).includes(p.id))?'checked':''}> ${esc(p.title)}</label>`).join('');
+  } else { pField.style.display='none'; pList.innerHTML=''; }
+
+  if(id){
+    const s = state.services.find(x=>x.id===id);
+    document.getElementById('svDate').value = s.date; document.getElementById('svKm').value = s.km;
+    document.getElementById('svType').value = s.type||'Regular'; document.getElementById('svCenter').value = s.center||'';
+    document.getElementById('svLabour').value = s.labourCost||''; document.getElementById('svParts').value = s.partsCost||'';
+    document.getElementById('svCost').value = s.cost||''; document.getElementById('svWork').value = s.workPerformed||'';
+    document.getElementById('svPartsReplaced').value = s.partsReplaced||''; document.getElementById('svNotes').value = s.notes||'';
+    document.getElementById('svNextDate').value = s.nextDate||''; document.getElementById('svNextKm').value = s.nextKm||'';
+    document.getElementById('deleteServiceBtn').style.display='block';
+  } else {
+    document.getElementById('svDate').value = todayStr(); document.getElementById('svKm').value = v.odometer||'';
+    document.getElementById('svType').value='Regular'; document.getElementById('svCenter').value='';
+    document.getElementById('svLabour').value=''; document.getElementById('svParts').value='';
+    document.getElementById('svCost').value=''; document.getElementById('svWork').value='';
+    document.getElementById('svPartsReplaced').value=''; document.getElementById('svNotes').value='';
+    document.getElementById('svNextDate').value=''; document.getElementById('svNextKm').value='';
+    document.getElementById('deleteServiceBtn').style.display='none';
+  }
+  serviceOverlay.classList.add('open');
+}
+document.getElementById('vcAddServiceBtn').onclick = ()=> openServiceSheet(null);
+document.getElementById('serviceClose').onclick = ()=> serviceOverlay.classList.remove('open');
+document.getElementById('saveServiceBtn').onclick = ()=>{
+  const v = vcActiveVehicle();
+  const fixedIds = Array.from(document.querySelectorAll('#svProblemsList input:checked')).map(el=>el.value);
+  const p = {
+    id: editingId.service||uid(), vehicleId: v.id,
+    date: document.getElementById('svDate').value||todayStr(), km: Number(document.getElementById('svKm').value)||0,
+    type: document.getElementById('svType').value, center: document.getElementById('svCenter').value,
+    labourCost: Number(document.getElementById('svLabour').value)||0, partsCost: Number(document.getElementById('svParts').value)||0,
+    cost: Number(document.getElementById('svCost').value)||0, workPerformed: document.getElementById('svWork').value,
+    partsReplaced: document.getElementById('svPartsReplaced').value, notes: document.getElementById('svNotes').value,
+    nextDate: document.getElementById('svNextDate').value, nextKm: Number(document.getElementById('svNextKm').value)||0,
+    fixedProblemIds: fixedIds
+  };
+  if(editingId.service) state.services = state.services.map(x=>x.id===editingId.service?p:x); else state.services.push(p);
+  fixedIds.forEach(pid=>{ const pr = state.vehicleProblems.find(x=>x.id===pid); if(pr){ pr.status='Fixed'; pr.fixedInServiceId=p.id; } });
+  if(Number(p.km) > (Number(v.odometer)||0)){ v.vOdoUpdated = true; state.vehicles = state.vehicles.map(x=>x.id===v.id?Object.assign(x,{odometer:Number(p.km)}):x); }
+  saveState(); serviceOverlay.classList.remove('open'); renderView(currentView);
+};
+document.getElementById('deleteServiceBtn').onclick = async ()=>{
+  if(await showConfirm('Delete service record?', 'This cannot be undone.')){
+    state.services = state.services.filter(x=>x.id!==editingId.service);
+    saveState(); serviceOverlay.classList.remove('open'); renderView(currentView);
+  }
+};
+
+/* -------- Part sheet -------- */
+const partOverlay = document.getElementById('partOverlay');
+document.getElementById('ptNameSelect').addEventListener('change', e=>{
+  document.getElementById('ptCustomNameField').style.display = e.target.value==='__custom' ? 'block' : 'none';
+});
+function openPartSheet(id){
+  editingId.part = id;
+  const v = vcActiveVehicle();
+  if(id){
+    const p = state.vehicleParts.find(x=>x.id===id);
+    const known = DEFAULT_PART_NAMES.includes(p.name);
+    document.getElementById('ptNameSelect').value = known ? p.name : '__custom';
+    document.getElementById('ptCustomNameField').style.display = known ? 'none' : 'block';
+    document.getElementById('ptCustomName').value = known ? '' : p.name;
+    document.getElementById('ptDate').value = p.installDate||''; document.getElementById('ptKm').value = p.installKm||'';
+    document.getElementById('ptCost').value = p.cost||''; document.getElementById('ptLifeKm').value = p.lifeKm||'';
+    document.getElementById('ptLifeMonths').value = p.lifeMonths||'';
+    document.getElementById('deletePartBtn').style.display='block';
+  } else {
+    document.getElementById('ptNameSelect').value = 'Engine Oil'; document.getElementById('ptCustomNameField').style.display='none';
+    document.getElementById('ptCustomName').value='';
+    document.getElementById('ptDate').value = todayStr(); document.getElementById('ptKm').value = v.odometer||'';
+    document.getElementById('ptCost').value=''; document.getElementById('ptLifeKm').value=''; document.getElementById('ptLifeMonths').value='';
+    document.getElementById('deletePartBtn').style.display='none';
+  }
+  partOverlay.classList.add('open');
+}
+document.getElementById('vcAddPartBtn').onclick = ()=> openPartSheet(null);
+document.getElementById('partClose').onclick = ()=> partOverlay.classList.remove('open');
+document.getElementById('savePartBtn').onclick = ()=>{
+  const v = vcActiveVehicle();
+  const sel = document.getElementById('ptNameSelect').value;
+  const name = sel==='__custom' ? (document.getElementById('ptCustomName').value||'Custom Item') : sel;
+  const p = {
+    id: editingId.part||uid(), vehicleId: v.id, name,
+    installDate: document.getElementById('ptDate').value, installKm: Number(document.getElementById('ptKm').value)||0,
+    cost: Number(document.getElementById('ptCost').value)||0, lifeKm: Number(document.getElementById('ptLifeKm').value)||0,
+    lifeMonths: Number(document.getElementById('ptLifeMonths').value)||0
+  };
+  if(editingId.part) state.vehicleParts = state.vehicleParts.map(x=>x.id===editingId.part?p:x); else state.vehicleParts.push(p);
+  saveState(); partOverlay.classList.remove('open'); renderView(currentView);
+};
+document.getElementById('deletePartBtn').onclick = async ()=>{
+  if(await showConfirm('Delete item?', 'This cannot be undone.')){
+    state.vehicleParts = state.vehicleParts.filter(x=>x.id!==editingId.part);
+    saveState(); partOverlay.classList.remove('open'); renderView(currentView);
+  }
+};
+
+/* -------- Problem sheet -------- */
+const problemOverlay = document.getElementById('problemOverlay');
+function openProblemSheet(id){
+  editingId.problem = id;
+  const v = vcActiveVehicle();
+  if(id){
+    const p = state.vehicleProblems.find(x=>x.id===id);
+    document.getElementById('pbTitle').value = p.title; document.getElementById('pbDesc').value = p.description||'';
+    document.getElementById('pbDate').value = p.dateNoticed||''; document.getElementById('pbKm').value = p.kmNoticed||'';
+    document.getElementById('pbCategory').value = p.category||'Other'; document.getElementById('pbSeverity').value = p.severity||'🟡 Medium';
+    document.getElementById('pbStatus').value = p.status||'Open'; document.getElementById('pbNotes').value = p.notes||'';
+    document.getElementById('deleteProblemBtn').style.display='block';
+  } else {
+    document.getElementById('pbTitle').value=''; document.getElementById('pbDesc').value='';
+    document.getElementById('pbDate').value = todayStr(); document.getElementById('pbKm').value = v.odometer||'';
+    document.getElementById('pbCategory').value='Other'; document.getElementById('pbSeverity').value='🟡 Medium';
+    document.getElementById('pbStatus').value='Open'; document.getElementById('pbNotes').value='';
+    document.getElementById('deleteProblemBtn').style.display='none';
+  }
+  problemOverlay.classList.add('open');
+}
+document.getElementById('vcAddProblemBtn').onclick = ()=> openProblemSheet(null);
+document.getElementById('problemClose').onclick = ()=> problemOverlay.classList.remove('open');
+document.getElementById('saveProblemBtn').onclick = ()=>{
+  const v = vcActiveVehicle();
+  const p = {
+    id: editingId.problem||uid(), vehicleId: v.id, title: document.getElementById('pbTitle').value||'Untitled issue',
+    description: document.getElementById('pbDesc').value, dateNoticed: document.getElementById('pbDate').value||todayStr(),
+    kmNoticed: Number(document.getElementById('pbKm').value)||0, category: document.getElementById('pbCategory').value,
+    severity: document.getElementById('pbSeverity').value, status: document.getElementById('pbStatus').value,
+    notes: document.getElementById('pbNotes').value
+  };
+  if(editingId.problem) state.vehicleProblems = state.vehicleProblems.map(x=>x.id===editingId.problem?Object.assign({},x,p):x);
+  else state.vehicleProblems.push(p);
+  saveState(); problemOverlay.classList.remove('open'); renderView(currentView);
+};
+document.getElementById('deleteProblemBtn').onclick = async ()=>{
+  if(await showConfirm('Delete problem note?', 'This cannot be undone.')){
+    state.vehicleProblems = state.vehicleProblems.filter(x=>x.id!==editingId.problem);
+    saveState(); problemOverlay.classList.remove('open'); renderView(currentView);
+  }
+};
+
+/* -------- Document sheet -------- */
+const docOverlay = document.getElementById('docOverlay');
+document.getElementById('dcNameSelect').addEventListener('change', e=>{
+  document.getElementById('dcCustomNameField').style.display = e.target.value==='__custom' ? 'block' : 'none';
+});
+function openDocSheet(id){
+  editingId.doc = id;
+  if(id){
+    const d = state.vehicleDocuments.find(x=>x.id===id);
+    const known = DEFAULT_DOC_NAMES.includes(d.name);
+    document.getElementById('dcNameSelect').value = known ? d.name : '__custom';
+    document.getElementById('dcCustomNameField').style.display = known ? 'none' : 'block';
+    document.getElementById('dcCustomName').value = known ? '' : d.name;
+    document.getElementById('dcIssueDate').value = d.issueDate||''; document.getElementById('dcExpiryDate').value = d.expiryDate||'';
+    document.getElementById('dcNotes').value = d.notes||'';
+    document.getElementById('deleteDocBtn').style.display='block';
+  } else {
+    document.getElementById('dcNameSelect').value='Insurance'; document.getElementById('dcCustomNameField').style.display='none';
+    document.getElementById('dcCustomName').value=''; document.getElementById('dcIssueDate').value=''; document.getElementById('dcExpiryDate').value='';
+    document.getElementById('dcNotes').value=''; document.getElementById('deleteDocBtn').style.display='none';
+  }
+  docOverlay.classList.add('open');
+}
+document.getElementById('vcAddDocBtn').onclick = ()=> openDocSheet(null);
+document.getElementById('docClose').onclick = ()=> docOverlay.classList.remove('open');
+document.getElementById('saveDocBtn').onclick = ()=>{
+  const v = vcActiveVehicle();
+  const sel = document.getElementById('dcNameSelect').value;
+  const name = sel==='__custom' ? (document.getElementById('dcCustomName').value||'Document') : sel;
+  const p = { id: editingId.doc||uid(), vehicleId: v.id, name, issueDate: document.getElementById('dcIssueDate').value, expiryDate: document.getElementById('dcExpiryDate').value, notes: document.getElementById('dcNotes').value };
+  if(editingId.doc) state.vehicleDocuments = state.vehicleDocuments.map(x=>x.id===editingId.doc?p:x); else state.vehicleDocuments.push(p);
+  saveState(); docOverlay.classList.remove('open'); renderView(currentView);
+};
+document.getElementById('deleteDocBtn').onclick = async ()=>{
+  if(await showConfirm('Delete document?', 'This cannot be undone.')){
+    state.vehicleDocuments = state.vehicleDocuments.filter(x=>x.id!==editingId.doc);
+    saveState(); docOverlay.classList.remove('open'); renderView(currentView);
+  }
+};
+
+/* -------- Schedule sheet -------- */
+const schedOverlay = document.getElementById('schedOverlay');
+function openScheduleSheet(id){
+  editingId.sched = id;
+  const v = vcActiveVehicle();
+  if(id){
+    const s = state.maintSchedules.find(x=>x.id===id);
+    document.getElementById('scName').value = s.name; document.getElementById('scKmInterval').value = s.kmInterval||'';
+    document.getElementById('scMoInterval').value = s.monthInterval||''; document.getElementById('scLastDate').value = s.lastDoneDate||'';
+    document.getElementById('scLastKm').value = s.lastDoneKm||''; document.getElementById('deleteSchedBtn').style.display='block';
+  } else {
+    document.getElementById('scName').value=''; document.getElementById('scKmInterval').value=''; document.getElementById('scMoInterval').value='';
+    document.getElementById('scLastDate').value = todayStr(); document.getElementById('scLastKm').value = v.odometer||'';
+    document.getElementById('deleteSchedBtn').style.display='none';
+  }
+  schedOverlay.classList.add('open');
+}
+document.getElementById('vcAddScheduleBtn').onclick = ()=> openScheduleSheet(null);
+document.getElementById('schedClose').onclick = ()=> schedOverlay.classList.remove('open');
+document.getElementById('saveSchedBtn').onclick = ()=>{
+  const v = vcActiveVehicle();
+  const p = { id: editingId.sched||uid(), vehicleId: v.id, name: document.getElementById('scName').value||'Reminder',
+    kmInterval: Number(document.getElementById('scKmInterval').value)||0, monthInterval: Number(document.getElementById('scMoInterval').value)||0,
+    lastDoneDate: document.getElementById('scLastDate').value||todayStr(), lastDoneKm: Number(document.getElementById('scLastKm').value)||0 };
+  if(editingId.sched) state.maintSchedules = state.maintSchedules.map(x=>x.id===editingId.sched?p:x); else state.maintSchedules.push(p);
+  saveState(); schedOverlay.classList.remove('open'); renderView(currentView);
+};
+document.getElementById('deleteSchedBtn').onclick = async ()=>{
+  if(await showConfirm('Delete reminder?', 'This cannot be undone.')){
+    state.maintSchedules = state.maintSchedules.filter(x=>x.id!==editingId.sched);
+    saveState(); schedOverlay.classList.remove('open'); renderView(currentView);
+  }
+};
+
+/* -------- Mechanic checklist -------- */
+const mechOverlay = document.getElementById('mechOverlay');
+document.getElementById('vcMechanicChecklistBtn').onclick = ()=>{
+  const v = vcActiveVehicle();
+  const open = vcProblems(v.id).filter(p=>p.status!=='Fixed');
+  const body = document.getElementById('mechChecklistBody');
+  if(!open.length){ body.innerHTML = `<div class="vc-empty-note">No open issues right now. 🎉</div>`; }
+  else {
+    body.innerHTML = open.map(p=>`
+      <div class="vc-checklist-item">
+        <input type="checkbox" class="vc-checkbox" data-pid="${p.id}">
+        <div>
+          <div style="font-weight:600;">${esc(p.title)} <span style="color:var(--muted); font-weight:normal;">(${esc(p.category||'')}, ${esc(p.severity||'')})</span></div>
+          <div style="color:var(--muted); font-size:11px; margin-top:2px;">${esc(p.description||'')}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+  mechOverlay.classList.add('open');
+};
+document.getElementById('mechClose').onclick = ()=> mechOverlay.classList.remove('open');
+document.getElementById('mechDoneBtn').onclick = ()=>{
+  document.querySelectorAll('#mechChecklistBody input:checked').forEach(el=>{
+    const pr = state.vehicleProblems.find(x=>x.id===el.dataset.pid);
+    if(pr) pr.status = 'Fixed';
+  });
+  saveState(); mechOverlay.classList.remove('open'); renderView(currentView);
+};
+/* =========================== END VEHICLE CARE MODULE =========================== */
 
 loadState();
 processRecurring();
