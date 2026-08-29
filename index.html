@@ -731,6 +731,10 @@ canvas.donut{ width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
   <div class="view" data-view="care">
     <div class="section" style="margin-top:0;">
       <div class="vc-vehicle-tabs" id="vcVehicleTabs"></div>
+      <div style="display:flex; gap:8px; margin-top:10px;">
+        <button class="btn btn-ghost" style="flex:1; padding:10px 8px; font-size:12px;" id="vcEditVehicleBtn">✏️ Edit Bike Details</button>
+        <button class="btn btn-primary" style="flex:1; padding:10px 8px; font-size:12px;" id="vcLogTripBtn">🛵 Log Trip / KM</button>
+      </div>
     </div>
 
     <div class="section" id="vcDashboardHolder"></div>
@@ -2866,6 +2870,14 @@ window.openEntrySheetForDate = function(dateStr) {
   document.getElementById('fDate').value = dateStr;
 };
 
+window.openEntrySheetForVehicle = function(vehicleId) {
+  openEntrySheet(null);
+  const vSel = document.getElementById('fVehicle');
+  vSel.value = vehicleId;
+  const veh = state.vehicles.find(x=>x.id===vehicleId);
+  if(veh) document.getElementById('fMileage').value = veh.mileage;
+};
+
 document.getElementById('fabAdd').onclick = ()=> openEntrySheet(null);
 document.getElementById('entryClose').onclick = ()=> entryOverlay.classList.remove('open');
 document.getElementById('cancelEntryBtn').onclick = ()=> entryOverlay.classList.remove('open');
@@ -3471,6 +3483,9 @@ function renderCareView(){
 }
 
 function vcSelectVehicle(id){ careVehicleId = id; renderCareView(); }
+
+document.getElementById('vcEditVehicleBtn').onclick = ()=> openVehicleSheet(vcActiveVehicle().id);
+document.getElementById('vcLogTripBtn').onclick = ()=> openEntrySheetForVehicle(vcActiveVehicle().id);
 
 function vcRenderQuickStats(v){
   const range = ranges.vcstats;
