@@ -827,6 +827,22 @@ canvas.donut{ width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
     <div class="section" style="height:10px;"></div>
   </div>
 
+  <div class="view" data-view="goals">
+    <div class="section" style="margin-top:0;">
+      <div class="section-head"><div class="section-title">Vehicle Loan / EMI Tracker</div><span class="section-link" id="glAddLoanBtn">+ Add Loan</span></div>
+      <div class="card" id="glLoanSummary"></div>
+      <div id="glLoansList" style="margin-top:12px;"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Savings Goal Timeline</div><span class="section-link" id="glAddGoalBtn">+ Set Goal</span></div>
+      <div class="helper-text" style="margin-top:0;">Projected dates use your average daily profit over the last 30 days.</div>
+      <div id="glGoalsList"></div>
+    </div>
+
+    <div class="section" style="height:10px;"></div>
+  </div>
+
 </div>
 
 <button class="fab" id="fabAdd" aria-label="Add trip">+</button>
@@ -837,6 +853,7 @@ canvas.donut{ width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
     <div class="nav-item" data-view="ledger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="9" y1="16" x2="15" y2="16"/></svg>Ledger</div>
     <div class="nav-item" data-view="fuel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 22V6a2 2 0 012-2h6a2 2 0 012 2v16"/><path d="M3 22h10"/><path d="M13 9h2a2 2 0 012 2v2.5a1.5 1.5 0 003 0V9c0-1-1-3-3-4"/><path d="M5 6h6"/></svg>Fuel</div>
     <div class="nav-item" data-view="insights"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>Insights</div>
+    <div class="nav-item" data-view="goals"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>Goals</div>
     <div class="nav-item" data-view="care"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>Care</div>
     <div class="nav-item" data-view="profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profile</div>
   </div>
@@ -939,16 +956,36 @@ canvas.donut{ width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
   <div class="sheet" id="recurringSheet">
     <div class="sheet-handle"></div>
     <div class="sheet-title"><span>Recurring / Loan</span><span class="sheet-close" id="recurringClose">✕</span></div>
+    <div class="field" style="display:flex; align-items:center; justify-content:space-between; margin-top:8px;">
+      <label style="margin:0;">🚗 This is a Vehicle Loan / EMI</label>
+      <input type="checkbox" id="rIsLoan" style="width:20px; height:20px; accent-color:var(--amber);">
+    </div>
     <div class="field"><label>Label</label><input type="text" id="rLabel" placeholder="e.g. Bike EMI, Platform Fee"></div>
     <div class="row2">
-      <div class="field"><label>Amount (₹)</label><input type="number" id="rAmount" step="1"></div>
-      <div class="field"><label>Category</label><input type="text" id="rCat" value="Fees"></div>
+      <div class="field"><label id="rAmountLabel">Amount (₹)</label><input type="number" id="rAmount" step="1"></div>
+      <div class="field" id="rCatField"><label>Category</label><input type="text" id="rCat" value="Fees"></div>
     </div>
-    <div class="row2">
+    <div class="row2" id="rFreqRow">
       <div class="field"><label>Frequency</label><select id="rFreq"><option value="weekly">Weekly</option><option value="monthly">Monthly</option></select></div>
       <div class="field"><label>Next Post Date</label><input type="date" id="rNextDate"></div>
     </div>
-    <div class="helper-text">This will automatically log an expense on the scheduled date when you open the app.</div>
+    <div class="helper-text" id="rRecurringHelper">This will automatically log an expense on the scheduled date when you open the app.</div>
+
+    <div id="rLoanFields" style="display:none;">
+      <div class="divider"></div>
+      <div class="helper-text" style="margin-top:0;">Loan Details — feeds the Goals & Debt Planner</div>
+      <div class="field"><label>Vehicle (optional)</label><select id="rLoanVehicle"><option value="">General / Not linked</option></select></div>
+      <div class="row2">
+        <div class="field"><label>Principal / Loan Amount (₹)</label><input type="number" id="rLoanPrincipal" step="1" placeholder="e.g. 80000"></div>
+        <div class="field"><label>Tenure (months)</label><input type="number" id="rLoanTenure" step="1" placeholder="e.g. 24"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Loan Start Date</label><input type="date" id="rLoanStart"></div>
+        <div class="field"><label>Interest Rate % (optional)</label><input type="number" id="rLoanRate" step="0.1" placeholder="reference only"></div>
+      </div>
+      <div class="helper-text">The EMI amount above is posted monthly to your P&L as a fixed cost automatically, same as any recurring expense.</div>
+    </div>
+
     <div class="sheet-actions"><button type="button" class="btn btn-danger" id="deleteRecurringBtn" style="display:none;">🗑</button><button type="button" class="btn btn-primary" id="saveRecurringBtn">Save</button></div>
   </div>
 </div>
@@ -1162,6 +1199,15 @@ function loadState(){
       if(!state.vehicleProblems) state.vehicleProblems = [];
       if(!state.vehicleDocuments) state.vehicleDocuments = [];
       if(!state.maintSchedules) state.maintSchedules = [];
+      if(!state.recurring) state.recurring = [];
+      state.recurring.forEach(r => {
+        if(r.isLoan === undefined) r.isLoan = false;
+        if(r.vehicleId === undefined) r.vehicleId = '';
+        if(r.principal === undefined) r.principal = 0;
+        if(r.tenureMonths === undefined) r.tenureMonths = 0;
+        if(r.startDate === undefined) r.startDate = '';
+        if(r.interestRate === undefined) r.interestRate = 0;
+      });
     }
   } catch(e) { console.warn('Load failed', e); state = defaultState(); }
 }
@@ -2782,7 +2828,7 @@ function renderProfileView(){
   if(!state.recurring.length) rl.innerHTML = `<div class="stat-empty">No recurring expenses.</div>`;
   else rl.innerHTML = state.recurring.map(r=>`
     <div class="hist-row" style="margin-bottom:8px;" onclick="openRecurringSheet('${r.id}')">
-      <div class="hist-mid"><div class="hist-earn">${esc(r.label)}</div><div class="hist-meta">${esc(r.freq)} · Next: ${fmtDateShort(r.nextDate)}</div></div>
+      <div class="hist-mid"><div class="hist-earn">${r.isLoan?'🚗 ':''}${esc(r.label)}</div><div class="hist-meta">${esc(r.freq)} · Next: ${fmtDateShort(r.nextDate)}</div></div>
       <div class="hist-profit neg">-${rupee(r.amount)}</div>
     </div>
   `).join('');
@@ -2835,6 +2881,7 @@ function renderView(view){
   if(view==='insights') renderInsightsView();
   if(view==='profile') renderProfileView();
   if(view==='care') renderCareView();
+  if(view==='goals') renderGoalsDebtView();
   window.scrollTo(0,0);
 }
 
@@ -3089,25 +3136,69 @@ document.getElementById('deleteVehicleBtn').onclick = async ()=>{
 };
 
 const recOverlay = document.getElementById('recurringOverlay');
+function rSyncLoanFieldsVisibility(){
+  const isLoan = document.getElementById('rIsLoan').checked;
+  document.getElementById('rLoanFields').style.display = isLoan ? 'block' : 'none';
+  document.getElementById('rCatField').style.display = isLoan ? 'none' : 'block';
+  document.getElementById('rFreqRow').style.display = isLoan ? 'none' : 'grid';
+  document.getElementById('rAmountLabel').textContent = isLoan ? 'EMI Amount (₹ / month)' : 'Amount (₹)';
+  document.getElementById('rRecurringHelper').textContent = isLoan
+    ? 'Posted monthly to your P&L as a fixed cost, and tracked with payoff projections in the Goals & Debt Planner.'
+    : 'This will automatically log an expense on the scheduled date when you open the app.';
+}
 function openRecurringSheet(id){
   editingId.recurring = id;
+  const vehSel = document.getElementById('rLoanVehicle');
+  vehSel.innerHTML = `<option value="">General / Not linked</option>` + state.vehicles.map(v=>`<option value="${v.id}">${esc(v.name)}</option>`).join('');
   if(id){
     const r = state.recurring.find(x=>x.id===id);
     document.getElementById('rLabel').value = r.label; document.getElementById('rAmount').value = r.amount;
     document.getElementById('rCat').value = r.category; document.getElementById('rFreq').value = r.freq;
     document.getElementById('rNextDate').value = r.nextDate;
+    document.getElementById('rIsLoan').checked = !!r.isLoan;
+    vehSel.value = r.vehicleId || '';
+    document.getElementById('rLoanPrincipal').value = r.principal || '';
+    document.getElementById('rLoanTenure').value = r.tenureMonths || '';
+    document.getElementById('rLoanStart').value = r.startDate || '';
+    document.getElementById('rLoanRate').value = r.interestRate || '';
     document.getElementById('deleteRecurringBtn').style.display = 'block';
   } else {
     document.getElementById('rLabel').value=''; document.getElementById('rAmount').value=''; document.getElementById('rCat').value='Fees';
     document.getElementById('rFreq').value='weekly'; document.getElementById('rNextDate').value=todayStr();
+    document.getElementById('rIsLoan').checked = false;
+    vehSel.value = ''; document.getElementById('rLoanPrincipal').value=''; document.getElementById('rLoanTenure').value='';
+    document.getElementById('rLoanStart').value = todayStr(); document.getElementById('rLoanRate').value='';
     document.getElementById('deleteRecurringBtn').style.display = 'none';
   }
+  rSyncLoanFieldsVisibility();
   recOverlay.classList.add('open');
 }
+window.openLoanSheet = function(id){
+  openRecurringSheet(id);
+  if(!id){ document.getElementById('rIsLoan').checked = true; rSyncLoanFieldsVisibility(); }
+};
+document.getElementById('rIsLoan').addEventListener('change', ()=>{
+  rSyncLoanFieldsVisibility();
+  if(document.getElementById('rIsLoan').checked){
+    document.getElementById('rCat').value = 'Loan/EMI';
+    document.getElementById('rFreq').value = 'monthly';
+  }
+});
 document.getElementById('addRecurringBtn').onclick = ()=> openRecurringSheet(null);
 document.getElementById('recurringClose').onclick = ()=> recOverlay.classList.remove('open');
 document.getElementById('saveRecurringBtn').onclick = ()=>{
-  const p = { id:editingId.recurring||uid(), label:document.getElementById('rLabel').value||'Fee', amount:Number(document.getElementById('rAmount').value)||0, category:document.getElementById('rCat').value||'Fees', freq:document.getElementById('rFreq').value, nextDate:document.getElementById('rNextDate').value||todayStr() };
+  const isLoan = document.getElementById('rIsLoan').checked;
+  const p = { id:editingId.recurring||uid(), label:document.getElementById('rLabel').value||(isLoan?'Loan/EMI':'Fee'),
+    amount:Number(document.getElementById('rAmount').value)||0,
+    category: isLoan ? 'Loan/EMI' : (document.getElementById('rCat').value||'Fees'),
+    freq: isLoan ? 'monthly' : document.getElementById('rFreq').value,
+    nextDate:document.getElementById('rNextDate').value||todayStr(),
+    isLoan, vehicleId: isLoan ? (document.getElementById('rLoanVehicle').value||'') : '',
+    principal: isLoan ? (Number(document.getElementById('rLoanPrincipal').value)||0) : 0,
+    tenureMonths: isLoan ? (Number(document.getElementById('rLoanTenure').value)||0) : 0,
+    startDate: isLoan ? (document.getElementById('rLoanStart').value||todayStr()) : '',
+    interestRate: isLoan ? (Number(document.getElementById('rLoanRate').value)||0) : 0
+  };
   if(editingId.recurring) state.recurring = state.recurring.map(x=>x.id===editingId.recurring ? p : x); else state.recurring.push(p);
   saveState(); processRecurring(); recOverlay.classList.remove('open'); renderView(currentView);
 };
@@ -3116,6 +3207,7 @@ document.getElementById('deleteRecurringBtn').onclick = async ()=>{
     state.recurring = state.recurring.filter(x=>x.id!==editingId.recurring); saveState(); recOverlay.classList.remove('open'); renderView(currentView); 
   }
 };
+
 
 document.getElementById('exportJsonBtn').onclick = ()=>{
   state.profile.lastBackup = Date.now(); saveState();
@@ -3892,6 +3984,125 @@ document.getElementById('mechDoneBtn').onclick = ()=>{
   saveState(); mechOverlay.classList.remove('open'); renderView(currentView);
 };
 /* =========================== END VEHICLE CARE MODULE =========================== */
+
+/* =========================== GOALS & DEBT PLANNER MODULE =========================== */
+function glLoans(){ return state.recurring.filter(r=>r.isLoan); }
+
+function glLoanStats(r){
+  const emi = Number(r.amount)||0;
+  const principal = Number(r.principal)||0;
+  const tenure = Number(r.tenureMonths)||0;
+  const start = r.startDate ? parseLocalDate(r.startDate) : null;
+  const totalPayable = emi * tenure;
+  let monthsElapsed = 0;
+  if(start){
+    const now = new Date();
+    monthsElapsed = (now.getFullYear()-start.getFullYear())*12 + (now.getMonth()-start.getMonth());
+    if(now.getDate() < start.getDate()) monthsElapsed -= 1;
+  }
+  monthsElapsed = clamp(monthsElapsed, 0, tenure);
+  const monthsRemaining = Math.max(0, tenure - monthsElapsed);
+  const paidSoFar = monthsElapsed * emi;
+  const remaining = Math.max(0, totalPayable - paidSoFar);
+  const pct = totalPayable>0 ? clamp((paidSoFar/totalPayable)*100, 0, 100) : 0;
+  let closureDate = '';
+  if(start && tenure>0){
+    const cd = new Date(start); cd.setMonth(cd.getMonth() + tenure);
+    closureDate = toISO(cd);
+  }
+  const isClosed = tenure>0 && monthsElapsed>=tenure;
+  return { emi, principal, tenure, totalPayable, monthsElapsed, monthsRemaining, paidSoFar, remaining, pct, closureDate, isClosed };
+}
+
+function glDailyProfitPace(){
+  const entries = getActiveEntries();
+  const cutoff = toISO(new Date(Date.now() - 30*86400000));
+  const recent = entries.filter(e=>e.date>=cutoff);
+  if(!recent.length) return 0;
+  const totalProfit = recent.reduce((s,e)=>s+computeEntry(e).profit,0);
+  const earliest = recent.reduce((min,e)=> e.date<min?e.date:min, recent[0].date);
+  const days = Math.max(1, Math.round((new Date(todayStr()) - parseLocalDate(earliest))/86400000) + 1);
+  return totalProfit/days;
+}
+
+function glProjectedDate(remaining, pace){
+  if(remaining<=0) return { text:'Goal met! 🎉', ok:true };
+  if(pace<=0) return { text:'Not enough recent profit trend to project a date yet', ok:false };
+  const days = Math.ceil(remaining/pace);
+  const d = new Date(); d.setDate(d.getDate()+days);
+  return { text:`Around ${d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})} (~${days} day${days===1?'':'s'} at current pace)`, ok:true };
+}
+
+function renderGoalsDebtView(){
+  const loans = glLoans();
+
+  const totalEmiMonthly = loans.reduce((s,r)=>s+ (Number(r.amount)||0), 0);
+  const totalOutstanding = loans.reduce((s,r)=> s + glLoanStats(r).remaining, 0);
+  document.getElementById('glLoanSummary').innerHTML = `
+    <div class="vc-mini-grid">
+      <div class="vc-mini-stat"><div class="lbl">Active Loans</div><div class="val">${loans.filter(r=>!glLoanStats(r).isClosed).length}</div></div>
+      <div class="vc-mini-stat"><div class="lbl">Monthly EMI Outflow</div><div class="val" style="color:var(--red)">${rupee(totalEmiMonthly)}</div></div>
+      <div class="vc-mini-stat"><div class="lbl">Total Outstanding</div><div class="val">${rupee(totalOutstanding)}</div></div>
+      <div class="vc-mini-stat"><div class="lbl">Posted To</div><div class="val" style="font-size:12.5px;">P&amp;L · Fixed Costs</div></div>
+    </div>
+  `;
+
+  const llHolder = document.getElementById('glLoansList');
+  if(!loans.length){
+    llHolder.innerHTML = `<div class="vc-empty-note">No vehicle loans tracked yet. Tap "+ Add Loan" to log an EMI — it'll post to your P&amp;L automatically every month.</div>`;
+  } else {
+    llHolder.innerHTML = loans.map(r=>{
+      const st = glLoanStats(r);
+      const veh = state.vehicles.find(v=>v.id===r.vehicleId);
+      return `
+        <div class="vc-part-card" onclick="openLoanSheet('${r.id}')">
+          <div class="vc-part-head">
+            <span class="vc-part-name">${esc(r.label)}${veh?` · ${esc(veh.name)}`:''}</span>
+            <span class="vc-part-status" style="color:${st.isClosed?'var(--green)':'var(--amber)'}; border:1px solid ${st.isClosed?'var(--green)':'var(--amber)'};">${st.isClosed?'Closed':'Active'}</span>
+          </div>
+          <div class="goal-track" style="margin:8px 0;"><div class="goal-fill" style="width:${st.pct}%; background:${st.isClosed?'var(--green)':'var(--amber)'};"></div></div>
+          <div class="vc-part-meta"><span>${rupee(st.paidSoFar)} paid of ${rupee(st.totalPayable)}</span><span>${st.pct.toFixed(0)}%</span></div>
+          <div class="vc-part-meta" style="margin-top:6px;"><span>EMI ${rupee(st.emi)}/mo</span><span>${st.monthsRemaining} mo left</span></div>
+          <div class="vc-part-meta" style="margin-top:2px;"><span>Next due ${fmtDateShort(r.nextDate)}</span><span>${st.closureDate?'Payoff '+fmtDateShort(st.closureDate):''}</span></div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  const entries = getActiveEntries();
+  let tEarn=0, tExp=0;
+  entries.forEach(e=>{ const c=computeEntry(e); tEarn+=c.earnings; tExp+=c.totalExpense; });
+  getActiveFees().forEach(f=> tExp += Number(f.amount)||0);
+  const netLifetime = tEarn - tExp;
+  const pace = glDailyProfitPace();
+
+  const timelineGoals = state.goals.filter(g => g.type==='savings' || g.type==='custom_purchase');
+  const glHolder = document.getElementById('glGoalsList');
+  if(!timelineGoals.length){
+    glHolder.innerHTML = `<div class="vc-empty-note">No savings or purchase goals yet. Tap "+ Set Goal" and choose "Savings / Payoff" or "Custom Purchase" to see a projected date here.</div>`;
+  } else {
+    let unallocatedProfit = netLifetime;
+    glHolder.innerHTML = timelineGoals.map(g=>{
+      let current;
+      if(g.type==='savings'){ current = netLifetime; }
+      else { current = Math.max(0, Math.min(unallocatedProfit, g.target)); unallocatedProfit -= current; }
+      const remaining = Math.max(0, g.target - current);
+      const pct = clamp((current/g.target)*100, 0, 100);
+      const proj = glProjectedDate(remaining, pace);
+      return `
+        <div class="goal-item" onclick="openGoalSheet('${g.id}')">
+          <div class="goal-head"><span class="goal-name">${esc(g.name || (g.type==='savings'?'Break-even':'Purchase Goal'))}</span><span class="goal-meta">${rupee(current)} / ${rupeeCompact(g.target)}</span></div>
+          <div class="goal-track"><div class="goal-fill" style="width:${pct}%; background:${pct>=100?'var(--green)':'var(--amber)'};"></div></div>
+          <div class="goal-footer" style="align-items:center;"><span style="color:${proj.ok?'var(--muted)':'var(--red)'};">${esc(proj.text)}</span></div>
+        </div>
+      `;
+    }).join('');
+  }
+}
+
+document.getElementById('glAddLoanBtn').onclick = ()=> openLoanSheet(null);
+document.getElementById('glAddGoalBtn').onclick = ()=> openGoalSheet(null);
+/* =========================== END GOALS & DEBT PLANNER MODULE =========================== */
 
 loadState();
 processRecurring();
