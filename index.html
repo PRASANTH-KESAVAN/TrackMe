@@ -940,6 +940,86 @@ canvas.donut{ width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
     <div class="section" style="height:10px;"></div>
   </div>
 
+  <div class="view" data-view="history">
+    <div class="section" style="margin-top:0;">
+      <div class="field" style="margin-top:0;">
+        <input type="text" id="histSearchInput" placeholder="Search platform, note, vehicle, or date...">
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="tabs" data-page="history">
+        <div class="tab" data-range="7">7D</div>
+        <div class="tab active" data-range="30">30D</div>
+        <div class="tab" data-range="90">90D</div>
+        <div class="tab" data-range="all">All</div>
+        <div class="tab" data-range="custom">Dates</div>
+      </div>
+      <div class="custom-range-picker" id="histCustomRange">
+        <div class="field" style="margin-top:0;"><label>Start</label><input type="date" id="histStart"></div>
+        <div class="field" style="margin-top:0;"><label>End</label><input type="date" id="histEnd"></div>
+        <button class="btn-sm" id="histApplyDates" type="button">Apply</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Filters</div><span class="section-link" id="histClearFilters">Clear All</span></div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div class="field" style="margin-top:0;">
+          <label>Vehicle</label>
+          <select id="histVehicleFilter"><option value="all">All Vehicles</option></select>
+        </div>
+        <div class="field" style="margin-top:0;">
+          <label>Platform</label>
+          <select id="histPlatformFilter"><option value="all">All Platforms</option></select>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div class="field" style="margin-top:0;">
+          <label>Result Type</label>
+          <select id="histResultFilter">
+            <option value="all">Profit & Loss</option>
+            <option value="profit">Profit Only</option>
+            <option value="loss">Loss Only</option>
+          </select>
+        </div>
+        <div class="field" style="margin-top:0;">
+          <label>Sort By</label>
+          <select id="histSortSelect">
+            <option value="date_desc">Date (Newest)</option>
+            <option value="date_asc">Date (Oldest)</option>
+            <option value="profit_desc">Profit (High → Low)</option>
+            <option value="profit_asc">Profit (Low → High)</option>
+            <option value="earnings_desc">Earnings (High → Low)</option>
+            <option value="expense_desc">Expenses (High → Low)</option>
+            <option value="distance_desc">Distance (High → Low)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="section-head" style="margin-top:16px; margin-bottom:2px;"><div class="section-title" style="font-size:11px;">Custom Filters</div></div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div class="field" style="margin-top:10px;"><label>Min Profit (₹)</label><input type="number" id="histMinProfit" placeholder="e.g. 0"></div>
+        <div class="field" style="margin-top:10px;"><label>Max Profit (₹)</label><input type="number" id="histMaxProfit" placeholder="e.g. 2000"></div>
+      </div>
+      <div class="field"><label>Expense Category Contains</label><input type="text" id="histExpenseCat" placeholder="e.g. maintenance, toll, parking..."></div>
+    </div>
+
+    <div class="section">
+      <div class="stat-row-3" id="histStatRow" style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; text-align:center;"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-head">
+        <div class="section-title">All Records (<span id="histCount">0</span>)</div>
+        <span class="section-link" id="histDownloadPdfBtn">⬇ PDF</span>
+      </div>
+      <div class="history-list" id="histResultsList"></div>
+    </div>
+
+    <div class="section" style="height:10px;"></div>
+  </div>
+
 </div>
 
 <button class="fab" id="fabAdd" aria-label="Add trip">+</button>
@@ -953,6 +1033,7 @@ canvas.donut{ width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
     <div class="nav-item" data-view="compare"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="7"/><rect x="14" y="6" width="3" height="12"/></svg>Compare</div>
     <div class="nav-item" data-view="goals"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>Goals</div>
     <div class="nav-item" data-view="care"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>Care</div>
+    <div class="nav-item" data-view="history"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>History</div>
     <div class="nav-item" data-view="profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profile</div>
   </div>
 </div>
@@ -1253,7 +1334,8 @@ const REDUCE_MOTION = window.matchMedia && window.matchMedia('(prefers-reduced-m
 let state = defaultState();
 let currentView = 'home';
 let filterVehicleId = 'all';
-let ranges = { home:'30', ledger:'30', fuel:'30', insights:'30', vcstats:'30' };
+let ranges = { home:'30', ledger:'30', fuel:'30', insights:'30', vcstats:'30', history:'30' };
+let historyState = { vehicle:'all', platform:'all', result:'all', sort:'date_desc', minProfit:'', maxProfit:'', expenseCat:'', search:'' };
 let editingId = { entry:null, goal:null, vehicle:null, recurring:null, service:null, part:null, problem:null, doc:null, sched:null };
 let careVehicleId = null;
 let problemFilter = { category:'all', severity:'all', status:'open' };
@@ -2898,6 +2980,186 @@ function renderFuelView(){
   ].filter(x=>x.v>0), 'No expenses recorded.');
 }
 
+/* ===================== HISTORY PAGE ===================== */
+function histGetFilteredEntries(){
+  const range = ranges.history;
+  let entries = state.entries.slice();
+
+  // Date range
+  if(range === 'custom'){
+    const start = document.getElementById('histStart').value || '2000-01-01';
+    const end = document.getElementById('histEnd').value || '2100-01-01';
+    entries = entries.filter(e=>e.date>=start && e.date<=end);
+  } else if(range !== 'all'){
+    const st = toISO(new Date(Date.now() - (Number(range)-1)*86400000));
+    entries = entries.filter(e=>e.date>=st);
+  }
+
+  // Vehicle filter
+  if(historyState.vehicle !== 'all') entries = entries.filter(e=>e.vehicleId===historyState.vehicle);
+
+  // Platform filter
+  if(historyState.platform !== 'all'){
+    entries = entries.filter(e=>(e.platformEarnings||[]).some(p=>p.platform===historyState.platform));
+  }
+
+  // Search
+  const q = (historyState.search||'').toLowerCase().trim();
+  if(q){
+    entries = entries.filter(e=>{
+      const vName = (state.vehicles.find(v=>v.id===e.vehicleId)||{}).name || '';
+      const plats = (e.platformEarnings||[]).map(p=>p.platform).join(' ');
+      const note = e.note || '';
+      const cats = (e.expenses||[]).map(x=>x.cat).join(' ');
+      return vName.toLowerCase().includes(q) || plats.toLowerCase().includes(q) ||
+             note.toLowerCase().includes(q) || cats.toLowerCase().includes(q) || e.date.includes(q);
+    });
+  }
+
+  // Expense category contains
+  const catQ = (historyState.expenseCat||'').toLowerCase().trim();
+  if(catQ){
+    entries = entries.filter(e=>(e.expenses||[]).some(x=>(x.cat||'').toLowerCase().includes(catQ)));
+  }
+
+  // Compute + result-type + min/max profit filters
+  let rows = entries.map(e=>({ e, c: computeEntry(e) }));
+  if(historyState.result === 'profit') rows = rows.filter(x=>x.c.profit >= 0);
+  if(historyState.result === 'loss') rows = rows.filter(x=>x.c.profit < 0);
+  if(historyState.minProfit !== '' && !isNaN(Number(historyState.minProfit))) rows = rows.filter(x=>x.c.profit >= Number(historyState.minProfit));
+  if(historyState.maxProfit !== '' && !isNaN(Number(historyState.maxProfit))) rows = rows.filter(x=>x.c.profit <= Number(historyState.maxProfit));
+
+  // Sort
+  const sortFns = {
+    date_desc: (a,b)=> b.e.date.localeCompare(a.e.date),
+    date_asc: (a,b)=> a.e.date.localeCompare(b.e.date),
+    profit_desc: (a,b)=> b.c.profit - a.c.profit,
+    profit_asc: (a,b)=> a.c.profit - b.c.profit,
+    earnings_desc: (a,b)=> b.c.earnings - a.c.earnings,
+    expense_desc: (a,b)=> b.c.totalExpense - a.c.totalExpense,
+    distance_desc: (a,b)=> b.c.distance - a.c.distance,
+  };
+  rows.sort(sortFns[historyState.sort] || sortFns.date_desc);
+  return rows;
+}
+
+function histPopulateFilterOptions(){
+  const vSel = document.getElementById('histVehicleFilter');
+  const curV = historyState.vehicle;
+  vSel.innerHTML = `<option value="all">All Vehicles</option>` + state.vehicles.map(v=>`<option value="${v.id}">${esc(v.name)}</option>`).join('');
+  vSel.value = state.vehicles.some(v=>v.id===curV) ? curV : 'all';
+
+  const pSel = document.getElementById('histPlatformFilter');
+  const curP = historyState.platform;
+  const plats = new Set(state.settings.platforms||[]);
+  state.entries.forEach(e=>(e.platformEarnings||[]).forEach(p=>{ if(p.platform) plats.add(p.platform); }));
+  pSel.innerHTML = `<option value="all">All Platforms</option>` + [...plats].map(p=>`<option value="${esc(p)}">${esc(p)}</option>`).join('');
+  pSel.value = plats.has(curP) ? curP : 'all';
+}
+
+function histBuildRowHtml(x){
+  const e = x.e, c = x.c;
+  const vName = (state.vehicles.find(v=>v.id===e.vehicleId)||{}).name || 'Vehicle';
+  const plats = (e.platformEarnings||[]).map(p=>p.platform).filter(Boolean).join(', ');
+  const catList = (e.expenses||[]).map(x2=>x2.cat).filter(Boolean).join(', ');
+  const metaBits = [`${c.distance}km`, vName];
+  if(plats) metaBits.push(plats);
+  if(e.note) metaBits.push(esc(e.note));
+  return `<div class="hist-row" onclick="openEntrySheet('${e.id}')">
+    <div class="hist-date">${fmtDateShort(e.date)}</div>
+    <div class="hist-mid">
+      <div class="hist-earn">${rupee(c.earnings)} <span style="color:var(--muted); font-weight:normal;">− ${rupee(c.totalExpense)}</span></div>
+      <div class="hist-meta">${metaBits.join(' · ')}${catList?' · Exp: '+esc(catList):''}</div>
+    </div>
+    <div class="hist-profit ${c.profit>=0?'pos':'neg'}">${c.profit>=0?'+':'-'}${rupee(Math.abs(c.profit))}</div>
+  </div>`;
+}
+
+function histBuildPrintHtml(rows, meta){
+  const totals = rows.reduce((s,x)=>({earnings:s.earnings+x.c.earnings, expense:s.expense+x.c.totalExpense, profit:s.profit+x.c.profit, dist:s.dist+x.c.distance}), {earnings:0, expense:0, profit:0, dist:0});
+  const rowsHtml = rows.map(x=>{
+    const vName = (state.vehicles.find(v=>v.id===x.e.vehicleId)||{}).name || '—';
+    const plats = (x.e.platformEarnings||[]).map(p=>p.platform).filter(Boolean).join(', ') || '—';
+    return `<tr>
+      <td>${fmtDateShort(x.e.date)}</td>
+      <td>${esc(vName)}</td>
+      <td>${esc(plats)}</td>
+      <td>${x.c.distance} km</td>
+      <td>${rupee(x.c.earnings)}</td>
+      <td>${rupee(x.c.totalExpense)}</td>
+      <td>${x.c.profit>=0?'+':'-'}${rupee(Math.abs(x.c.profit))}</td>
+      <td>${esc(x.e.note||'')}</td>
+    </tr>`;
+  }).join('');
+  return `
+    <div class="print-card">
+      <h2 style="margin:0 0 4px;">Shiftmeter — Trip History Report</h2>
+      <div style="font-size:12px; color:#444; margin-bottom:10px;">${esc(meta)} · Generated ${fmtDateShort(toISO(new Date()))}</div>
+      <table class="print-table">
+        <tr><td>Total Trips</td><td class="val">${rows.length}</td></tr>
+        <tr><td>Total Distance</td><td class="val">${totals.dist} km</td></tr>
+        <tr><td>Total Earnings</td><td class="val">${rupee(totals.earnings)}</td></tr>
+        <tr><td>Total Expenses</td><td class="val">${rupee(totals.expense)}</td></tr>
+        <tr><td>Net Profit</td><td class="val">${totals.profit>=0?'+':'-'}${rupee(Math.abs(totals.profit))}</td></tr>
+      </table>
+      <table class="print-table" style="margin-top:16px;">
+        <thead><tr><th>Date</th><th>Vehicle</th><th>Platform</th><th>Distance</th><th>Earnings</th><th>Expenses</th><th>Profit</th><th>Note</th></tr></thead>
+        <tbody>${rowsHtml || '<tr><td colspan="8">No records match the current filters.</td></tr>'}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderHistoryView(){
+  document.getElementById('histCustomRange').classList.toggle('active', ranges.history==='custom');
+  histPopulateFilterOptions();
+
+  const rows = histGetFilteredEntries();
+
+  const totals = rows.reduce((s,x)=>({earnings:s.earnings+x.c.earnings, expense:s.expense+x.c.totalExpense, profit:s.profit+x.c.profit}), {earnings:0, expense:0, profit:0});
+  document.getElementById('histStatRow').innerHTML = rows.length ? `
+    <div class="card stat-card"><div class="stat-title">Earnings</div><div class="stat-value" style="color:var(--green)">${rupee(totals.earnings)}</div></div>
+    <div class="card stat-card"><div class="stat-title">Expenses</div><div class="stat-value" style="color:var(--red)">${rupee(totals.expense)}</div></div>
+    <div class="card stat-card"><div class="stat-title">Net Profit</div><div class="stat-value" style="color:${totals.profit>=0?'var(--green)':'var(--red)'}">${totals.profit>=0?'+':'-'}${rupee(Math.abs(totals.profit))}</div></div>
+  ` : `<div class="stat-empty" style="grid-column:1/-1;">No data.</div>`;
+
+  document.getElementById('histCount').textContent = rows.length;
+  const listEl = document.getElementById('histResultsList');
+  listEl.innerHTML = rows.length ? rows.slice(0,300).map(histBuildRowHtml).join('') : `<div class="stat-empty">No trips match your filters.</div>`;
+
+  document.getElementById('histDownloadPdfBtn').onclick = () => {
+    const rangeLabel = ranges.history==='custom'
+      ? `${document.getElementById('histStart').value||'—'} to ${document.getElementById('histEnd').value||'—'}`
+      : (ranges.history==='all' ? 'All Time' : `Last ${ranges.history} days`);
+    const vName = historyState.vehicle==='all' ? 'All Vehicles' : (state.vehicles.find(v=>v.id===historyState.vehicle)||{}).name || 'Vehicle';
+    document.getElementById('printArea').innerHTML = histBuildPrintHtml(rows, `${rangeLabel} · ${vName} · ${historyState.platform==='all'?'All Platforms':historyState.platform}`);
+    window.print();
+  };
+}
+
+document.getElementById('histSearchInput').addEventListener('input', (e)=>{ historyState.search = e.target.value; renderHistoryView(); });
+document.getElementById('histVehicleFilter').addEventListener('change', (e)=>{ historyState.vehicle = e.target.value; renderHistoryView(); });
+document.getElementById('histPlatformFilter').addEventListener('change', (e)=>{ historyState.platform = e.target.value; renderHistoryView(); });
+document.getElementById('histResultFilter').addEventListener('change', (e)=>{ historyState.result = e.target.value; renderHistoryView(); });
+document.getElementById('histSortSelect').addEventListener('change', (e)=>{ historyState.sort = e.target.value; renderHistoryView(); });
+document.getElementById('histMinProfit').addEventListener('input', (e)=>{ historyState.minProfit = e.target.value; renderHistoryView(); });
+document.getElementById('histMaxProfit').addEventListener('input', (e)=>{ historyState.maxProfit = e.target.value; renderHistoryView(); });
+document.getElementById('histExpenseCat').addEventListener('input', (e)=>{ historyState.expenseCat = e.target.value; renderHistoryView(); });
+document.getElementById('histClearFilters').addEventListener('click', ()=>{
+  historyState = { vehicle:'all', platform:'all', result:'all', sort:'date_desc', minProfit:'', maxProfit:'', expenseCat:'', search:'' };
+  document.getElementById('histSearchInput').value = '';
+  document.getElementById('histResultFilter').value = 'all';
+  document.getElementById('histSortSelect').value = 'date_desc';
+  document.getElementById('histMinProfit').value = '';
+  document.getElementById('histMaxProfit').value = '';
+  document.getElementById('histExpenseCat').value = '';
+  ranges.history = '30';
+  document.querySelectorAll('.tabs[data-page="history"] .tab').forEach(t=>t.classList.toggle('active', t.dataset.range==='30'));
+  document.getElementById('histCustomRange').classList.remove('active');
+  renderHistoryView();
+});
+/* =================== END HISTORY PAGE =================== */
+
 /* ===================== SMART INSIGHTS ===================== */
 function cmpLongestStreakInfo(agg){
   let longestStreak=0, currStreak=0, lastDate=null, maxEnd=null, curStart=null, maxStart=null;
@@ -3362,8 +3624,13 @@ document.querySelectorAll('.tabs[data-page]').forEach(grp=>{
     t.addEventListener('click', ()=>{
       if(t.dataset.range === 'custom' && grp.dataset.page === 'ledger') {
         document.getElementById('ledgerCustomRange').classList.add('active');
-      } else {
+      } else if(grp.dataset.page === 'ledger') {
         document.getElementById('ledgerCustomRange').classList.remove('active');
+      }
+      if(t.dataset.range === 'custom' && grp.dataset.page === 'history') {
+        document.getElementById('histCustomRange').classList.add('active');
+      } else if(grp.dataset.page === 'history') {
+        document.getElementById('histCustomRange').classList.remove('active');
       }
       grp.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); t.classList.add('active');
       ranges[grp.dataset.page] = t.dataset.range; renderView(currentView);
@@ -3371,6 +3638,7 @@ document.querySelectorAll('.tabs[data-page]').forEach(grp=>{
   });
 });
 document.getElementById('applyPnlDates').addEventListener('click', () => { renderView('ledger'); });
+document.getElementById('histApplyDates').addEventListener('click', () => { renderView('history'); });
 
 function renderView(view){
   document.querySelectorAll('.view').forEach(v=> v.classList.toggle('active', v.dataset.view===view));
@@ -3384,6 +3652,7 @@ function renderView(view){
   if(view==='profile') renderProfileView();
   if(view==='care') renderCareView();
   if(view==='goals') renderGoalsDebtView();
+  if(view==='history') renderHistoryView();
   window.scrollTo(0,0);
 }
 
