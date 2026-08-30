@@ -1015,11 +1015,6 @@ canvas.donut{ width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
     <div class="field"><label>Target Amount (₹)</label><input type="number" id="gTarget" step="10" placeholder="e.g. 1000"></div>
     <div id="goalSuggestWrap" class="helper-text" style="color:var(--amber); cursor:pointer; display:none;">💡 Suggestion: ₹<span id="gSuggestVal"></span> based on past 30 days. Tap to use.</div>
     <div class="field" id="gNameField" style="display:none;"><label>Goal Name</label><input type="text" id="gName" placeholder="e.g. Bike EMI, New Phone"></div>
-    <div class="field" id="gTargetDateField" style="display:none;">
-      <label>Target Date (optional)</label>
-      <input type="date" id="gTargetDate">
-      <div class="helper-text" style="margin-top:6px;">Set a deadline (e.g. "buy it by Diwali") and your goal card will show exactly how much you need to save per day to make it, and whether you're on pace.</div>
-    </div>
     <div class="sheet-actions"><button type="button" class="btn btn-danger" id="deleteGoalBtn" style="display:none;">🗑</button><button type="button" class="btn btn-primary" id="saveGoalBtn">Save Goal</button></div>
   </div>
 </div>
@@ -2555,10 +2550,6 @@ function renderGoalsWidget(entries, netLifetime){
             subtitle = `Need ${rupee(expected - current)} more to catch up`;
         }
     }
-    if ((g.type === 'savings' || g.type === 'custom_purchase') && g.targetDate) {
-        const dl = glGoalDeadlineInfo(g.targetDate, Math.max(0, g.target-current));
-        if(dl){ paceHtml = `<span class="trend-badge ${dl.badge}">${dl.badgeText}</span>`; subtitle = dl.text; }
-    }
 
     const pct = clamp((current/g.target)*100, 0, 100);
     const color = pct>=100 ? 'var(--green)' : 'var(--amber)';
@@ -2805,36 +2796,29 @@ function renderFuelView(){
   maintList.innerHTML = '';
   state.vehicles.forEach(v => {
     if(filterVehicleId !== 'all' && filterVehicleId !== v.id) return;
-    
-    const vEnt = state.entries.filter(e=>e.vehicleId===v.id).sort((a,b)=>a.date.localeCompare(b.date));
-    let distSince = 0;
-    let lastMaintDate = null;
-    
-    for(let i=vEnt.length-1; i>=0; i--){
-      const e = vEnt[i];
-      if((e.expenses||[]).some(x=>x.cat.toLowerCase().includes('maintenance'))) {
-        lastMaintDate = e.date;
-        break;
-      }
-      distSince += Number(e.distance)||0;
-    }
-    
-    let daysSince = 0;
-    if(lastMaintDate) {
-      daysSince = Math.floor((new Date() - new Date(lastMaintDate)) / 86400000);
-    } else if(vEnt.length) {
-      daysSince = Math.floor((new Date() - new Date(vEnt[0].date)) / 86400000);
-    }
 
-    const kmTarget = v.serviceInterval || 3000;
+    // Service health is based on the vehicle's actual ODOMETER (total lifetime km),
+    // measured against the next-service km/date deadline — same source of truth as the
+    // Vehicle Care page (vcNextServiceInfo), NOT the km logged from trips.
+    const ns = vcNextServiceInfo(v);
+    const kmInterval = v.serviceInterval || 3000;
     const daysTarget = (v.serviceIntervalMonths || 3) * 30;
-    
-    const kmPct = Math.min(100, (distSince / kmTarget) * 100);
-    const daysPct = Math.min(100, (daysSince / daysTarget) * 100);
-    
+    const kmSinceService = Math.max(0, (Number(v.odometer)||0) - ns.lastKm);
+    const daysSinceService = daysTarget - (ns.daysRemaining!==null ? ns.daysRemaining : daysTarget);
+    const kmPct = ns.kmProgress;
+    const daysPct = ns.daysRemaining!==null ? clamp(100 - (ns.daysRemaining/daysTarget)*100, 0, 100) : 0;
+
     let status = 'Healthy'; let statusColor = 'var(--green)';
-    if(kmPct >= 100 || daysPct >= 100) { status = 'Service Overdue'; statusColor = 'var(--red)'; }
-    else if(kmPct >= 85 || daysPct >= 85) { status = 'Service Due Soon'; statusColor = 'var(--amber)'; }
+    if(ns.status === 'overdue') { status = 'Service Overdue'; statusColor = 'var(--red)'; }
+    else if(ns.status === 'soon') { status = 'Service Due Soon'; statusColor = 'var(--amber)'; }
+
+    // Separate, purely informational figure: how many km came from LOGGED TRIPS only
+    // (does not affect service health, since odometer may include non-logged/personal driving).
+    const vEnt = state.entries.filter(e=>e.vehicleId===v.id).sort((a,b)=>a.date.localeCompare(b.date));
+    const tripKmSinceService = ns.lastDate
+      ? vEnt.filter(e=>e.date>=ns.lastDate).reduce((s,e)=>s+(Number(e.distance)||0),0)
+      : vEnt.reduce((s,e)=>s+(Number(e.distance)||0),0);
+    const tripKmTotal = vEnt.reduce((s,e)=>s+(Number(e.distance)||0),0);
 
     maintList.innerHTML += `
       <div class="card" style="margin-bottom:10px;">
@@ -2842,12 +2826,28 @@ function renderFuelView(){
           <span style="font-family:var(--font-display); font-weight:700;">${esc(v.name)}</span>
           <span style="color:${statusColor}; font-size:11px; font-weight:bold; padding:2px 6px; border-radius:4px; background:rgba(255,255,255,0.05);">${status}</span>
         </div>
-        
-        <div style="font-size:11px; color:var(--muted); margin-bottom:4px; display:flex; justify-content:space-between;"><span>Distance: ${distSince} / ${kmTarget} km</span><span>${Math.round(kmPct)}%</span></div>
-        <div class="goal-track" style="margin-bottom:12px;"><div class="goal-fill" style="width:${kmPct}%; background:${kmPct>=100?'var(--red)':kmPct>=85?'var(--amber)':'var(--green)'}"></div></div>
-        
-        <div style="font-size:11px; color:var(--muted); margin-bottom:4px; display:flex; justify-content:space-between;"><span>Time: ${daysSince} / ${daysTarget} days</span><span>${Math.round(daysPct)}%</span></div>
-        <div class="goal-track"><div class="goal-fill" style="width:${daysPct}%; background:${daysPct>=100?'var(--red)':daysPct>=85?'var(--amber)':'var(--green)'}"></div></div>
+
+        <div style="font-size:11px; color:var(--muted); margin-bottom:4px; display:flex; justify-content:space-between;"><span>Odometer: ${Math.round(kmSinceService).toLocaleString('en-IN')} / ${kmInterval.toLocaleString('en-IN')} km since last service</span><span>${Math.round(kmPct)}%</span></div>
+        <div class="goal-track" style="margin-bottom:12px;"><div class="goal-fill" style="width:${kmPct}%; background:${statusColor}"></div></div>
+
+        <div style="font-size:11px; color:var(--muted); margin-bottom:4px; display:flex; justify-content:space-between;"><span>Time: ${Math.max(0,Math.round(daysSinceService))} / ${daysTarget} days</span><span>${Math.round(daysPct)}%</span></div>
+        <div class="goal-track"><div class="goal-fill" style="width:${daysPct}%; background:${statusColor}"></div></div>
+
+        <div style="display:flex; justify-content:space-between; font-size:10.5px; color:var(--muted); margin-top:10px; font-family:var(--font-mono);">
+          <span>${Math.round(Number(v.odometer)||0).toLocaleString('en-IN')} km total on odometer</span>
+          <span>Next due: ${Math.round(ns.nextKm).toLocaleString('en-IN')} km${ns.nextDate?' · '+fmtDateShort(ns.nextDate):''}</span>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:10px;">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;">
+          <span style="font-family:var(--font-display); font-weight:700; font-size:12px; letter-spacing:0.5px; color:var(--muted); text-transform:uppercase;">Trip-Logged KM · ${esc(v.name)}</span>
+        </div>
+        <div class="vc-mini-grid">
+          <div class="vc-mini-stat"><div class="lbl">Since Last Service</div><div class="val" style="color:var(--teal);">${Math.round(tripKmSinceService).toLocaleString('en-IN')} km</div></div>
+          <div class="vc-mini-stat"><div class="lbl">All Logged Trips</div><div class="val" style="color:var(--teal);">${Math.round(tripKmTotal).toLocaleString('en-IN')} km</div></div>
+        </div>
+        <div style="font-size:10px; color:var(--muted); margin-top:8px;">Based only on trips you've logged — separate from the odometer-based service health above.</div>
       </div>
     `;
   });
@@ -3887,20 +3887,18 @@ document.getElementById('deleteEntryBtn').onclick = async ()=>{
 const goalOverlay = document.getElementById('goalOverlay');
 function openGoalSheet(id){
   editingId.goal = id;
-  const sW = document.getElementById('goalSuggestWrap'), gT = document.getElementById('gTarget'), gN = document.getElementById('gNameField'), gTD = document.getElementById('gTargetDateField'), gTDI = document.getElementById('gTargetDate');
+  const sW = document.getElementById('goalSuggestWrap'), gT = document.getElementById('gTarget'), gN = document.getElementById('gNameField');
   if(id){
     const g = state.goals.find(x=>x.id===id);
-    document.getElementById('gType').value = g.type; gT.value = g.target; document.getElementById('gName').value = g.name||''; gTDI.value = g.targetDate||'';
+    document.getElementById('gType').value = g.type; gT.value = g.target; document.getElementById('gName').value = g.name||'';
     document.getElementById('deleteGoalBtn').style.display='block'; sW.style.display='none';
   } else {
-    document.getElementById('gType').value = 'daily_earn'; gT.value = ''; document.getElementById('gName').value = ''; gTDI.value = '';
+    document.getElementById('gType').value = 'daily_earn'; gT.value = ''; document.getElementById('gName').value = '';
     document.getElementById('deleteGoalBtn').style.display='none'; updateGoalSuggest();
   }
   document.getElementById('gType').onchange = ()=>{
     const v = document.getElementById('gType').value;
-    const showExtra = (v === 'savings' || v === 'custom_purchase');
-    gN.style.display = showExtra ? 'block' : 'none';
-    gTD.style.display = showExtra ? 'block' : 'none';
+    gN.style.display = (v === 'savings' || v === 'custom_purchase') ? 'block' : 'none';
     if(!id) updateGoalSuggest();
   };
   document.getElementById('gType').dispatchEvent(new Event('change'));
@@ -3933,9 +3931,7 @@ function updateGoalSuggest(){
 document.getElementById('manageGoalsLink').onclick = ()=> openGoalSheet(null);
 document.getElementById('goalClose').onclick = ()=> goalOverlay.classList.remove('open');
 document.getElementById('saveGoalBtn').onclick = async ()=>{
-  const gTypeVal = document.getElementById('gType').value;
-  const targetDateVal = document.getElementById('gTargetDate').value;
-  const payload = { id: editingId.goal||uid(), type: gTypeVal, target: Number(document.getElementById('gTarget').value)||0, name: document.getElementById('gName').value, targetDate: (gTypeVal==='savings'||gTypeVal==='custom_purchase') ? (targetDateVal||null) : null };
+  const payload = { id: editingId.goal||uid(), type: document.getElementById('gType').value, target: Number(document.getElementById('gTarget').value)||0, name: document.getElementById('gName').value };
   if(payload.target<=0) { await showAlert('Error', 'Enter a valid target amount above 0.'); return; }
   if(editingId.goal) state.goals = state.goals.map(x=> x.id===editingId.goal ? payload : x);
   else state.goals.push(payload);
@@ -4895,30 +4891,6 @@ function glProjectedDate(remaining, pace){
   return { text:`Around ${d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})} (~${days} day${days===1?'':'s'} at current pace)`, ok:true };
 }
 
-function glGoalDeadlineInfo(targetDate, remaining){
-  if(!targetDate) return null;
-  const today = new Date(); today.setHours(0,0,0,0);
-  const target = parseLocalDate(targetDate);
-  const daysLeft = Math.ceil((target-today)/86400000);
-
-  if(remaining<=0){
-    return { badge:'pos', badgeText:'Goal Met! 🎉', text:`Reached before the ${fmtDateShort(targetDate)} target.` };
-  }
-  if(daysLeft<=0){
-    return { badge:'neg', badgeText:'Deadline Passed', text:`Target date ${fmtDateShort(targetDate)} has passed — still need ${rupee(remaining)}.` };
-  }
-
-  const requiredDaily = remaining/daysLeft;
-  const actualPace = glDailyProfitPace();
-  const onTrack = actualPace >= requiredDaily;
-
-  if(onTrack){
-    return { badge:'pos', badgeText:'On Track', text:`Save ~${rupee(requiredDaily,{dec:true})}/day to hit it by ${fmtDateShort(targetDate)} (${daysLeft} day${daysLeft===1?'':'s'} left).` };
-  }
-  const shortfall = requiredDaily - actualPace;
-  return { badge:'neg', badgeText:'Behind Pace', text:`Need ~${rupee(requiredDaily,{dec:true})}/day — you're averaging ~${rupee(actualPace,{dec:true})}/day. Find ${rupee(shortfall,{dec:true})}/day more to hit ${fmtDateShort(targetDate)} (${daysLeft} day${daysLeft===1?'':'s'} left).` };
-}
-
 function renderGoalsDebtView(){
   const loans = glLoans();
 
@@ -4974,15 +4946,12 @@ function renderGoalsDebtView(){
       else { current = Math.max(0, Math.min(unallocatedProfit, g.target)); unallocatedProfit -= current; }
       const remaining = Math.max(0, g.target - current);
       const pct = clamp((current/g.target)*100, 0, 100);
-      const dl = glGoalDeadlineInfo(g.targetDate, remaining);
-      const footerText = dl ? dl.text : glProjectedDate(remaining, pace).text;
-      const footerColor = dl ? (dl.badge==='pos' ? 'var(--green)' : 'var(--red)') : (glProjectedDate(remaining, pace).ok ? 'var(--muted)' : 'var(--red)');
-      const dateBadge = g.targetDate ? `<span class="goal-meta" style="margin-left:8px;">🎯 ${fmtDateShort(g.targetDate)}</span>` : '';
+      const proj = glProjectedDate(remaining, pace);
       return `
         <div class="goal-item" onclick="openGoalSheet('${g.id}')">
-          <div class="goal-head"><span class="goal-name">${esc(g.name || (g.type==='savings'?'Break-even':'Purchase Goal'))}${dateBadge}</span><span class="goal-meta">${rupee(current)} / ${rupeeCompact(g.target)}</span></div>
+          <div class="goal-head"><span class="goal-name">${esc(g.name || (g.type==='savings'?'Break-even':'Purchase Goal'))}</span><span class="goal-meta">${rupee(current)} / ${rupeeCompact(g.target)}</span></div>
           <div class="goal-track"><div class="goal-fill" style="width:${pct}%; background:${pct>=100?'var(--green)':'var(--amber)'};"></div></div>
-          <div class="goal-footer" style="align-items:center;"><span style="color:${footerColor};">${esc(footerText)}</span></div>
+          <div class="goal-footer" style="align-items:center;"><span style="color:${proj.ok?'var(--muted)':'var(--red)'};">${esc(proj.text)}</span></div>
         </div>
       `;
     }).join('');
