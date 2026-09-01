@@ -130,6 +130,21 @@ canvas.gauge{ width:100%; height:150px; display:block; }
 .streak-dot.pos { background: rgba(52,211,153,0.15); border-color: var(--green); color: var(--green); }
 .streak-dot.neg { background: rgba(247,107,107,0.15); border-color: var(--red); color: var(--red); }
 .streak-dot.empty { border-style: dashed; }
+.streak-dot.off { background: rgba(96,165,250,0.15); border-color: var(--blue); color: var(--blue); font-size:11px; }
+.missing-pill-row{ display:flex; align-items:center; gap:6px; }
+.missing-pill-off{ background:rgba(96,165,250,0.12); border:1px solid rgba(96,165,250,0.4); color:var(--blue); padding:6px 10px; border-radius:20px; font-size:11px; font-family:var(--font-mono); cursor:pointer; white-space:nowrap; }
+.missing-pill-off:active{ background:rgba(96,165,250,0.22); transform:scale(0.95); }
+.dayoff-stat-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.dayoff-reason-row{ display:flex; align-items:center; gap:8px; font-size:11.5px; font-family:var(--font-mono); margin-top:8px; }
+.dayoff-reason-row .drname{ flex:0 0 92px; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.dayoff-reason-track{ flex:1; height:8px; border-radius:4px; background:rgba(255,255,255,0.05); overflow:hidden; }
+.dayoff-reason-fill{ height:100%; border-radius:4px; background:var(--blue); }
+.dayoff-reason-pct{ flex:0 0 32px; text-align:right; color:var(--muted); }
+.dayoff-list-item{ display:flex; align-items:center; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--hairline); font-size:12px; cursor:pointer; }
+.dayoff-list-item:last-child{ border-bottom:none; }
+.dayoff-list-date{ font-family:var(--font-mono); color:var(--text); }
+.dayoff-list-reason{ color:var(--blue); font-family:var(--font-mono); font-size:11px; background:rgba(96,165,250,0.12); padding:3px 8px; border-radius:8px; }
+.hist-dayoff-badge{ color:var(--blue); font-family:var(--font-mono); font-weight:600; display:flex; align-items:center; gap:4px; }
 .streak-lbl { font-size: 9px; color: var(--muted); font-family: var(--font-mono); text-transform: uppercase; }
 
 .best-worst-row { display: flex; gap: 10px; margin-top: 12px; }
@@ -648,6 +663,19 @@ canvas.donut{ width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
     
     <div class="section" id="breakEvenSection" style="display:none;"></div>
 
+    <div class="section" id="dayOffSection" style="display:none;">
+      <div class="section-head"><div class="section-title">Days Off</div></div>
+      <div class="dayoff-stat-grid" id="dayOffStatsHolder"></div>
+      <div class="card" id="dayOffReasonCard" style="margin-top:12px; display:none;">
+        <div class="stat-title" style="margin-bottom:2px;">Breakdown by Reason</div>
+        <div id="dayOffReasonHolder"></div>
+      </div>
+      <div class="card" id="dayOffListCard" style="margin-top:12px; display:none;">
+        <div class="stat-title" style="margin-bottom:2px;">Recent Days Off</div>
+        <div id="dayOffListHolder"></div>
+      </div>
+    </div>
+
     <div class="section">
       <div class="section-head"><div class="section-title">Per Trip Averages</div></div>
       <div class="stat-row-3" id="perTripStats" style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; text-align:center;"></div>
@@ -981,6 +1009,7 @@ canvas.donut{ width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
             <option value="all">Profit & Loss</option>
             <option value="profit">Profit Only</option>
             <option value="loss">Loss Only</option>
+            <option value="dayoff">Days Off Only</option>
           </select>
         </div>
         <div class="field" style="margin-top:0;">
@@ -1044,36 +1073,61 @@ canvas.donut{ width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
     <div class="sheet-handle"></div>
     <div class="sheet-title"><span id="entrySheetTitle">Log Trip</span><span class="sheet-close" id="entryClose">✕</span></div>
     <form id="entryForm">
+      <div class="tabs" id="entryTypeTabs" style="margin-bottom:16px;">
+        <div class="tab active" data-entry-type="trip" id="tripTypeTab">🚗 Work Day</div>
+        <div class="tab" data-entry-type="dayoff" id="dayOffTypeTab">🏖 Day Off</div>
+      </div>
+
       <div class="row2">
         <div class="field"><label>Date</label><input type="date" id="fDate" required></div>
         <div class="field"><label>Vehicle / Job</label><select id="fVehicle"></select></div>
       </div>
-      <div class="row2">
-        <div class="field"><label>Start Time</label><input type="time" id="fStartTime"></div>
-        <div class="field"><label>End Time</label><input type="time" id="fEndTime"></div>
-      </div>
 
-      <div class="field">
-        <label>Platform Fares & Tips</label>
-        <div id="platformRows"></div>
-        <button type="button" class="btn btn-ghost" id="addPlatformBtn" style="padding:6px 10px; font-size:11.5px; width:auto; margin-top:8px;">+ Add platform</button>
-        <div class="fuel-preview earn-preview">
-          <span class="fp-label">Gross Earnings</span><span class="fp-value" id="platformTotalPreview">₹0</span>
+      <div id="tripFieldsWrap">
+        <div class="row2">
+          <div class="field"><label>Start Time</label><input type="time" id="fStartTime"></div>
+          <div class="field"><label>End Time</label><input type="time" id="fEndTime"></div>
+        </div>
+
+        <div class="field">
+          <label>Platform Fares & Tips</label>
+          <div id="platformRows"></div>
+          <button type="button" class="btn btn-ghost" id="addPlatformBtn" style="padding:6px 10px; font-size:11.5px; width:auto; margin-top:8px;">+ Add platform</button>
+          <div class="fuel-preview earn-preview">
+            <span class="fp-label">Gross Earnings</span><span class="fp-value" id="platformTotalPreview">₹0</span>
+          </div>
+        </div>
+
+        <div class="row2">
+          <div class="field"><label>Distance (km)</label><input type="number" id="fDistance" min="0" step="0.1" placeholder="0"></div>
+          <div class="field"><label>Mileage (km/L)</label><input type="number" id="fMileage" min="0" step="0.1" placeholder="e.g. 35"></div>
+        </div>
+        <div class="fuel-preview">
+          <span class="fp-label">Fuel cost (auto @ ₹<span id="petrolPriceLabel">0</span>/L)</span><span class="fp-value" id="fuelPreview">₹0</span>
+        </div>
+
+        <div class="field" style="margin-top:18px;">
+          <label style="display:flex;justify-content:space-between;">Other Expenses <button type="button" class="btn btn-ghost" id="addExpenseBtn" style="padding:4px 8px; font-size:10px; width:auto;">+ Add</button></label>
+          <div id="expenseRows"></div>
+          <div class="helper-text" id="noExpHint">No other expenses added.</div>
         </div>
       </div>
 
-      <div class="row2">
-        <div class="field"><label>Distance (km)</label><input type="number" id="fDistance" min="0" step="0.1" placeholder="0"></div>
-        <div class="field"><label>Mileage (km/L)</label><input type="number" id="fMileage" min="0" step="0.1" placeholder="e.g. 35"></div>
-      </div>
-      <div class="fuel-preview">
-        <span class="fp-label">Fuel cost (auto @ ₹<span id="petrolPriceLabel">0</span>/L)</span><span class="fp-value" id="fuelPreview">₹0</span>
-      </div>
-
-      <div class="field" style="margin-top:18px;">
-        <label style="display:flex;justify-content:space-between;">Other Expenses <button type="button" class="btn btn-ghost" id="addExpenseBtn" style="padding:4px 8px; font-size:10px; width:auto;">+ Add</button></label>
-        <div id="expenseRows"></div>
-        <div class="helper-text" id="noExpHint">No other expenses added.</div>
+      <div id="dayOffFieldsWrap" style="display:none;">
+        <div class="field">
+          <label>Reason</label>
+          <select id="fDayOffReason">
+            <option value="Leave">Leave</option>
+            <option value="Personal">Personal</option>
+            <option value="Sick">Sick</option>
+            <option value="Festival">Festival / Holiday</option>
+            <option value="Weather">Weather</option>
+            <option value="Vehicle Issue">Vehicle Issue</option>
+            <option value="Rest">Rest Day</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="helper-text" style="margin-top:10px;">This day will be tracked as a day off, not counted as a ₹0 earning day in your stats.</div>
       </div>
 
       <div class="field"><label>Note (optional)</label><input type="text" id="fNote" placeholder="e.g. rainy day, festival rush..."></div>
@@ -1081,7 +1135,7 @@ canvas.donut{ width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
       <div class="sheet-actions">
         <button type="button" class="btn btn-danger" id="deleteEntryBtn" style="display:none;">🗑</button>
         <button type="button" class="btn btn-ghost" id="cancelEntryBtn">Cancel</button>
-        <button type="submit" class="btn btn-primary">Save trip</button>
+        <button type="submit" class="btn btn-primary" id="saveEntryBtn">Save trip</button>
       </div>
     </form>
   </div>
@@ -1499,7 +1553,9 @@ function computeEntry(e){
 function aggregateByDate(entries) {
   const map = {};
   entries.forEach(e => {
-    if (!map[e.date]) map[e.date] = { date: e.date, earnings: 0, fares: 0, tips: 0, expenses: 0, profit: 0, fuel: 0, maint: 0, otherExp: 0, dist: 0, plats: {}, sumMileage: 0, sumBaseline: 0, tripCount: 0 };
+    if (!map[e.date]) map[e.date] = { date: e.date, earnings: 0, fares: 0, tips: 0, expenses: 0, profit: 0, fuel: 0, maint: 0, otherExp: 0, dist: 0, plats: {}, sumMileage: 0, sumBaseline: 0, tripCount: 0, isDayOff: true, dayOffReason: null };
+    if(!e.isDayOff) map[e.date].isDayOff = false;
+    else if(!map[e.date].dayOffReason) map[e.date].dayOffReason = e.dayOffReason || 'Leave';
     const c = computeEntry(e);
     map[e.date].earnings += c.earnings;
     map[e.date].fares += c.fares;
@@ -1508,9 +1564,11 @@ function aggregateByDate(entries) {
     map[e.date].profit += c.profit;
     map[e.date].fuel += c.fuelCost;
     map[e.date].dist += c.distance;
-    map[e.date].sumMileage += c.mileage;
-    map[e.date].sumBaseline += (state.vehicles.find(v=>v.id===e.vehicleId)||state.vehicles[0]).mileage;
-    map[e.date].tripCount += 1;
+    if(!e.isDayOff){
+      map[e.date].sumMileage += c.mileage;
+      map[e.date].sumBaseline += (state.vehicles.find(v=>v.id===e.vehicleId)||state.vehicles[0]).mileage;
+      map[e.date].tripCount += 1;
+    }
     (e.expenses||[]).forEach(x=>{
       if(x.cat.toLowerCase().includes('maintenance')) map[e.date].maint += x.amount;
       else map[e.date].otherExp += x.amount;
@@ -2343,7 +2401,9 @@ function drawCmpRadar(canvas, axes, series){
 
 function renderHomeView(){
   const entries = getActiveEntries();
-  document.getElementById('entryCount').textContent = entries.length + (entries.length===1?' trip':' trips');
+  const homeDayOffCount = entries.filter(e=>e.isDayOff).length;
+  const homeTripCount = entries.length - homeDayOffCount;
+  document.getElementById('entryCount').textContent = homeTripCount + (homeTripCount===1?' trip':' trips') + (homeDayOffCount ? ` · ${homeDayOffCount} day${homeDayOffCount===1?'':'s'} off` : '');
   
   let tEarn=0, tExp=0;
   entries.forEach(e=>{ const c=computeEntry(e); tEarn+=c.earnings; tExp+=c.totalExpense; });
@@ -2359,16 +2419,19 @@ function renderHomeView(){
       const recent = allAgg[allAgg.length - 1]; 
       
       let sumFuelPerKm = 0, countFuel = 0;
-      let sumProf = 0;
+      let sumProf = 0, profDayCount = 0;
       for(let i=0; i<allAgg.length-1; i++) {
+          if(allAgg[i].isDayOff) continue;
           if(allAgg[i].dist > 0) { sumFuelPerKm += allAgg[i].fuel / allAgg[i].dist; countFuel++; }
-          sumProf += allAgg[i].profit;
+          sumProf += allAgg[i].profit; profDayCount++;
       }
       const avgFuelPerKm = countFuel ? sumFuelPerKm / countFuel : 0;
       const recentFuelPerKm = recent.dist > 0 ? recent.fuel / recent.dist : 0;
-      const avgProfit = allAgg.length>1 ? sumProf / (allAgg.length-1) : 0;
+      const avgProfit = profDayCount ? sumProf / profDayCount : 0;
       
-      if (avgFuelPerKm > 0 && recentFuelPerKm > avgFuelPerKm * 1.3) {
+      if (recent.isDayOff) {
+          // Skip anomaly checks on a logged day off — it's not a work-performance signal.
+      } else if (avgFuelPerKm > 0 && recentFuelPerKm > avgFuelPerKm * 1.3) {
          anomalyHolder.innerHTML = `<div class="anomaly-banner"><div class="anomaly-icon">🚨</div><div class="anomaly-text"><strong>High Fuel Cost Detected</strong> The most recent trip logged ${rupee(recentFuelPerKm, {dec:true})}/km, which is ${Math.round((recentFuelPerKm/avgFuelPerKm - 1)*100)}% higher than your historical average.</div></div>`;
       } else if (avgProfit > 0 && recent.profit < avgProfit * 0.5 && recent.profit > 0) {
          anomalyHolder.innerHTML = `<div class="anomaly-banner"><div class="anomaly-icon">⚠️</div><div class="anomaly-text"><strong>Low Profit Day</strong> Your most recent logged profit (${rupee(recent.profit)}) was significantly lower than your daily average (${rupee(avgProfit)}).</div></div>`;
@@ -2397,7 +2460,11 @@ function renderHomeView(){
                   <div class="missing-title">⚠️ Missed Logs Detected</div>
                   <div class="helper-text" style="margin:0; color:var(--text); font-size:11.5px;">You have unrecorded days recently. Tap to log them.</div>
                   <div class="missing-pills">
-                      ${missingDates.map(d => `<div class="missing-pill" onclick="openEntrySheetForDate('${d}')">📅 ${fmtDateShort(d)}</div>`).join('')}
+                      ${missingDates.map(d => `
+                        <div class="missing-pill-row">
+                          <div class="missing-pill" onclick="openEntrySheetForDate('${d}')">📅 ${fmtDateShort(d)}</div>
+                          <div class="missing-pill-off" onclick="markDateAsDayOff('${d}', 'Leave')" title="Mark as day off">🏖 Off</div>
+                        </div>`).join('')}
                   </div>
               </div>
           `;
@@ -2450,7 +2517,9 @@ function renderHomeView(){
       let iso = toISO(currD);
       let entryForDay = entries.filter(e => e.date === iso);
       
-      if(entryForDay.length > 0) {
+      if(entryForDay.length > 0 && entryForDay.every(e=>e.isDayOff)) {
+          streakHtml += `<div class="streak-day" onclick="openEntrySheetForDate('${iso}')"><div class="streak-dot off">🏖</div><div class="streak-lbl">${currD.toLocaleDateString('en-US', {weekday:'narrow'})}</div></div>`;
+      } else if(entryForDay.length > 0) {
           let p = entryForDay.reduce((s,e) => s + computeEntry(e).profit, 0);
           streakHtml += `<div class="streak-day"><div class="streak-dot ${p>=0?'pos':'neg'}">${p>=0?'✓':'!'}</div><div class="streak-lbl">${currD.toLocaleDateString('en-US', {weekday:'narrow'})}</div></div>`;
       } else {
@@ -2462,7 +2531,7 @@ function renderHomeView(){
 
   const bestWorstHolder = document.getElementById('bestWorstHolder');
   const weekEntries = entries.filter(e => e.date >= toISO(new Date(Date.now() - 7*86400000)));
-  const weekAgg = aggregateByDate(weekEntries);
+  const weekAgg = aggregateByDate(weekEntries).filter(a=>!a.isDayOff);
   if (weekAgg.length >= 2) {
       let best = weekAgg[0], worst = weekAgg[0];
       weekAgg.forEach(a => {
@@ -2846,6 +2915,16 @@ function renderLedgerView(){
     } else {
         listEl.innerHTML = rev.slice(0, 100).map(e => {
             const c = computeEntry(e);
+            if(e.isDayOff){
+              return `<div class="hist-row" onclick="openEntrySheet('${e.id}')">
+                <div class="hist-date">${fmtDateShort(e.date)}</div>
+                <div class="hist-mid">
+                  <div class="hist-dayoff-badge">🏖 Day Off</div>
+                  <div class="hist-meta">${esc(e.dayOffReason||'Leave')} ${e.note?'· '+esc(e.note):''}</div>
+                </div>
+                <div class="hist-profit" style="color:var(--muted)">—</div>
+              </div>`;
+            }
             let badge = '';
             if(e.date === bestDate && c.profit > 0) badge = '<span class="trend-badge pos" style="margin-left:6px;">🏆 Best Day</span>';
             else if(e.date === worstDate && c.profit < 0) badge = '<span class="trend-badge neg" style="margin-left:6px;">📉 Worst Day</span>';
@@ -3024,8 +3103,9 @@ function histGetFilteredEntries(){
 
   // Compute + result-type + min/max profit filters
   let rows = entries.map(e=>({ e, c: computeEntry(e) }));
-  if(historyState.result === 'profit') rows = rows.filter(x=>x.c.profit >= 0);
-  if(historyState.result === 'loss') rows = rows.filter(x=>x.c.profit < 0);
+  if(historyState.result === 'profit') rows = rows.filter(x=>!x.e.isDayOff && x.c.profit >= 0);
+  if(historyState.result === 'loss') rows = rows.filter(x=>!x.e.isDayOff && x.c.profit < 0);
+  if(historyState.result === 'dayoff') rows = rows.filter(x=>x.e.isDayOff);
   if(historyState.minProfit !== '' && !isNaN(Number(historyState.minProfit))) rows = rows.filter(x=>x.c.profit >= Number(historyState.minProfit));
   if(historyState.maxProfit !== '' && !isNaN(Number(historyState.maxProfit))) rows = rows.filter(x=>x.c.profit <= Number(historyState.maxProfit));
 
@@ -3059,6 +3139,16 @@ function histPopulateFilterOptions(){
 
 function histBuildRowHtml(x){
   const e = x.e, c = x.c;
+  if(e.isDayOff){
+    return `<div class="hist-row" onclick="openEntrySheet('${e.id}')">
+      <div class="hist-date">${fmtDateShort(e.date)}</div>
+      <div class="hist-mid">
+        <div class="hist-dayoff-badge">🏖 Day Off</div>
+        <div class="hist-meta">${esc(e.dayOffReason||'Leave')}${e.note?' · '+esc(e.note):''}</div>
+      </div>
+      <div class="hist-profit" style="color:var(--muted)">—</div>
+    </div>`;
+  }
   const vName = (state.vehicles.find(v=>v.id===e.vehicleId)||{}).name || 'Vehicle';
   const plats = (e.platformEarnings||[]).map(p=>p.platform).filter(Boolean).join(', ');
   const catList = (e.expenses||[]).map(x2=>x2.cat).filter(Boolean).join(', ');
@@ -3079,6 +3169,18 @@ function histBuildPrintHtml(rows, meta){
   const totals = rows.reduce((s,x)=>({earnings:s.earnings+x.c.earnings, expense:s.expense+x.c.totalExpense, profit:s.profit+x.c.profit, dist:s.dist+x.c.distance}), {earnings:0, expense:0, profit:0, dist:0});
   const rowsHtml = rows.map(x=>{
     const vName = (state.vehicles.find(v=>v.id===x.e.vehicleId)||{}).name || '—';
+    if(x.e.isDayOff){
+      return `<tr>
+        <td>${fmtDateShort(x.e.date)}</td>
+        <td>${esc(vName)}</td>
+        <td>🏖 Day Off</td>
+        <td>—</td>
+        <td>—</td>
+        <td>—</td>
+        <td>—</td>
+        <td>${esc(x.e.dayOffReason||'Leave')}${x.e.note?' · '+esc(x.e.note):''}</td>
+      </tr>`;
+    }
     const plats = (x.e.platformEarnings||[]).map(p=>p.platform).filter(Boolean).join(', ') || '—';
     return `<tr>
       <td>${fmtDateShort(x.e.date)}</td>
@@ -3096,7 +3198,8 @@ function histBuildPrintHtml(rows, meta){
       <h2 style="margin:0 0 4px;">Shiftmeter — Trip History Report</h2>
       <div style="font-size:12px; color:#444; margin-bottom:10px;">${esc(meta)} · Generated ${fmtDateShort(toISO(new Date()))}</div>
       <table class="print-table">
-        <tr><td>Total Trips</td><td class="val">${rows.length}</td></tr>
+        <tr><td>Total Trips</td><td class="val">${rows.filter(x=>!x.e.isDayOff).length}</td></tr>
+        <tr><td>Days Off</td><td class="val">${rows.filter(x=>x.e.isDayOff).length}</td></tr>
         <tr><td>Total Distance</td><td class="val">${totals.dist} km</td></tr>
         <tr><td>Total Earnings</td><td class="val">${rupee(totals.earnings)}</td></tr>
         <tr><td>Total Expenses</td><td class="val">${rupee(totals.expense)}</td></tr>
@@ -3320,10 +3423,31 @@ function generateSeasonalityInsight(){
   };
 }
 
+function generateDayOffInsight(range){
+  if(range==='all') return null;
+  const days = Number(range);
+  const curEnd = new Date();
+  const curStart = new Date(curEnd); curStart.setDate(curStart.getDate()-days+1);
+  const prevEnd = new Date(curStart); prevEnd.setDate(prevEnd.getDate()-1);
+  const prevStart = new Date(prevEnd); prevStart.setDate(prevStart.getDate()-days+1);
+  const cur = cmpComputeMetrics(toISO(curStart), toISO(curEnd));
+  const prev = cmpComputeMetrics(toISO(prevStart), toISO(prevEnd));
+  if(cur.dayOffCount === 0 && prev.dayOffCount === 0) return null;
+  if(cur.dayOffCount === prev.dayOffCount) return null;
+  const delta = cur.dayOffCount - prev.dayOffCount;
+  return {
+    icon: '🏖',
+    tone: 'neutral',
+    text: `You took ${cur.dayOffCount} day${cur.dayOffCount===1?'':'s'} off in the last ${days} days — ${delta>0?delta+' more':Math.abs(delta)+' fewer'} than the previous ${days} days (${prev.dayOffCount}).`
+  };
+}
+
 function renderSmartInsights(range){
   const insights = [...generateTrendInsights(range), ...generateRecordInsights(range)];
   const seasonal = generateSeasonalityInsight();
   if(seasonal) insights.push(seasonal);
+  const dayOffInsight = generateDayOffInsight(range);
+  if(dayOffInsight) insights.push(dayOffInsight);
 
   const section = document.getElementById('smartInsightsSection');
   const holder = document.getElementById('smartInsightsHolder');
@@ -3346,6 +3470,8 @@ function renderInsightsView(){
     const st = toISO(new Date(Date.now() - (Number(range)-1)*86400000));
     entries = entries.filter(e=>e.date>=st);
   }
+  const dayOffEntries = entries.filter(e=>e.isDayOff);
+  const workEntries = entries.filter(e=>!e.isDayOff);
 
   let earn=0, exp=0, dist=0, tips=0, hrs=0;
   const pMap={}, cMap={}, platEff={};
@@ -3355,7 +3481,7 @@ function renderInsightsView(){
     if(range==='all' || f.date >= toISO(new Date(Date.now() - (Number(range)-1)*86400000))) fixedCosts += Number(f.amount);
   });
 
-  entries.forEach(e=>{
+  workEntries.forEach(e=>{
     const c=computeEntry(e); earn+=c.earnings; exp+=c.totalExpense; dist+=c.distance; tips+=c.tips; hrs+=c.durationHours;
     cMap['Fuel'] = (cMap['Fuel']||0)+c.fuelCost;
     (e.expenses||[]).forEach(x=> { cMap[x.cat] = (cMap[x.cat]||0)+x.amount; fixedCosts += x.amount; });
@@ -3372,7 +3498,7 @@ function renderInsightsView(){
   });
   
   const hl = document.getElementById('analysisHighlights');
-  if (entries.length > 0) {
+  if (workEntries.length > 0) {
       let topPlat = Object.keys(pMap).length ? Object.keys(pMap).reduce((a, b) => pMap[a] > pMap[b] ? a : b, Object.keys(pMap)[0]) : 'None';
       let topExp = Object.keys(cMap).length ? Object.keys(cMap).reduce((a, b) => cMap[a] > cMap[b] ? a : b, Object.keys(cMap)[0]) : 'None';
       hl.innerHTML = `
@@ -3389,10 +3515,10 @@ function renderInsightsView(){
       hl.innerHTML = '';
   }
 
-  document.getElementById('perTripStats').innerHTML = entries.length ? `
-    <div class="card stat-card"><div class="stat-title">Earn / Trip</div><div class="stat-value" style="color:var(--green)">${rupee(earn/entries.length)}</div></div>
-    <div class="card stat-card"><div class="stat-title">Exp / Trip</div><div class="stat-value" style="color:var(--red)">${rupee(exp/entries.length)}</div></div>
-    <div class="card stat-card"><div class="stat-title">Dist / Trip</div><div class="stat-value">${(dist/entries.length).toFixed(1)} km</div></div>
+  document.getElementById('perTripStats').innerHTML = workEntries.length ? `
+    <div class="card stat-card"><div class="stat-title">Earn / Trip</div><div class="stat-value" style="color:var(--green)">${rupee(earn/workEntries.length)}</div></div>
+    <div class="card stat-card"><div class="stat-title">Exp / Trip</div><div class="stat-value" style="color:var(--red)">${rupee(exp/workEntries.length)}</div></div>
+    <div class="card stat-card"><div class="stat-title">Dist / Trip</div><div class="stat-value">${(dist/workEntries.length).toFixed(1)} km</div></div>
   ` : `<div class="stat-empty" style="grid-column:1/-1">No data.</div>`;
   
   const perHrEl = document.getElementById('perHrStats');
@@ -3478,7 +3604,7 @@ function renderInsightsView(){
   }
 
   const tMap = { 'Morning (6A-12P)': {sum:0,cnt:0}, 'Afternoon (12P-5P)': {sum:0,cnt:0}, 'Evening (5P-9P)': {sum:0,cnt:0}, 'Night (9P-6A)': {sum:0,cnt:0} };
-  entries.forEach(e=>{
+  workEntries.forEach(e=>{
     if(e.startTime) {
       const h = Number(e.startTime.split(':')[0]);
       let cat = 'Night (9P-6A)';
@@ -3489,14 +3615,14 @@ function renderInsightsView(){
     }
   });
   const tData = Object.keys(tMap).map(k=>({ label:k, val:tMap[k].cnt?tMap[k].sum/tMap[k].cnt:0, valName:'Avg Profit' }));
-  if(entries.some(e=>e.startTime)) {
+  if(workEntries.some(e=>e.startTime)) {
     document.getElementById('timeOfDayChartHolder').innerHTML = `<canvas class="catbar" id="timeOfDayCanvas"></canvas>`;
     drawCategoricalBar(document.getElementById('timeOfDayCanvas'), tData);
   } else {
     document.getElementById('timeOfDayChartHolder').innerHTML = `<div class="chart-empty">Add start times to trips to see this chart.</div>`;
   }
 
-  drawHeatmap(document.getElementById('profitHeatmapCanvas'), entries);
+  drawHeatmap(document.getElementById('profitHeatmapCanvas'), workEntries);
 
   if(aggData.length) {
       drawMultiLineChart(document.getElementById('insightTipsLine'), aggData.map(a=>a.date), [
@@ -3530,10 +3656,12 @@ function renderInsightsView(){
   }
 
   const wMap = [0,0,0,0,0,0,0], wCnt = [0,0,0,0,0,0,0];
-  entries.forEach(e=>{ const d = parseLocalDate(e.date).getDay(); wMap[d]+=computeEntry(e).profit; wCnt[d]++; });
+  workEntries.forEach(e=>{ const d = parseLocalDate(e.date).getDay(); wMap[d]+=computeEntry(e).profit; wCnt[d]++; });
   const wData2 = [1,2,3,4,5,6,0].map((d,i)=>({ label:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][i], val:wCnt[d]?wMap[d]/wCnt[d]:0, valName:'Avg Profit' }));
-  if(entries.length) drawCategoricalBar(document.getElementById('weekdayCanvas'), wData2);
+  if(workEntries.length) drawCategoricalBar(document.getElementById('weekdayCanvas'), wData2);
   else document.getElementById('weekdayChartHolder').innerHTML = `<div class="chart-empty">No data.</div>`;
+
+  renderDayOffSection(dayOffEntries, workEntries, range);
   
   // Personal Records
   const prHolder = document.getElementById('prGridHolder');
@@ -3574,6 +3702,51 @@ function renderInsightsView(){
   } else {
     prHolder.innerHTML = `<div class="stat-empty" style="grid-column:1/-1;">Log more trips to build your records!</div>`;
   }
+}
+
+function renderDayOffSection(dayOffEntries, workEntries, range){
+  const section = document.getElementById('dayOffSection');
+  if(!dayOffEntries.length){ section.style.display = 'none'; return; }
+  section.style.display = 'block';
+
+  const totalLogged = dayOffEntries.length + workEntries.length;
+  const offRate = totalLogged > 0 ? (dayOffEntries.length / totalLogged) * 100 : 0;
+
+  const reasonCounts = {};
+  dayOffEntries.forEach(e => { const r = e.dayOffReason || 'Leave'; reasonCounts[r] = (reasonCounts[r]||0)+1; });
+  const topReason = Object.keys(reasonCounts).reduce((a,b)=> reasonCounts[a]>=reasonCounts[b]?a:b, Object.keys(reasonCounts)[0]);
+
+  document.getElementById('dayOffStatsHolder').innerHTML = `
+    <div class="card stat-card"><div class="stat-title">Days Off</div><div class="stat-value" style="color:var(--blue)">${dayOffEntries.length}</div></div>
+    <div class="card stat-card"><div class="stat-title">Off Rate</div><div class="stat-value">${offRate.toFixed(0)}%</div></div>
+    <div class="card stat-card"><div class="stat-title">Top Reason</div><div class="stat-value" style="font-size:13px;">${esc(topReason)}</div></div>
+  `;
+
+  const reasonCard = document.getElementById('dayOffReasonCard');
+  const reasonKeys = Object.keys(reasonCounts).sort((a,b)=>reasonCounts[b]-reasonCounts[a]);
+  if(reasonKeys.length > 1){
+    reasonCard.style.display = 'block';
+    document.getElementById('dayOffReasonHolder').innerHTML = reasonKeys.map(k => {
+      const pct = (reasonCounts[k]/dayOffEntries.length)*100;
+      return `<div class="dayoff-reason-row">
+        <span class="drname">${esc(k)}</span>
+        <div class="dayoff-reason-track"><div class="dayoff-reason-fill" style="width:${pct}%"></div></div>
+        <span class="dayoff-reason-pct">${reasonCounts[k]}</span>
+      </div>`;
+    }).join('');
+  } else {
+    reasonCard.style.display = 'none';
+  }
+
+  const listCard = document.getElementById('dayOffListCard');
+  listCard.style.display = 'block';
+  const sorted = [...dayOffEntries].sort((a,b)=> b.date.localeCompare(a.date)).slice(0, 8);
+  document.getElementById('dayOffListHolder').innerHTML = sorted.map(e => `
+    <div class="dayoff-list-item" onclick="openEntrySheet('${e.id}')">
+      <span class="dayoff-list-date">${fmtDateShort(e.date)}</span>
+      <span class="dayoff-list-reason">🏖 ${esc(e.dayOffReason||'Leave')}</span>
+    </div>
+  `).join('') + (dayOffEntries.length > 8 ? `<div class="helper-text" style="margin-top:8px; text-align:center;">+${dayOffEntries.length-8} more this period</div>` : '');
 }
 
 function renderProfileView(){
@@ -3670,6 +3843,7 @@ const CMP_METRICS = [
   { key:'earnPerTrip', label:'Earnings/trip', higherBetter:true, fmt:v=>rupee(v,{dec:true}) },
   { key:'tripCount', label:'Trip Count', higherBetter:true, fmt:v=>Math.round(v).toLocaleString('en-IN') },
   { key:'avgTripValue', label:'Avg Trip Value', higherBetter:true, fmt:v=>rupee(v,{dec:true}) },
+  { key:'dayOffCount', label:'Days Off', higherBetter:false, fmt:v=>Math.round(v)+' day'+(Math.round(v)===1?'':'s') },
 ];
 const CMP_WEEKDAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
@@ -3738,7 +3912,9 @@ function cmpResolvePeriods(){
 }
 
 function cmpComputeMetrics(startISO, endISO){
-  const entries = getActiveEntries().filter(e=> e.date>=startISO && e.date<=endISO);
+  const allEntries = getActiveEntries().filter(e=> e.date>=startISO && e.date<=endISO);
+  const dayOffCount = allEntries.filter(e=>e.isDayOff).length;
+  const entries = allEntries.filter(e=>!e.isDayOff);
   let gross=0, fuelCost=0, otherExp=0, dist=0, hrs=0;
   const byDate = {}, platMap = {}, weekdayMap = {};
   entries.forEach(e=>{
@@ -3789,7 +3965,7 @@ function cmpComputeMetrics(startISO, endISO){
     cur.setDate(cur.getDate()+1); guard++;
   }
 
-  return { gross, netProfit, margin, distance:dist, costPerKm, fuelCostPerKm, fuelCost, otherExp, earnPerHour, earnPerTrip, tripCount, avgTripValue:earnPerTrip, bestDay, worstDay, bestWeekday, platformMix, dailySeries, hasData: tripCount>0 };
+  return { gross, netProfit, margin, distance:dist, costPerKm, fuelCostPerKm, fuelCost, otherExp, earnPerHour, earnPerTrip, tripCount, avgTripValue:earnPerTrip, bestDay, worstDay, bestWeekday, platformMix, dailySeries, dayOffCount, hasData: tripCount>0 };
 }
 
 function cmpUpdateControlsVisibility(){
@@ -4023,7 +4199,6 @@ function openEntrySheet(id){
 
   if(id){
     const ent = state.entries.find(e=>e.id===id);
-    document.getElementById('entrySheetTitle').textContent = 'Edit Trip';
     document.getElementById('deleteEntryBtn').style.display = 'block';
     document.getElementById('fDate').value = ent.date;
     vSel.value = ent.vehicleId;
@@ -4032,10 +4207,11 @@ function openEntrySheet(id){
     document.getElementById('fDistance').value = ent.distance||'';
     document.getElementById('fMileage').value = ent.mileage||'';
     document.getElementById('fNote').value = ent.note||'';
+    document.getElementById('fDayOffReason').value = ent.dayOffReason || 'Leave';
     (ent.platformEarnings||[]).forEach(p=> addPlatformRow(p.platform, p.amount, p.tip));
     (ent.expenses||[]).forEach(x=> addExpenseRow(x.cat, x.amount));
+    setEntryTypeMode(ent.isDayOff ? 'dayoff' : 'trip');
   } else {
-    document.getElementById('entrySheetTitle').textContent = 'Log Trip';
     document.getElementById('deleteEntryBtn').style.display = 'none';
     document.getElementById('entryForm').reset();
     document.getElementById('fDate').value = todayStr();
@@ -4044,6 +4220,7 @@ function openEntrySheet(id){
     vSel.value = state.vehicles[0].id;
     document.getElementById('fMileage').value = state.vehicles[0].mileage;
     addPlatformRow(state.settings.platforms[0], '', '');
+    setEntryTypeMode('trip');
   }
   updateLiveCalc(); entryOverlay.classList.add('open');
 }
@@ -4051,6 +4228,26 @@ function openEntrySheet(id){
 window.openEntrySheetForDate = function(dateStr) {
   openEntrySheet(null);
   document.getElementById('fDate').value = dateStr;
+};
+
+window.openDayOffSheetForDate = function(dateStr) {
+  openEntrySheet(null);
+  document.getElementById('fDate').value = dateStr;
+  setEntryTypeMode('dayoff');
+};
+
+// One-tap day off marking (e.g. from the missing days banner) — no sheet needed.
+window.markDateAsDayOff = function(dateStr, reason){
+  const vehicleId = (state.vehicles[0]||{}).id;
+  if(!vehicleId) return;
+  const existingIdx = state.entries.findIndex(x=>x.date===dateStr && x.vehicleId===vehicleId);
+  const payload = {
+    id: existingIdx>-1 ? state.entries[existingIdx].id : uid(),
+    date: dateStr, vehicleId, isDayOff: true, dayOffReason: reason || 'Leave',
+    platformEarnings: [], startTime:'', endTime:'', distance:0, mileage:0, fuelPrice:0, expenses:[], note:''
+  };
+  if(existingIdx>-1) state.entries[existingIdx] = payload; else state.entries.push(payload);
+  saveState(); renderView(currentView);
 };
 
 window.openEntrySheetForVehicle = function(vehicleId) {
@@ -4064,6 +4261,20 @@ window.openEntrySheetForVehicle = function(vehicleId) {
 document.getElementById('fabAdd').onclick = ()=> openEntrySheet(null);
 document.getElementById('entryClose').onclick = ()=> entryOverlay.classList.remove('open');
 document.getElementById('cancelEntryBtn').onclick = ()=> entryOverlay.classList.remove('open');
+
+let entryTypeMode = 'trip';
+function setEntryTypeMode(mode){
+  entryTypeMode = mode;
+  document.getElementById('tripTypeTab').classList.toggle('active', mode==='trip');
+  document.getElementById('dayOffTypeTab').classList.toggle('active', mode==='dayoff');
+  document.getElementById('tripFieldsWrap').style.display = mode==='trip' ? 'block' : 'none';
+  document.getElementById('dayOffFieldsWrap').style.display = mode==='dayoff' ? 'block' : 'none';
+  document.getElementById('fDate').required = true;
+  document.getElementById('saveEntryBtn').textContent = mode==='dayoff' ? 'Save day off' : 'Save trip';
+  document.getElementById('entrySheetTitle').textContent = (editingId.entry ? 'Edit ' : 'Log ') + (mode==='dayoff' ? 'Day Off' : 'Trip');
+}
+document.getElementById('tripTypeTab').onclick = ()=> setEntryTypeMode('trip');
+document.getElementById('dayOffTypeTab').onclick = ()=> setEntryTypeMode('dayoff');
 
 function getOpts(list, sel){ return list.map(x=>`<option value="${esc(x)}" ${x===sel?'selected':''}>${esc(x)}</option>`).join('')+`<option value="__new__">+ New</option>`; }
 
@@ -4120,22 +4331,33 @@ document.getElementById('entryForm').onsubmit = e => {
   const date = document.getElementById('fDate').value;
   const vehicleId = document.getElementById('fVehicle').value;
   const v = state.vehicles.find(x=>x.id===vehicleId);
-  const platformEarnings = [...document.querySelectorAll('#platformRows .platform-row-form')].map(r=>{
-    const inps = r.querySelectorAll('input');
-    return { platform: r.querySelector('select').value, amount: Number(inps[0].value)||0, tip: Number(inps[1].value)||0 };
-  }).filter(p=> p.amount>0 || p.tip>0);
-  const expenses = [...document.querySelectorAll('#expenseRows .expense-row')].map(r=>({
-    cat: r.querySelector('select').value, amount: Number(r.querySelector('input').value)||0
-  })).filter(x=>x.amount>0);
+  const note = document.getElementById('fNote').value;
 
-  const payload = {
-    id: editingId.entry || uid(), date, vehicleId, platformEarnings,
-    startTime: document.getElementById('fStartTime').value,
-    endTime: document.getElementById('fEndTime').value,
-    distance: Number(document.getElementById('fDistance').value)||0,
-    mileage: Number(document.getElementById('fMileage').value)||0,
-    fuelPrice: v.fuelPrice, expenses, note: document.getElementById('fNote').value
-  };
+  let payload;
+  if(entryTypeMode === 'dayoff'){
+    payload = {
+      id: editingId.entry || uid(), date, vehicleId,
+      isDayOff: true, dayOffReason: document.getElementById('fDayOffReason').value,
+      platformEarnings: [], startTime:'', endTime:'', distance:0, mileage:0, fuelPrice:0, expenses:[], note
+    };
+  } else {
+    const platformEarnings = [...document.querySelectorAll('#platformRows .platform-row-form')].map(r=>{
+      const inps = r.querySelectorAll('input');
+      return { platform: r.querySelector('select').value, amount: Number(inps[0].value)||0, tip: Number(inps[1].value)||0 };
+    }).filter(p=> p.amount>0 || p.tip>0);
+    const expenses = [...document.querySelectorAll('#expenseRows .expense-row')].map(r=>({
+      cat: r.querySelector('select').value, amount: Number(r.querySelector('input').value)||0
+    })).filter(x=>x.amount>0);
+
+    payload = {
+      id: editingId.entry || uid(), date, vehicleId, isDayOff: false, platformEarnings,
+      startTime: document.getElementById('fStartTime').value,
+      endTime: document.getElementById('fEndTime').value,
+      distance: Number(document.getElementById('fDistance').value)||0,
+      mileage: Number(document.getElementById('fMileage').value)||0,
+      fuelPrice: v.fuelPrice, expenses, note
+    };
+  }
 
   if(editingId.entry){
     const idx = state.entries.findIndex(x=>x.id===editingId.entry);
