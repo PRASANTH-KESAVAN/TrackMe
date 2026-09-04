@@ -962,6 +962,7 @@ canvas.donut{ width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
     <div class="section">
       <div class="section-head"><div class="section-title">Savings Goal Timeline</div><span class="section-link" id="glAddGoalBtn">+ Set Goal</span></div>
       <div class="helper-text" style="margin-top:0;">Projected dates use your average daily profit over the last 30 days.</div>
+      <div class="card" id="glUnallocatedCard" style="margin-bottom:12px;"></div>
       <div id="glGoalsList"></div>
     </div>
 
@@ -5480,6 +5481,18 @@ function renderGoalsDebtView(){
   getActiveFees().forEach(f=> tExp += Number(f.amount)||0);
   const netLifetime = tEarn - tExp;
   const pace = glDailyProfitPace();
+
+  const allocatedPct = totalAllocatedPercent(null);
+  const unallocatedPct = Math.max(0, 100 - allocatedPct);
+  const unallocatedProfit = Math.max(0, netLifetime) * (unallocatedPct/100);
+  document.getElementById('glUnallocatedCard').innerHTML = `
+    <div class="vc-mini-grid">
+      <div class="vc-mini-stat"><div class="lbl">Unallocated Profit</div><div class="val" style="color:${unallocatedPct>0?'var(--teal)':'var(--muted)'}">${rupee(unallocatedProfit)}</div></div>
+      <div class="vc-mini-stat"><div class="lbl">Unallocated %</div><div class="val">${unallocatedPct}%</div></div>
+      <div class="vc-mini-stat"><div class="lbl">Allocated %</div><div class="val">${allocatedPct}%</div></div>
+      <div class="vc-mini-stat"><div class="lbl">Total Net Profit</div><div class="val">${rupee(Math.max(0,netLifetime))}</div></div>
+    </div>
+  `;
 
   const timelineGoals = state.goals.filter(g => g.type==='savings' || g.type==='custom_purchase');
   const glHolder = document.getElementById('glGoalsList');
