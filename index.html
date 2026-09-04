@@ -960,7 +960,7 @@ canvas.donut{ width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
     </div>
 
     <div class="section">
-      <div class="section-head"><div class="section-title">Savings Goal Timeline</div><span class="section-link" id="glAddGoalBtn">+ Set Goal</span></div>
+      <div class="section-head"><div class="section-title">Savings Goal Timeline</div><span style="display:flex; gap:12px;"><span class="section-link" id="glAdjustPercentBtn">⚖️ Adjust %</span><span class="section-link" id="glAddGoalBtn">+ Set Goal</span></span></div>
       <div class="helper-text" style="margin-top:0;">Projected dates use your average daily profit over the last 30 days.</div>
       <div id="glGoalsList"></div>
     </div>
@@ -1151,6 +1151,20 @@ canvas.donut{ width:130px; height:130px; flex:0 0 130px; cursor:pointer; }
     <div id="goalSuggestWrap" class="helper-text" style="color:var(--amber); cursor:pointer; display:none;">💡 Suggestion: ₹<span id="gSuggestVal"></span> based on past 30 days. Tap to use.</div>
     <div class="field" id="gNameField" style="display:none;"><label>Goal Name</label><input type="text" id="gName" placeholder="e.g. Bike EMI, New Phone"></div>
     <div class="sheet-actions"><button type="button" class="btn btn-danger" id="deleteGoalBtn" style="display:none;">🗑</button><button type="button" class="btn btn-primary" id="saveGoalBtn">Save Goal</button></div>
+  </div>
+</div>
+
+<!-- GOAL PERCENT REASSIGN SHEET -->
+<div class="overlay" id="percentOverlay">
+  <div class="sheet" id="percentSheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title"><span>Split Your Profit</span><span class="sheet-close" id="percentClose">✕</span></div>
+    <div class="helper-text" style="margin-top:0;">Give every goal a % share of your profit/earnings. Shares must add up to exactly 100%.</div>
+    <div id="percentList"></div>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin:16px 0 4px; padding:10px 12px; background:var(--panel-2); border-radius:10px; font-family:var(--font-mono); font-weight:600; font-size:13px;">
+      <span style="color:var(--muted); font-weight:normal;">Total assigned</span><span id="percentTotalVal">0%</span>
+    </div>
+    <div class="sheet-actions"><button type="button" class="btn btn-primary" id="savePercentBtn">Save Split</button></div>
   </div>
 </div>
 
@@ -1441,6 +1455,17 @@ function loadState(){
       if(!state.vehicleDocuments) state.vehicleDocuments = [];
       if(!state.maintSchedules) state.maintSchedules = [];
       if(!state.recurring) state.recurring = [];
+      if(!state.goals) state.goals = [];
+      if(state.goals.length && state.goals.some(g => g.percent === undefined)){
+        // Migration: goals saved before % splitting existed. Give every goal an
+        // equal share so the total is a valid 100%, user can re-adjust anytime.
+        const n = state.goals.length;
+        const base = Math.floor(100 / n);
+        let remainder = 100 - base * n;
+        state.goals.forEach((g, i) => {
+          g.percent = base + (i < remainder ? 1 : 0);
+        });
+      }
       state.recurring.forEach(r => {
         if(r.isLoan === undefined) r.isLoan = false;
         if(r.vehicleId === undefined) r.vehicleId = '';
@@ -2482,19 +2507,20 @@ function renderHomeView(){
      let current = 0;
      const today = todayStr();
      const dToday = new Date();
+     const share = (Number(g.percent)||0) / 100;
      
      if (g.type === 'daily_earn') {
-         current = entries.filter(e=>e.date===today).reduce((s,e)=>s+computeEntry(e).earnings,0);
+         current = entries.filter(e=>e.date===today).reduce((s,e)=>s+computeEntry(e).earnings,0) * share;
      } else if (g.type === 'weekly_earn') {
          const d = new Date(); const day = d.getDay()||7; d.setDate(d.getDate() - day + 1);
-         current = entries.filter(e=>e.date>=toISO(d)).reduce((s,e)=>s+computeEntry(e).earnings,0);
+         current = entries.filter(e=>e.date>=toISO(d)).reduce((s,e)=>s+computeEntry(e).earnings,0) * share;
      } else if (g.type === 'monthly_earn') {
          const startOfMonth = today.slice(0,7)+'-01';
-         current = entries.filter(e=>e.date>=startOfMonth).reduce((s,e)=>s+computeEntry(e).earnings,0);
+         current = entries.filter(e=>e.date>=startOfMonth).reduce((s,e)=>s+computeEntry(e).earnings,0) * share;
      } else if (g.type === 'savings') {
-         current = net; 
+         current = net * share; 
      } else if (g.type === 'custom_purchase') {
-         current = Math.max(0, Math.min(net, g.target));
+         current = Math.max(0, net * share);
      }
 
      const pct = clamp(current / g.target, 0, 1);
@@ -2661,27 +2687,27 @@ function renderGoalsWidget(entries, netLifetime){
   const startOfMonth = today.slice(0,7)+'-01';
   const earnMonth = entries.filter(e=>e.date>=startOfMonth).reduce((s,e)=>s+computeEntry(e).earnings,0);
 
-  let unallocatedProfit = netLifetime;
+  const needsSplit = state.goals.length>0 && sumGoalPercents()!==100;
 
-  list.innerHTML = state.goals.map(g => {
+  list.innerHTML = (needsSplit ? `<div class="stat-empty" style="margin-bottom:10px; cursor:pointer;" onclick="openPercentSheet()">⚠️ Your goal shares add up to ${sumGoalPercents()}%, not 100%. Tap to fix.</div>` : '') + state.goals.map(g => {
     let current = 0, label = '', subtitle='', actionHtml='';
+    const share = (Number(g.percent)||0) / 100;
     
     // Pace Calculation Logic
     let timePct = 0;
     if (g.type === 'daily_earn') {
-      current = earnToday; label = 'Daily Earn';
+      current = earnToday * share; label = 'Daily Earn';
     } else if (g.type === 'weekly_earn') {
-      current = earnWeek; label = 'Weekly Earn';
+      current = earnWeek * share; label = 'Weekly Earn';
       timePct = (day - 1) / 7;
     } else if (g.type === 'monthly_earn') {
-      current = earnMonth; label = 'Monthly Earn';
+      current = earnMonth * share; label = 'Monthly Earn';
       const daysInMonth = new Date(dToday.getFullYear(), dToday.getMonth()+1, 0).getDate();
       timePct = dToday.getDate() / daysInMonth;
     } else if (g.type === 'savings') {
-      current = netLifetime; label = g.name || 'Break-even'; subtitle=`${rupee(Math.max(0, g.target-current))} remaining`;
+      current = netLifetime * share; label = g.name || 'Break-even'; subtitle=`${rupee(Math.max(0, g.target-current))} remaining`;
     } else if (g.type === 'custom_purchase') {
-      current = Math.max(0, Math.min(unallocatedProfit, g.target));
-      unallocatedProfit -= current; 
+      current = Math.max(0, netLifetime * share);
       label = g.name || 'Purchase Goal';
       subtitle = current >= g.target ? 'Ready to buy!' : `Need ${rupee(Math.max(0, g.target-current))} more profit`;
       if(current >= g.target) {
@@ -2706,7 +2732,7 @@ function renderGoalsWidget(entries, netLifetime){
     const color = pct>=100 ? 'var(--green)' : 'var(--amber)';
     return `
       <div class="goal-item" onclick="openGoalSheet('${g.id}')">
-        <div class="goal-head"><span class="goal-name">${esc(label)} ${paceHtml}</span><span class="goal-meta">${rupee(current)} / ${rupeeCompact(g.target)}</span></div>
+        <div class="goal-head"><span class="goal-name">${esc(label)} ${paceHtml} <span class="goal-meta" style="font-weight:normal;">· ${g.percent||0}%</span></span><span class="goal-meta">${rupee(current)} / ${rupeeCompact(g.target)}</span></div>
         <div class="goal-track"><div class="goal-fill" data-w="${pct}%" style="width:0%; background:${color}"></div></div>
         <div class="goal-footer" style="align-items:center;"><span>${esc(subtitle)}</span><div>${pct>=100 && g.type!=='custom_purchase'?'<span class="streak-badge">Met! 🎉</span>':''}${actionHtml}</div></div>
       </div>
@@ -4401,7 +4427,7 @@ function updateGoalSuggest(){
   
   if(t === 'custom_purchase') {
     sw.style.display = 'block';
-    sw.innerHTML = `💡 Custom purchases are funded sequentially using your available all-time net profit. Once fully funded, you can convert it to an expense.`;
+    sw.innerHTML = `💡 Custom purchases are funded by whatever % share of your all-time net profit you assign to them. Once fully funded, you can convert it to an expense.`;
     sw.onclick = null;
     return;
   }
@@ -4422,16 +4448,84 @@ function updateGoalSuggest(){
 document.getElementById('manageGoalsLink').onclick = ()=> openGoalSheet(null);
 document.getElementById('goalClose').onclick = ()=> goalOverlay.classList.remove('open');
 document.getElementById('saveGoalBtn').onclick = async ()=>{
-  const payload = { id: editingId.goal||uid(), type: document.getElementById('gType').value, target: Number(document.getElementById('gTarget').value)||0, name: document.getElementById('gName').value };
+  const isNew = !editingId.goal;
+  const existing = editingId.goal ? state.goals.find(x=>x.id===editingId.goal) : null;
+  const payload = { id: editingId.goal||uid(), type: document.getElementById('gType').value, target: Number(document.getElementById('gTarget').value)||0, name: document.getElementById('gName').value, percent: existing ? (Number(existing.percent)||0) : 0 };
   if(payload.target<=0) { await showAlert('Error', 'Enter a valid target amount above 0.'); return; }
   if(editingId.goal) state.goals = state.goals.map(x=> x.id===editingId.goal ? payload : x);
   else state.goals.push(payload);
   saveState(); goalOverlay.classList.remove('open'); renderView(currentView);
+  if(isNew) openPercentSheet();
 };
 document.getElementById('deleteGoalBtn').onclick = async ()=>{ 
   if(await showConfirm('Delete Goal?', 'Are you sure you want to remove this goal?')) {
     state.goals = state.goals.filter(x=>x.id!==editingId.goal); saveState(); goalOverlay.classList.remove('open'); renderView(currentView); 
+    if(state.goals.length && sumGoalPercents()!==100) openPercentSheet();
   }
+};
+
+/* ---------- Goal % Reassignment ---------- */
+function sumGoalPercents(){ return state.goals.reduce((s,g)=> s + (Number(g.percent)||0), 0); }
+function goalTypeLabel(g){
+  switch(g.type){
+    case 'daily_earn': return 'Daily Earnings';
+    case 'weekly_earn': return 'Weekly Earnings';
+    case 'monthly_earn': return 'Monthly Earnings';
+    case 'savings': return 'Savings / Payoff';
+    case 'custom_purchase': return 'Custom Purchase';
+    default: return '';
+  }
+}
+function goalDisplayName(g){
+  if(g.name) return g.name;
+  switch(g.type){
+    case 'daily_earn': return 'Daily Earn';
+    case 'weekly_earn': return 'Weekly Earn';
+    case 'monthly_earn': return 'Monthly Earn';
+    case 'savings': return 'Break-even';
+    default: return 'Purchase Goal';
+  }
+}
+const percentOverlay = document.getElementById('percentOverlay');
+window.openPercentSheet = function(){
+  if(!state.goals.length) return;
+  const list = document.getElementById('percentList');
+  list.innerHTML = state.goals.map(g => `
+    <div class="field" style="display:flex; align-items:center; gap:10px; margin-top:10px;">
+      <div style="flex:1; min-width:0;">
+        <div style="font-size:12.5px; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${esc(goalDisplayName(g))}</div>
+        <div style="font-size:10.5px; color:var(--muted);">${goalTypeLabel(g)} · Target ${rupeeCompact(g.target)}</div>
+      </div>
+      <input type="number" min="0" max="100" step="1" data-goal-id="${g.id}" class="percent-input" value="${g.percent||0}" style="width:64px; text-align:right; background:var(--panel-2); border:1px solid var(--hairline); border-radius:8px; padding:8px; color:var(--text); font-family:var(--font-mono);">
+      <span style="color:var(--muted); font-size:12px;">%</span>
+    </div>
+  `).join('');
+  list.querySelectorAll('.percent-input').forEach(inp => inp.addEventListener('input', updatePercentTotal));
+  updatePercentTotal();
+  percentOverlay.classList.add('open');
+};
+function updatePercentTotal(){
+  const inputs = document.querySelectorAll('#percentList .percent-input');
+  let total = 0;
+  inputs.forEach(inp => total += Number(inp.value)||0);
+  const totalEl = document.getElementById('percentTotalVal');
+  totalEl.textContent = total + '%';
+  totalEl.style.color = total===100 ? 'var(--green)' : 'var(--red)';
+  const btn = document.getElementById('savePercentBtn');
+  btn.disabled = total!==100;
+  btn.style.opacity = total!==100 ? '0.5' : '1';
+  btn.style.pointerEvents = total!==100 ? 'none' : 'auto';
+}
+document.getElementById('percentClose').onclick = ()=> percentOverlay.classList.remove('open');
+document.getElementById('savePercentBtn').onclick = ()=>{
+  const inputs = document.querySelectorAll('#percentList .percent-input');
+  let total = 0; const vals = {};
+  inputs.forEach(inp => { const v = Number(inp.value)||0; vals[inp.dataset.goalId] = v; total += v; });
+  if(total !== 100) return;
+  state.goals.forEach(g => { if(vals[g.id]!==undefined) g.percent = vals[g.id]; });
+  saveState();
+  percentOverlay.classList.remove('open');
+  renderView(currentView);
 };
 
 const vehOverlay = document.getElementById('vehicleOverlay');
@@ -5430,17 +5524,16 @@ function renderGoalsDebtView(){
   if(!timelineGoals.length){
     glHolder.innerHTML = `<div class="vc-empty-note">No savings or purchase goals yet. Tap "+ Set Goal" and choose "Savings / Payoff" or "Custom Purchase" to see a projected date here.</div>`;
   } else {
-    let unallocatedProfit = netLifetime;
-    glHolder.innerHTML = timelineGoals.map(g=>{
-      let current;
-      if(g.type==='savings'){ current = netLifetime; }
-      else { current = Math.max(0, Math.min(unallocatedProfit, g.target)); unallocatedProfit -= current; }
+    const needsSplit = state.goals.length>0 && sumGoalPercents()!==100;
+    glHolder.innerHTML = (needsSplit ? `<div class="vc-empty-note" style="color:var(--red); cursor:pointer;" onclick="openPercentSheet()">⚠️ Goal shares add up to ${sumGoalPercents()}%, not 100%. Tap to fix.</div>` : '') + timelineGoals.map(g=>{
+      const share = (Number(g.percent)||0) / 100;
+      const current = Math.max(0, netLifetime * share);
       const remaining = Math.max(0, g.target - current);
       const pct = clamp((current/g.target)*100, 0, 100);
-      const proj = glProjectedDate(remaining, pace);
+      const proj = glProjectedDate(remaining, pace * share);
       return `
         <div class="goal-item" onclick="openGoalSheet('${g.id}')">
-          <div class="goal-head"><span class="goal-name">${esc(g.name || (g.type==='savings'?'Break-even':'Purchase Goal'))}</span><span class="goal-meta">${rupee(current)} / ${rupeeCompact(g.target)}</span></div>
+          <div class="goal-head"><span class="goal-name">${esc(g.name || (g.type==='savings'?'Break-even':'Purchase Goal'))} <span class="goal-meta" style="font-weight:normal;">· ${g.percent||0}%</span></span><span class="goal-meta">${rupee(current)} / ${rupeeCompact(g.target)}</span></div>
           <div class="goal-track"><div class="goal-fill" style="width:${pct}%; background:${pct>=100?'var(--green)':'var(--amber)'};"></div></div>
           <div class="goal-footer" style="align-items:center;"><span style="color:${proj.ok?'var(--muted)':'var(--red)'};">${esc(proj.text)}</span></div>
         </div>
@@ -5448,6 +5541,8 @@ function renderGoalsDebtView(){
     }).join('');
   }
 }
+
+document.getElementById('glAdjustPercentBtn').onclick = ()=> openPercentSheet();
 
 document.getElementById('glAddLoanBtn').onclick = ()=> openLoanSheet(null);
 document.getElementById('glAddGoalBtn').onclick = ()=> openGoalSheet(null);
@@ -5462,3 +5557,4 @@ checkReminders();
 </script>
 </body>
 </html>
+                                  
